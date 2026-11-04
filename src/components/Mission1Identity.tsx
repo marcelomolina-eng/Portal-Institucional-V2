@@ -155,7 +155,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           }`}
         >
           <Video className="w-4 h-4" />
-          <span>Videos Institucionales (Drive)</span>
+          <span>Videos Institucionales</span>
         </button>
 
         <button
@@ -340,13 +340,13 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
         </div>
       )}
 
-      {/* TAB 2: VIDEOS INSTITUCIONALES (GOOGLE DRIVE EMBEDS) */}
+      {/* TAB: VIDEOS INSTITUCIONALES */}
       {activeTab === 'videos' && (
         <div className="space-y-6">
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setActiveVideo('video1')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
                 activeVideo === 'video1'
                   ? 'bg-[#7A1C1C] text-white shadow-md'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -354,12 +354,11 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
             >
               <Video className="w-4 h-4" />
               <span>Video 01: Identidad y Trayectoria</span>
-              <span className="text-[10px] font-mono opacity-80">(Drive: ...yEBh-v)</span>
             </button>
 
             <button
               onClick={() => setActiveVideo('video2')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
                 activeVideo === 'video2'
                   ? 'bg-[#7A1C1C] text-white shadow-md'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -367,7 +366,6 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
             >
               <Video className="w-4 h-4" />
               <span>Video 02: Cultura y Espíritu Educar</span>
-              <span className="text-[10px] font-mono opacity-80">(Drive: ...x83Prom)</span>
             </button>
           </div>
 

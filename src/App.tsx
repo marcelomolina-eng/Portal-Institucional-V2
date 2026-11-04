@@ -38,15 +38,6 @@ import { AdminLoginModal } from './components/AdminLoginModal';
 import { QrCodeModal } from './components/QrCodeModal';
 import { GasFilesViewer } from './components/GasFilesViewer';
 import { InstitutionalLogo } from './components/InstitutionalLogo';
-import { 
-  ShieldCheck, 
-  Heart, 
-  Sparkles, 
-  FileCode2, 
-  Lock, 
-  QrCode, 
-  RefreshCw 
-} from 'lucide-react';
 
 export default function App() {
   // Navigation & Mission state
@@ -430,8 +421,8 @@ export default function App() {
       </main>
 
       {/* Institutional Footer */}
-      <footer className="bg-[#1C1A17] text-slate-400 py-8 border-t-2 border-[#CFB07A] text-xs no-print">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="bg-[#1C1A17] text-slate-400 py-6 border-t-2 border-[#CFB07A] text-xs no-print">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <InstitutionalLogo size="sm" showSubtitle={false} />
             <div>
@@ -442,40 +433,6 @@ export default function App() {
                 Verita Vinci • Operación Informático: Una misión: descubrir todo lo que nos une © 2026
               </p>
             </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 text-xs">
-            <button
-              onClick={() => setIsQrModalOpen(true)}
-              className="hover:text-[#CFB07A] transition flex items-center gap-1"
-            >
-              <QrCode className="w-3.5 h-3.5 text-[#01913F]" /> Acceso QR Móvil
-            </button>
-            <span className="text-slate-700">•</span>
-            <button
-              onClick={() => setCurrentMission('gasFiles')}
-              className="hover:text-[#CFB07A] transition flex items-center gap-1"
-            >
-              <FileCode2 className="w-3.5 h-3.5 text-[#CFB07A]" /> Código Apps Script
-            </button>
-            <span className="text-slate-700">•</span>
-            <button
-              onClick={() => {
-                if (isAdminLoggedIn) setCurrentMission('admin');
-                else setIsAdminLoginModalOpen(true);
-              }}
-              className="hover:text-[#CFB07A] transition flex items-center gap-1"
-            >
-              <Lock className="w-3.5 h-3.5 text-[#DE4034]" /> Panel RRHH
-            </button>
-            <span className="text-slate-700">•</span>
-            <button
-              onClick={handleResetToDefaults}
-              className="text-slate-500 hover:text-slate-300 transition flex items-center gap-1"
-              title="Restaurar datos iniciales"
-            >
-              <RefreshCw className="w-3 h-3" /> Restaurar Demo
-            </button>
           </div>
         </div>
       </footer>
