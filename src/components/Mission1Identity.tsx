@@ -13,8 +13,10 @@ import {
   History,
   Calendar,
   Layers,
-  Sparkles
+  Sparkles,
+  Music
 } from 'lucide-react';
+import { HimnoPlayer } from './HimnoPlayer';
 
 interface Mission1IdentityProps {
   onComplete: () => void;
@@ -27,7 +29,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
   onNavigateNext,
   isCompleted
 }) => {
-  const [activeTab, setActiveTab] = React.useState<'filosofia' | 'videos' | 'historia'>('filosofia');
+  const [activeTab, setActiveTab] = React.useState<'filosofia' | 'himno' | 'videos' | 'historia'>('filosofia');
   const [activeVideo, setActiveVideo] = React.useState<'video1' | 'video2'>('video1');
 
   const valores = [
@@ -130,6 +132,18 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
         >
           <Layers className="w-4 h-4" />
           <span>Misión, Visión y Escudo</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('himno')}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
+            activeTab === 'himno'
+              ? 'border-[#CFB07A] text-[#1C1A17] bg-[#CFB07A]/25 rounded-t-lg font-extrabold'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <Music className="w-4 h-4 text-[#CFB07A]" />
+          <span>Himno Institucional</span>
         </button>
 
         <button
@@ -282,6 +296,47 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               </div>
             </div>
           </div>
+
+          {/* VALORES INSTITUCIONALES */}
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+            <div className="border-b border-slate-100 pb-3">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-[#01913F] font-mono">
+                Pilares Formativos
+              </span>
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">
+                Valores Institucionales del Colegio Informático
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500">
+                Principios rectores que guían nuestra labor diaria con los estudiantes y las familias.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {valores.map((v, i) => (
+                <div key={i} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-[#CFB07A] transition space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-xs">
+                    {v.icon}
+                  </div>
+                  <h4 className="font-bold text-slate-900 text-sm">
+                    {v.title}
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {v.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* HIMNO INSTITUCIONAL DEL COLEGIO INFORMÁTICO */}
+          <HimnoPlayer audioSrc="/assets/himno Colegio.mpeg" />
+        </div>
+      )}
+
+      {/* TAB DEDICADO: HIMNO INSTITUCIONAL */}
+      {activeTab === 'himno' && (
+        <div className="space-y-6">
+          <HimnoPlayer audioSrc="/assets/himno Colegio.mpeg" />
         </div>
       )}
 
