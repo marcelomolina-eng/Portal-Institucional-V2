@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Paleta Oficial extraída del Escudo Institucional "VERITA VINCI" */
+    --color-escudo-rojo: #DE4034;
+    --color-escudo-rojo-dark: #8F1F17;
+    --color-escudo-rojo-deep: #5C120C;
+    --color-escudo-verde: #01913F;
+    --color-escudo-verde-dark: #00602A;
+    --color-escudo-verde-deep: #003D1B;
+    --color-escudo-arena: #CFB07A;
+    --color-escudo-arena-light: #F7F3EA;
+    --color-escudo-arena-dark: #9E7F47;
+    --color-escudo-negro: #22201B;
+    --color-escudo-blanco: #FFFFFF;
+
+    /* Legacy mapping mapped to the new authentic shield palette */
+    --color-granate: var(--color-escudo-rojo);
+    --color-granate-dark: var(--color-escudo-rojo-dark);
+    --color-verde: var(--color-escudo-verde);
+    --color-dorado: var(--color-escudo-arena);
+    --color-dorado-light: var(--color-escudo-arena-light);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #F8F9FA;
+    color: #22201B;
+    overflow-x: hidden;
+  }
+
+  .font-serif-title {
+    font-family: 'Cinzel', serif;
+  }
+
+  .font-mono-code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom subtle scrollbars with shield colors */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F4F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #CFB07A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #01913F;
+}
+
+/* Print styles for Diploma certification */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #diploma-printable-area, #diploma-printable-area * {
+    visibility: visible;
+  }
+  #diploma-printable-area {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

@@ -1,0 +1,107 @@
+<script>
+  /**
+   * Lógica Cliente para Google Apps Script
+   * Conecta las vistas interactivas y realiza llamadas remotas a google.script.run
+   */
+  
+  // Estado local del onboarding
+  var estadoApp = {
+    misionActual: 'home',
+    progreso: 0,
+    diploma: null,
+    adminAutenticado: false
+  };
+
+  document.addEventListener("DOMContentLoaded", function() {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+    renderizarInicio();
+  });
+
+  // Renderiza la vista de bienvenida
+  function renderizarInicio() {
+    var container = document.getElementById("vista-activa");
+    if (!container) return;
+
+    container.innerHTML = \`
+      <div class="space-y-6">
+        <div class="rounded-3xl bg-gradient-to-br from-[#7A1C1C] to-[#480c0c] text-white p-8 border-2 border-[#D4B26F] shadow-xl">
+          <div class="inline-block px-3 py-1 bg-[#D4B26F]/20 text-[#D4B26F] rounded-full text-xs font-bold uppercase mb-3">
+            PORTAL DIGITAL DE ONBOARDING 2026
+          </div>
+          <h2 class="text-3xl font-extrabold text-white">¡Bienvenido al Colegio Informático!</h2>
+          <p class="text-slate-200 mt-2 text-sm leading-relaxed max-w-2xl">
+            Nos alegra que hoy comiences a ser parte de nuestra comunidad. Cada paso que des aquí sumará a la misión colectiva de educar con calidez, rigor y vanguardia tecnológica.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button onclick="iniciarMision('mision1')" class="px-6 py-3 rounded-xl bg-[#008751] hover:bg-[#007043] text-white font-bold text-sm shadow-md transition">
+              INICIAR OPERACIÓN
+            </button>
+            <button onclick="verVideoInstitucional()" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 transition">
+              Ver Video Institucional (Drive)
+            </button>
+          </div>
+        </div>
+      </div>
+    \`;
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function iniciarMision(misionId) {
+    alert("Iniciando " + misionId + " en Google Apps Script.");
+  }
+
+  function verVideoInstitucional() {
+    window.open("https://drive.google.com/file/d/1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v/view", "_blank");
+  }
+
+  // Llamada RPC para validar credenciales admin con SHA-256
+  async function autenticarAdminGAS(email, password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password.trim());
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const passHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    google.script.run
+      .withSuccessHandler(function(response) {
+        if (response.success) {
+          alert("Acceso concedido a: " + response.user.name);
+        } else {
+          alert("Error: " + response.message);
+        }
+      })
+      .withFailureHandler(function(error) {
+        alert("Error de comunicación con Google Apps Script: " + error.message);
+      })
+      .loginAdmin(email, passHash);
+  }
+
+  // Llamada RPC para emitir diploma
+  function solicitarDiplomaGAS(nombre, puesto, email, fecha) {
+    google.script.run
+      .withSuccessHandler(function(res) {
+        if (res.success) {
+          alert("¡Diploma emitido con éxito! Folio: " + res.folio);
+          if (window.confetti) confetti();
+        } else {
+          alert("Error al emitir diploma: " + res.error);
+        }
+      })
+      .generarDiplomaPDF({
+        nombre: nombre,
+        puesto: puesto,
+        email: email,
+        fechaIngreso: fecha
+      });
+  }
+
+  function mostrarModalAdmin() {
+    var email = prompt("Ingrese correo autorizado (rrhh@educarsrl.com.ar o marcelo.molina@educarsrl.com.ar):", "rrhh@educarsrl.com.ar");
+    if (!email) return;
+    var pass = prompt("Ingrese contraseña (predeterminada: educar2026):", "educar2026");
+    if (!pass) return;
+    autenticarAdminGAS(email, pass);
+  }
+</script>

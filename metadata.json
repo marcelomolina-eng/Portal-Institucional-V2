@@ -1,0 +1,6 @@
+{
+  "name": "Portal Digital de Onboarding 2026 - Colegio Informático",
+  "description": "Portal interactivo 'Operación Informático: Una misión: descubrir todo lo que nos une'. Inducción, cultura, iniciativas, autoridades, calendario y certificación para el Colegio Informático (Educar).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

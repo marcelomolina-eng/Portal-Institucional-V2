@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Onboarding 2026 | Colegio Informático Educar</title>
+  <!-- Google Fonts & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- Iconos Lucide CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <?!= include('Estilos'); ?>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+  
+  <!-- CABECERA INSTITUCIONAL -->
+  <header class="sticky top-0 z-50 bg-[#1C1A17] text-white shadow-lg border-b-2 border-[#CFB07A]">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <img src="/assets/aistudio/escudo_colegio_informatico.png" alt="Escudo Verita Vinci" class="w-10 h-12 object-contain drop-shadow-sm" />
+        <div>
+          <h1 class="text-base sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            Colegio Informático
+            <span class="text-xs bg-[#01913F] text-white px-2 py-0.5 rounded-full font-medium tracking-normal">Educar 2026</span>
+          </h1>
+          <p class="text-xs text-[#CFB07A] font-serif-title font-medium">Verita Vinci • Una misión: descubrir todo lo que nos une</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <button onclick="mostrarModalAdmin()" class="text-xs bg-[#DE4034] hover:bg-[#8F1F17] text-white px-3 py-1.5 rounded-lg border border-[#CFB07A]/40 transition flex items-center gap-1.5">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          <span>Gestión RRHH</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main id="app-root" class="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
+    <!-- El contenido interactivo de las 4 misiones y certificación se renderiza vía JavaScript.html -->
+    <div id="vista-activa"></div>
+  </main>
+
+  <footer class="bg-[#1C1A17] text-slate-400 py-6 text-center text-xs border-t-2 border-[#CFB07A]">
+    <p>Colegio Informático Educar SRL © 2026 • Corrientes, Argentina</p>
+    <p class="mt-1 text-[#CFB07A] font-serif-title">Verita Vinci • Excelencia, calidez y cultura tecnológica.</p>
+  </footer>
+
+  <?!= include('JavaScript'); ?>
+</body>
+</html>

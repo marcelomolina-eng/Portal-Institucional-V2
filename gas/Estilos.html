@@ -1,0 +1,53 @@
+<style>
+  :root {
+    --color-escudo-rojo: #DE4034;
+    --color-escudo-verde: #01913F;
+    --color-escudo-arena: #CFB07A;
+    --color-escudo-negro: #1C1A17;
+    --color-granate: #DE4034;
+    --color-verde: #01913F;
+    --color-dorado: #CFB07A;
+    --color-oscuro: #1C1A17;
+  }
+  
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  
+  .font-serif-title {
+    font-family: 'Cinzel', Georgia, serif;
+  }
+  
+  /* Gradientes institucionales */
+  .bg-institucional-gradient {
+    background: linear-gradient(135deg, #DE4034 0%, #8F1F17 100%);
+  }
+  
+  .card-hover-effect {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-hover-effect:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -10px rgba(222, 64, 52, 0.2);
+  }
+  
+  /* Borde dorado de doble línea para constancia y diplomas */
+  .diploma-border {
+    border: 8px double #CFB07A;
+    background: radial-gradient(circle at center, #FFFFFF 0%, #FAF8F2 100%);
+  }
+  
+  /* Print Rules */
+  @media print {
+    header, footer, nav, button {
+      display: none !important;
+    }
+    #diploma-printable-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+  }
+</style>
