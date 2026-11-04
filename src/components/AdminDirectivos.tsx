@@ -17,8 +17,10 @@ import {
   AlertCircle,
   Eye,
   Camera,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
+import { compressAndResizeImage } from '../utils/imageCompressor';
 
 interface AdminDirectivosProps {
   authorities: Authority[];
@@ -76,6 +78,9 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
   const [photoMode, setPhotoMode] = useState<'upload' | 'url'>('upload');
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [previewPhoto, setPreviewPhoto] = useState<string>('');
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filter authorities
@@ -108,6 +113,9 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
     });
     setPreviewPhoto('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80');
     setPhotoError(null);
+    setSaveError(null);
+    setIsCompressing(false);
+    setIsSaving(false);
     setIsModalOpen(true);
   };
 
@@ -125,10 +133,13 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
     });
     setPreviewPhoto(auth.photoUrl);
     setPhotoError(null);
+    setSaveError(null);
+    setIsCompressing(false);
+    setIsSaving(false);
     setIsModalOpen(true);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -137,52 +148,81 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setPhotoError('La imagen supera los 5 MB. Te recomendamos una imagen menor para optimizar la velocidad.');
+    if (file.size > 10 * 1024 * 1024) {
+      setPhotoError(`La imagen seleccionada supera los 10 MB (${(file.size / (1024 * 1024)).toFixed(1)} MB). Por favor selecciona una imagen de menor peso.`);
       return;
     }
 
     setPhotoError(null);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      setFormData(prev => ({ ...prev, photoUrl: result }));
-      setPreviewPhoto(result);
-    };
-    reader.readAsDataURL(file);
+    setSaveError(null);
+    setIsCompressing(true);
+
+    try {
+      // Auto-compress and resize image to max 400x400px (WebP format, ~20-40KB)
+      const compressedDataUrl = await compressAndResizeImage(file, {
+        maxWidth: 400,
+        maxHeight: 400,
+        quality: 0.82
+      });
+
+      setFormData(prev => ({ ...prev, photoUrl: compressedDataUrl }));
+      setPreviewPhoto(compressedDataUrl);
+    } catch (err: unknown) {
+      console.error('Error al optimizar imagen local:', err);
+      const msg = err instanceof Error ? err.message : 'No se pudo procesar la imagen local.';
+      setPhotoError(msg);
+    } finally {
+      setIsCompressing(false);
+      if (e.target) {
+        e.target.value = '';
+      }
+    }
   };
 
   const handleUrlChange = (url: string) => {
     setFormData(prev => ({ ...prev, photoUrl: url }));
     setPreviewPhoto(url);
     setPhotoError(null);
+    setSaveError(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setSaveError(null);
+
     if (!formData.name.trim() || !formData.role.trim() || !formData.email.trim()) {
-      alert('Por favor completa los campos obligatorios: Nombre, Cargo y Correo institucional.');
+      setSaveError('Por favor completa los campos obligatorios: Nombre, Cargo y Correo institucional.');
       return;
     }
 
-    const authorityPayload: Authority = {
-      id: formData.id || `auth-${Date.now()}`,
-      name: formData.name.trim(),
-      role: formData.role.trim(),
-      area: formData.area.trim(),
-      email: formData.email.trim(),
-      phoneExt: formData.phoneExt.trim(),
-      bio: formData.bio.trim() || 'Referente del Colegio Informático comprometido con la excelencia formativa.',
-      photoUrl: formData.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
-    };
+    setIsSaving(true);
 
-    if (editingAuthority) {
-      onUpdateAuthority(authorityPayload);
-    } else {
-      onAddAuthority(authorityPayload);
+    try {
+      const authorityPayload: Authority = {
+        id: formData.id || `auth-${Date.now()}`,
+        name: formData.name.trim(),
+        role: formData.role.trim(),
+        area: formData.area.trim(),
+        email: formData.email.trim(),
+        phoneExt: formData.phoneExt.trim(),
+        bio: formData.bio.trim() || 'Referente del Colegio Informático comprometido con la excelencia formativa.',
+        photoUrl: formData.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+      };
+
+      if (editingAuthority) {
+        onUpdateAuthority(authorityPayload);
+      } else {
+        onAddAuthority(authorityPayload);
+      }
+
+      setIsModalOpen(false);
+    } catch (err: unknown) {
+      console.error('Error al guardar directivo:', err);
+      const msg = err instanceof Error ? err.message : 'Error al guardar los datos del directivo.';
+      setSaveError(`No se pudieron guardar los cambios: ${msg}`);
+    } finally {
+      setIsSaving(false);
     }
-
-    setIsModalOpen(false);
   };
 
   const handleDelete = (id: string) => {
@@ -456,17 +496,28 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
                           onChange={handleFileUpload}
                           accept="image/*"
                           className="hidden"
+                          disabled={isCompressing}
                         />
                         <button
                           type="button"
+                          disabled={isCompressing}
                           onClick={() => fileInputRef.current?.click()}
-                          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 hover:border-[#01913F] rounded-xl text-xs font-bold text-slate-600 hover:text-[#01913F] bg-white flex items-center justify-center gap-2 transition"
+                          className="w-full py-2.5 px-3 border-2 border-dashed border-slate-300 hover:border-[#01913F] disabled:opacity-60 disabled:cursor-not-allowed rounded-xl text-xs font-bold text-slate-600 hover:text-[#01913F] bg-white flex items-center justify-center gap-2 transition"
                         >
-                          <Upload className="w-4 h-4" />
-                          <span>Seleccionar Imagen de la Computadora</span>
+                          {isCompressing ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin text-[#01913F]" />
+                              <span>Comprimiendo imagen (WebP 400x400)...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="w-4 h-4" />
+                              <span>Seleccionar Imagen de la Computadora</span>
+                            </>
+                          )}
                         </button>
                         <p className="text-[10px] text-slate-400 mt-1">
-                          Admite JPG, PNG o WebP. La imagen se almacena de forma persistente.
+                          Admite JPG, PNG o WebP. Se redimensiona automáticamente a 400x400px para garantizar almacenamiento seguro y alta velocidad.
                         </p>
                       </div>
                     ) : (
@@ -589,21 +640,40 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
                 />
               </div>
 
+              {/* Mensaje de error al guardar */}
+              {saveError && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-start gap-2 animate-fadeIn">
+                  <AlertCircle className="w-4 h-4 text-[#DE4034] shrink-0 mt-0.5" />
+                  <span className="leading-relaxed">{saveError}</span>
+                </div>
+              )}
+
               {/* Botones de acción */}
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
+                  disabled={isSaving || isCompressing}
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                  className="px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition disabled:opacity-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-[#DE4034] hover:bg-[#c7352a] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center gap-2 active:scale-95"
+                  disabled={isSaving || isCompressing}
+                  className="px-5 py-2.5 bg-[#DE4034] hover:bg-[#c7352a] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center gap-2 active:scale-95"
                 >
-                  <Check className="w-4 h-4" />
-                  <span>{editingAuthority ? 'Guardar Cambios' : 'Registrar Directivo'}</span>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Guardando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>{editingAuthority ? 'Guardar Cambios' : 'Registrar Directivo'}</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>

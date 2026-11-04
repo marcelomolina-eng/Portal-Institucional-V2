@@ -25,6 +25,7 @@ import {
   INITIAL_FEEDBACK,
   INITIAL_ORGANIGRAM
 } from './data/initialData';
+import { safeLocalStorageSet, safeLocalStorageGet } from './utils/storage';
 import { Header } from './components/Header';
 import { HomeMission } from './components/HomeMission';
 import { Mission1Identity } from './components/Mission1Identity';
@@ -51,76 +52,36 @@ export default function App() {
   // Navigation & Mission state
   const [currentMission, setCurrentMission] = useState<MissionId>('home');
   const [completedMissions, setCompletedMissions] = useState<Record<string, boolean>>(() => {
-    try {
-      const saved = localStorage.getItem('ci_completed_missions_2026');
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
+    return safeLocalStorageGet('ci_completed_missions_2026', {});
   });
 
   // Data states with persistence
   const [config, setConfig] = useState<AppConfig>(() => {
-    try {
-      const saved = localStorage.getItem('ci_app_config_2026');
-      return saved ? JSON.parse(saved) : INITIAL_CONFIG;
-    } catch {
-      return INITIAL_CONFIG;
-    }
+    return safeLocalStorageGet('ci_app_config_2026', INITIAL_CONFIG);
   });
 
   const [authorities, setAuthorities] = useState<Authority[]>(() => {
-    try {
-      const saved = localStorage.getItem('ci_authorities_2026');
-      return saved ? JSON.parse(saved) : AUTHORITIES;
-    } catch {
-      return AUTHORITIES;
-    }
+    return safeLocalStorageGet('ci_authorities_2026', AUTHORITIES);
   });
 
   const [organigramLevels, setOrganigramLevels] = useState<OrganigramLevel[]>(() => {
-    try {
-      const saved = localStorage.getItem('ci_organigram_2026');
-      return saved ? JSON.parse(saved) : INITIAL_ORGANIGRAM;
-    } catch {
-      return INITIAL_ORGANIGRAM;
-    }
+    return safeLocalStorageGet('ci_organigram_2026', INITIAL_ORGANIGRAM);
   });
 
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(() => {
-    try {
-      const saved = localStorage.getItem('ci_calendar_2026');
-      return saved ? JSON.parse(saved) : INITIAL_CALENDAR;
-    } catch {
-      return INITIAL_CALENDAR;
-    }
+    return safeLocalStorageGet('ci_calendar_2026', INITIAL_CALENDAR);
   });
 
   const [notices, setNotices] = useState<NoticeItem[]>(() => {
-    try {
-      const saved = localStorage.getItem('ci_notices_2026');
-      return saved ? JSON.parse(saved) : INITIAL_NOTICES;
-    } catch {
-      return INITIAL_NOTICES;
-    }
+    return safeLocalStorageGet('ci_notices_2026', INITIAL_NOTICES);
   });
 
   const [diplomas, setDiplomas] = useState<DiplomaRecord[]>(() => {
-    try {
-      const saved = localStorage.getItem('ci_diplomas_2026');
-      return saved ? JSON.parse(saved) : INITIAL_DIPLOMAS;
-    } catch {
-      return INITIAL_DIPLOMAS;
-    }
+    return safeLocalStorageGet('ci_diplomas_2026', INITIAL_DIPLOMAS);
   });
 
   const [feedbacks, setFeedbacks] = useState<FeedbackRecord[]>(() => {
-    try {
-      const saved = localStorage.getItem('ci_feedbacks_2026');
-      return saved ? JSON.parse(saved) : INITIAL_FEEDBACK;
-    } catch {
-      return INITIAL_FEEDBACK;
-    }
+    return safeLocalStorageGet('ci_feedbacks_2026', INITIAL_FEEDBACK);
   });
 
   // Admin authentication state
@@ -135,37 +96,37 @@ export default function App() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
 
-  // Sync to localStorage
+  // Sync to localStorage safely
   useEffect(() => {
-    localStorage.setItem('ci_completed_missions_2026', JSON.stringify(completedMissions));
+    safeLocalStorageSet('ci_completed_missions_2026', completedMissions);
   }, [completedMissions]);
 
   useEffect(() => {
-    localStorage.setItem('ci_app_config_2026', JSON.stringify(config));
+    safeLocalStorageSet('ci_app_config_2026', config);
   }, [config]);
 
   useEffect(() => {
-    localStorage.setItem('ci_calendar_2026', JSON.stringify(calendarEvents));
+    safeLocalStorageSet('ci_calendar_2026', calendarEvents);
   }, [calendarEvents]);
 
   useEffect(() => {
-    localStorage.setItem('ci_notices_2026', JSON.stringify(notices));
+    safeLocalStorageSet('ci_notices_2026', notices);
   }, [notices]);
 
   useEffect(() => {
-    localStorage.setItem('ci_diplomas_2026', JSON.stringify(diplomas));
+    safeLocalStorageSet('ci_diplomas_2026', diplomas);
   }, [diplomas]);
 
   useEffect(() => {
-    localStorage.setItem('ci_feedbacks_2026', JSON.stringify(feedbacks));
+    safeLocalStorageSet('ci_feedbacks_2026', feedbacks);
   }, [feedbacks]);
 
   useEffect(() => {
-    localStorage.setItem('ci_authorities_2026', JSON.stringify(authorities));
+    safeLocalStorageSet('ci_authorities_2026', authorities);
   }, [authorities]);
 
   useEffect(() => {
-    localStorage.setItem('ci_organigram_2026', JSON.stringify(organigramLevels));
+    safeLocalStorageSet('ci_organigram_2026', organigramLevels);
   }, [organigramLevels]);
 
   // Calculate mission progress percentage
@@ -231,30 +192,40 @@ export default function App() {
 
   // Authority (Directivos) handlers
   const handleAddAuthority = (newAuth: Authority) => {
-    setAuthorities(prev => [...prev, newAuth]);
+    try {
+      setAuthorities(prev => [...prev, newAuth]);
+    } catch (err) {
+      console.error('Error adding authority to state:', err);
+      throw err;
+    }
   };
 
   const handleUpdateAuthority = (updatedAuth: Authority) => {
-    setAuthorities(prev => prev.map(a => a.id === updatedAuth.id ? updatedAuth : a));
-    // Sincronizar en el organigrama si esta persona está asignada a alguna área
-    setOrganigramLevels(prevLevels => prevLevels.map(lvl => ({
-      ...lvl,
-      nodes: lvl.nodes.map(node => ({
-        ...node,
-        responsibles: node.responsibles.map(r => {
-          if (r.id === updatedAuth.id || r.name.toLowerCase() === updatedAuth.name.toLowerCase()) {
-            return {
-              ...r,
-              name: updatedAuth.name,
-              role: updatedAuth.role,
-              photoUrl: updatedAuth.photoUrl,
-              email: updatedAuth.email
-            };
-          }
-          return r;
-        })
-      }))
-    })));
+    try {
+      setAuthorities(prev => prev.map(a => a.id === updatedAuth.id ? updatedAuth : a));
+      // Sincronizar en el organigrama si esta persona está asignada a alguna área
+      setOrganigramLevels(prevLevels => prevLevels.map(lvl => ({
+        ...lvl,
+        nodes: lvl.nodes.map(node => ({
+          ...node,
+          responsibles: node.responsibles.map(r => {
+            if (r.id === updatedAuth.id || r.name.toLowerCase() === updatedAuth.name.toLowerCase()) {
+              return {
+                ...r,
+                name: updatedAuth.name,
+                role: updatedAuth.role,
+                photoUrl: updatedAuth.photoUrl,
+                email: updatedAuth.email
+              };
+            }
+            return r;
+          })
+        }))
+      })));
+    } catch (err) {
+      console.error('Error updating authority and syncing organigram:', err);
+      throw err;
+    }
   };
 
   const handleDeleteAuthority = (id: string) => {
