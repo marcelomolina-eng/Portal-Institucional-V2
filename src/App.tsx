@@ -27,6 +27,8 @@ import {
 } from './data/initialData';
 import { safeLocalStorageSet, safeLocalStorageGet } from './utils/storage';
 import { 
+  supabase,
+  mapRowToAuthority,
   fetchDirectivos, 
   insertDirectivo, 
   updateDirectivo, 
@@ -62,13 +64,9 @@ export default function App() {
     return safeLocalStorageGet('ci_app_config_2026', INITIAL_CONFIG);
   });
 
-  const [authorities, setAuthorities] = useState<Authority[]>(() => {
-    return safeLocalStorageGet('ci_authorities_2026', AUTHORITIES);
-  });
+  const [authorities, setAuthorities] = useState<Authority[]>(AUTHORITIES);
 
-  const [organigramLevels, setOrganigramLevels] = useState<OrganigramLevel[]>(() => {
-    return safeLocalStorageGet('ci_organigram_2026', INITIAL_ORGANIGRAM);
-  });
+  const [organigramLevels, setOrganigramLevels] = useState<OrganigramLevel[]>(INITIAL_ORGANIGRAM);
 
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(() => {
     return safeLocalStorageGet('ci_calendar_2026', INITIAL_CALENDAR);
@@ -98,7 +96,7 @@ export default function App() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
 
-  // Sync to localStorage safely
+  // Sync to localStorage safely (solo para datos de sesión y diplomas locales)
   useEffect(() => {
     safeLocalStorageSet('ci_completed_missions_2026', completedMissions);
   }, [completedMissions]);
@@ -123,28 +121,32 @@ export default function App() {
     safeLocalStorageSet('ci_feedbacks_2026', feedbacks);
   }, [feedbacks]);
 
-  useEffect(() => {
-    safeLocalStorageSet('ci_authorities_2026', authorities);
-  }, [authorities]);
-
-  useEffect(() => {
-    safeLocalStorageSet('ci_organigram_2026', organigramLevels);
-  }, [organigramLevels]);
-
-  // Load from Supabase and subscribe to Realtime updates
+  // Load from Supabase and subscribe to Realtime updates (Directivos y Organigrama reemplazan LocalStorage)
   useEffect(() => {
     let isMounted = true;
 
     // 1. Initial directivos fetch from Supabase
-    fetchDirectivos()
-      .then(dbAuthorities => {
-        if (isMounted && dbAuthorities && dbAuthorities.length > 0) {
-          setAuthorities(dbAuthorities);
+    const loadDirectivos = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('directivos')
+          .select('*')
+          .order('id', { ascending: true });
+
+        if (error) {
+          console.error("Error Supabase:", error);
+        } else {
+          console.log("Cargando desde Supabase:", data);
+          if (isMounted && data && data.length > 0) {
+            setAuthorities(data.map(mapRowToAuthority));
+          }
         }
-      })
-      .catch(err => {
-        console.warn('[Supabase] Using default authorities fallback:', err);
-      });
+      } catch (err) {
+        console.error("Error Supabase:", err);
+      }
+    };
+
+    loadDirectivos();
 
     // 2. Initial organigram fetch from Supabase
     fetchOrganigram()
@@ -154,7 +156,7 @@ export default function App() {
         }
       })
       .catch(err => {
-        console.warn('[Supabase] Using default organigram fallback:', err);
+        console.error("Error Supabase:", err);
       });
 
     // 3. Realtime Postgres CDC subscriptions across clients

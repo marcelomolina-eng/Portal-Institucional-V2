@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Authority } from '../types';
 import { 
   Users, 
@@ -22,7 +22,7 @@ import {
   Cloud
 } from 'lucide-react';
 import { compressAndResizeImage } from '../utils/imageCompressor';
-import { uploadDirectivoPhoto, isSupabaseConfigured } from '../lib/supabase';
+import { supabase, uploadDirectivoPhoto, isSupabaseConfigured } from '../lib/supabase';
 
 interface AdminDirectivosProps {
   authorities: Authority[];
@@ -50,11 +50,63 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
   onUpdateAuthority,
   onDeleteAuthority
 }) => {
+  const [directivosList, setDirectivosList] = useState<Authority[]>(authorities);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedArea, setSelectedArea] = useState<string>('todos');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAuthority, setEditingAuthority] = useState<Authority | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Sincronizar con props de autoridades si cambian externamente
+  useEffect(() => {
+    if (authorities && authorities.length > 0) {
+      setDirectivosList(authorities);
+    }
+  }, [authorities]);
+
+  // useEffect inicial: carga las autoridades desde la base de datos Supabase
+  useEffect(() => {
+    const fetchDirectivosFromSupabase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('directivos')
+          .select('*')
+          .order('id', { ascending: true });
+
+        if (error) {
+          console.error("Error Supabase:", error);
+        } else {
+          console.log("Cargando desde Supabase:", data);
+          if (data && data.length > 0) {
+            const mappedAuthorities: Authority[] = data.map((row: any) => ({
+              id: String(row.id || `auth-${Date.now()}`),
+              name: row.nombre || row.name || '',
+              role: row.cargo || row.role || '',
+              area: row.area || '',
+              email: row.email || '',
+              phoneExt: row.telefono || row.phoneExt || '',
+              bio: row.biografia || row.bio || '',
+              photoUrl: row.foto_url || row.photoUrl || ''
+            }));
+            setDirectivosList(mappedAuthorities);
+
+            // Sincronizar en el estado superior de la aplicación
+            mappedAuthorities.forEach(auth => {
+              if (authorities.some(a => a.id === auth.id)) {
+                onUpdateAuthority(auth);
+              } else {
+                onAddAuthority(auth);
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error Supabase:", err);
+      }
+    };
+
+    fetchDirectivosFromSupabase();
+  }, []);
 
   // Form State
   const [formData, setFormData] = useState<{
@@ -87,7 +139,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filter authorities
-  const filteredAuthorities = authorities.filter(auth => {
+  const filteredAuthorities = directivosList.filter(auth => {
     const matchesSearch = 
       auth.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       auth.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,7 +152,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
   });
 
   // Unique areas present in list
-  const uniqueAreas = Array.from(new Set(authorities.map(a => a.area)));
+  const uniqueAreas = Array.from(new Set(directivosList.map(a => a.area)));
 
   const handleOpenCreate = () => {
     setEditingAuthority(null);
@@ -212,7 +264,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
     setSaveError(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaveError(null);
 
@@ -235,10 +287,39 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
         photoUrl: formData.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
       };
 
+      const directivoRow = {
+        id: authorityPayload.id,
+        nombre: authorityPayload.name,
+        cargo: authorityPayload.role,
+        area: authorityPayload.area,
+        email: authorityPayload.email,
+        telefono: authorityPayload.phoneExt,
+        biografia: authorityPayload.bio,
+        foto_url: authorityPayload.photoUrl
+      };
+
+      // Guardar o actualizar en Supabase usando upsert
+      try {
+        const { data, error } = await supabase
+          .from('directivos')
+          .upsert([directivoRow])
+          .select();
+
+        if (error) {
+          console.error("Error Supabase:", error);
+        } else {
+          console.log("Cargando desde Supabase:", data);
+        }
+      } catch (supabaseErr) {
+        console.error("Error Supabase:", supabaseErr);
+      }
+
       if (editingAuthority) {
         onUpdateAuthority(authorityPayload);
+        setDirectivosList(prev => prev.map(a => a.id === authorityPayload.id ? authorityPayload : a));
       } else {
         onAddAuthority(authorityPayload);
+        setDirectivosList(prev => [...prev, authorityPayload]);
       }
 
       setIsModalOpen(false);
@@ -251,8 +332,24 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('directivos')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error("Error Supabase:", error);
+      } else {
+        console.log("Eliminado de Supabase:", id);
+      }
+    } catch (supabaseErr) {
+      console.error("Error Supabase:", supabaseErr);
+    }
+
     onDeleteAuthority(id);
+    setDirectivosList(prev => prev.filter(a => a.id !== id));
     setDeleteConfirmId(null);
   };
 
