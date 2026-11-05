@@ -135,6 +135,10 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
   const [isCompressing, setIsCompressing] = useState(false);
   const [isUploadingToStorage, setIsUploadingToStorage] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [toastAlert, setToastAlert] = useState<{
+    type: 'error' | 'success';
+    message: string;
+  } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -287,7 +291,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
         photoUrl: formData.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
       };
 
-      const directivoRow = {
+      const directivoData = {
         id: authorityPayload.id,
         nombre: authorityPayload.name,
         cargo: authorityPayload.role,
@@ -298,20 +302,41 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
         foto_url: authorityPayload.photoUrl
       };
 
-      // Guardar o actualizar en Supabase usando upsert
+      // Guardar o actualizar directamente en Supabase usando .upsert() con onConflict: 'id'
       try {
         const { data, error } = await supabase
           .from('directivos')
-          .upsert([directivoRow])
+          .upsert(directivoData, { onConflict: 'id' })
           .select();
 
         if (error) {
           console.error("Error Supabase:", error);
-        } else {
-          console.log("Cargando desde Supabase:", data);
+          const errorMsg = "Error al guardar en Supabase: " + error.message;
+          setSaveError(errorMsg);
+          setToastAlert({
+            type: 'error',
+            message: errorMsg
+          });
+          setIsSaving(false);
+          return;
         }
-      } catch (supabaseErr) {
+
+        console.log("Cargando desde Supabase:", data);
+        setToastAlert({
+          type: 'success',
+          message: `Directivo "${authorityPayload.name}" guardado exitosamente en Supabase.`
+        });
+        setTimeout(() => setToastAlert(null), 4000);
+      } catch (supabaseErr: any) {
         console.error("Error Supabase:", supabaseErr);
+        const errorMsg = "Error al guardar en Supabase: " + (supabaseErr?.message || String(supabaseErr));
+        setSaveError(errorMsg);
+        setToastAlert({
+          type: 'error',
+          message: errorMsg
+        });
+        setIsSaving(false);
+        return;
       }
 
       if (editingAuthority) {
@@ -327,6 +352,10 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
       console.error('Error al guardar directivo:', err);
       const msg = err instanceof Error ? err.message : 'Error al guardar los datos del directivo.';
       setSaveError(`No se pudieron guardar los cambios: ${msg}`);
+      setToastAlert({
+        type: 'error',
+        message: "Error al guardar en Supabase: " + msg
+      });
     } finally {
       setIsSaving(false);
     }
@@ -341,11 +370,28 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
 
       if (error) {
         console.error("Error Supabase:", error);
-      } else {
-        console.log("Eliminado de Supabase:", id);
+        const errorMsg = "Error al guardar en Supabase: " + error.message;
+        setToastAlert({
+          type: 'error',
+          message: errorMsg
+        });
+        return;
       }
-    } catch (supabaseErr) {
+
+      console.log("Eliminado de Supabase:", id);
+      setToastAlert({
+        type: 'success',
+        message: "Directivo eliminado correctamente en Supabase."
+      });
+      setTimeout(() => setToastAlert(null), 3000);
+    } catch (supabaseErr: any) {
       console.error("Error Supabase:", supabaseErr);
+      const errorMsg = "Error al guardar en Supabase: " + (supabaseErr?.message || String(supabaseErr));
+      setToastAlert({
+        type: 'error',
+        message: errorMsg
+      });
+      return;
     }
 
     onDeleteAuthority(id);
@@ -354,7 +400,34 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Alerta Visual Toast de Supabase */}
+      {toastAlert && (
+        <div 
+          role="alert"
+          className={`fixed top-5 right-5 z-50 max-w-md p-4 rounded-2xl shadow-2xl border-2 flex items-start gap-3 transition-all duration-300 animate-slideDown ${
+            toastAlert.type === 'error'
+              ? 'bg-red-600 text-white border-white/80'
+              : 'bg-[#01913F] text-white border-white/80'
+          }`}
+        >
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div className="flex-1 text-xs">
+            <p className="font-bold text-sm">
+              {toastAlert.type === 'error' ? 'Alerta de Supabase' : 'Sincronización Exitosa'}
+            </p>
+            <p className="mt-1 font-medium leading-relaxed">{toastAlert.message}</p>
+          </div>
+          <button
+            onClick={() => setToastAlert(null)}
+            className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-black/20 transition"
+            title="Cerrar alerta"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Header y Estadísticas */}
       <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

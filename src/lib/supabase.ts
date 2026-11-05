@@ -1,10 +1,16 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Authority, OrganigramLevel } from '../types';
-import { AUTHORITIES, INITIAL_ORGANIGRAM } from '../data/initialData';
 
-// Lectura y sanitización de variables de entorno de Supabase
-const rawUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
-const rawAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
+// Lectura de variables de entorno de Supabase (o almacenamiento local configurado)
+const getEnvVar = (key: string): string => {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+    return String(import.meta.env[key]);
+  }
+  return '';
+};
+
+const rawUrl = getEnvVar('VITE_SUPABASE_URL') || (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_url') || '' : '');
+const rawAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY') || (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_anon_key') || '' : '');
 
 /**
  * Limpia la URL de Supabase eliminando barras finales y segmentos accidentales como /rest/v1.
@@ -13,26 +19,36 @@ export const cleanSupabaseUrl = (url: string): string => {
   return url.trim().replace(/\/+$/, '').replace(/\/rest\/v1\/?$/, '');
 };
 
+const supabaseUrl = cleanSupabaseUrl(rawUrl) || 'https://placeholder-ci.supabase.co';
+const supabaseAnonKey = rawAnonKey.trim() || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_anon_key';
+
 /**
- * Verifica si las credenciales de Supabase están activas, válidas y configuradas.
+ * Verifica si las credenciales de Supabase están configuradas en el entorno.
  */
 export const isSupabaseConfigured = (): boolean => {
   const url = cleanSupabaseUrl(rawUrl);
-  const key = rawAnonKey;
+  const key = rawAnonKey.trim();
   return (
-    typeof url === 'string' &&
     url.startsWith('https://') &&
     url.includes('.supabase.co') &&
     !url.includes('your-project-id') &&
     !url.includes('placeholder') &&
-    !url.includes('ci-san-juan-de-vera') &&
-    typeof key === 'string' &&
     key.length > 20 &&
     !key.includes('your-anon-key') &&
-    !key.includes('placeholder') &&
     !key.includes('dummy')
   );
 };
+
+/**
+ * Cliente REAL de Supabase.
+ * Conexión directa y sin intermediarios ni fallbacks simulados.
+ */
+export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false
+  }
+});
 
 /**
  * Estructura de la tabla 'directivos' en Supabase.
@@ -66,7 +82,7 @@ export function mapRowToAuthority(row: DirectivoRow | any): Authority {
 }
 
 /**
- * Mapea un objeto Authority a la estructura de columnas de Supabase.
+ * Mapea un objeto Authority a la estructura de columnas de la tabla Supabase.
  */
 export function mapAuthorityToRow(auth: Authority): DirectivoRow {
   return {
@@ -81,253 +97,41 @@ export function mapAuthorityToRow(auth: Authority): DirectivoRow {
   };
 }
 
-// Almacén en memoria para permitir persistencia durante la sesión si Supabase no está configurado o si la tabla aún no existe
-let localDirectivos: DirectivoRow[] = AUTHORITIES.map(mapAuthorityToRow);
-let localOrganigram: OrganigramLevel[] = INITIAL_ORGANIGRAM;
-
 /**
- * Constructor de consultas mock en caso de no tener Supabase configurado
- */
-class MockQueryBuilder {
-  private table: string;
-  private action: 'select' | 'upsert' | 'update' | 'delete' = 'select';
-  private payload: any = null;
-  private filterField: string | null = null;
-  private filterVal: any = null;
-
-  constructor(table: string) {
-    this.table = table;
-  }
-
-  select(columns = '*') {
-    this.action = 'select';
-    return this;
-  }
-
-  order(field: string, opts?: { ascending?: boolean }) {
-    return this;
-  }
-
-  eq(field: string, val: any) {
-    this.filterField = field;
-    this.filterVal = val;
-    return this;
-  }
-
-  maybeSingle() {
-    return this.then((res: any) => {
-      const item = Array.isArray(res.data) ? res.data[0] || null : res.data;
-      return { data: item, error: null };
-    });
-  }
-
-  single() {
-    return this.maybeSingle();
-  }
-
-  upsert(rows: any, opts?: any) {
-    this.action = 'upsert';
-    this.payload = rows;
-    return this;
-  }
-
-  insert(rows: any) {
-    return this.upsert(rows);
-  }
-
-  update(row: any) {
-    this.action = 'update';
-    this.payload = row;
-    return this;
-  }
-
-  delete() {
-    this.action = 'delete';
-    return this;
-  }
-
-  async then(resolve: (value: any) => any, reject?: (reason: any) => any) {
-    try {
-      let result: any = { data: null, error: null };
-
-      if (this.table === 'directivos') {
-        if (this.action === 'select') {
-          result = { data: [...localDirectivos], error: null };
-        } else if (this.action === 'upsert') {
-          const rowsToUpsert = Array.isArray(this.payload) ? this.payload : [this.payload];
-          rowsToUpsert.forEach((row: any) => {
-            const idx = localDirectivos.findIndex(d => d.id === row.id);
-            if (idx >= 0) {
-              localDirectivos[idx] = { ...localDirectivos[idx], ...row };
-            } else {
-              localDirectivos.push(row);
-            }
-          });
-          result = { data: rowsToUpsert, error: null };
-        } else if (this.action === 'update') {
-          if (this.filterField === 'id') {
-            localDirectivos = localDirectivos.map(d => d.id === this.filterVal ? { ...d, ...this.payload } : d);
-          }
-          result = { data: [this.payload], error: null };
-        } else if (this.action === 'delete') {
-          if (this.filterField === 'id') {
-            localDirectivos = localDirectivos.filter(d => d.id !== this.filterVal);
-          }
-          result = { data: null, error: null };
-        }
-      } else if (this.table === 'portal_config') {
-        if (this.action === 'select') {
-          result = { data: { key: 'organigrama', value: localOrganigram }, error: null };
-        } else if (this.action === 'upsert') {
-          if (this.payload && this.payload.key === 'organigrama') {
-            localOrganigram = this.payload.value;
-          }
-          result = { data: this.payload, error: null };
-        }
-      }
-
-      return resolve(result);
-    } catch (e) {
-      if (reject) return reject(e);
-      return resolve({ data: null, error: e });
-    }
-  }
-}
-
-/**
- * Envuelve una consulta real a Supabase para capturar el error PostgREST PGRST125
- * (que ocurre si la tabla aún no fue creada en la base de datos Supabase)
- * y responder con los datos locales sin romper la aplicación.
- */
-function wrapQueryBuilder(builder: any, table: string) {
-  const originalThen = builder.then ? builder.then.bind(builder) : null;
-  if (!originalThen) return builder;
-
-  builder.then = function(resolve: any, reject: any) {
-    return originalThen((res: any) => {
-      // PGRST125: "Invalid path specified in request URL" (PostgREST 404 cuando la tabla no existe)
-      if (res && res.error && (res.error.code === 'PGRST125' || res.error.message?.includes('Invalid path'))) {
-        console.warn(`[Supabase Info] La tabla '${table}' aún no existe en Supabase (PGRST125). Usa el Editor SQL en el panel para crearla. Cargando datos locales.`);
-        if (table === 'directivos') {
-          return resolve({ data: [...localDirectivos], error: null });
-        }
-        if (table === 'portal_config') {
-          return resolve({ data: { key: 'organigrama', value: localOrganigram }, error: null });
-        }
-        return resolve({ data: null, error: null });
-      }
-      return resolve(res);
-    }, reject);
-  };
-  return builder;
-}
-
-// Instancia real si está configurada
-const realClient: SupabaseClient | null = isSupabaseConfigured()
-  ? createClient(cleanSupabaseUrl(rawUrl), rawAnonKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false
-      }
-    })
-  : null;
-
-/**
- * Cliente Supabase unificado y resistente.
- * Exportado como SupabaseClient.
- */
-export const supabase: SupabaseClient = {
-  from: (table: string) => {
-    if (realClient) {
-      const builder = realClient.from(table);
-      return wrapQueryBuilder(builder, table);
-    }
-    return new MockQueryBuilder(table) as any;
-  },
-  storage: {
-    from: (bucket: string) => {
-      if (realClient) {
-        return realClient.storage.from(bucket);
-      }
-      return {
-        upload: async (path: string, fileOrBlob: any) => {
-          return { data: { path }, error: null };
-        },
-        getPublicUrl: (path: string) => {
-          return { data: { publicUrl: '' } };
-        }
-      } as any;
-    }
-  } as any,
-  channel: (name: string) => {
-    if (realClient) {
-      return realClient.channel(name);
-    }
-    return {
-      on: () => ({
-        subscribe: () => ({ unsubscribe: () => {} })
-      }),
-      subscribe: () => ({ unsubscribe: () => {} })
-    } as any;
-  },
-  removeChannel: (channel: any) => {
-    if (realClient) {
-      return realClient.removeChannel(channel);
-    }
-    return Promise.resolve('ok' as any);
-  }
-} as unknown as SupabaseClient;
-
-/**
- * Carga de directivos desde Supabase.
+ * Carga directa de directivos desde la base de datos real de Supabase.
  */
 export async function fetchDirectivos(): Promise<Authority[]> {
-  try {
-    const { data, error } = await supabase
-      .from('directivos')
-      .select('*')
-      .order('id', { ascending: true });
+  const { data, error } = await supabase
+    .from('directivos')
+    .select('*')
+    .order('id', { ascending: true });
 
-    if (error) {
-      console.error("Error Supabase:", error);
-      return AUTHORITIES;
-    }
-
-    console.log("Cargando desde Supabase:", data);
-
-    if (!data || data.length === 0) {
-      return AUTHORITIES;
-    }
-
-    return (data as any[]).map(mapRowToAuthority);
-  } catch (err) {
-    console.error("Error Supabase:", err);
-    return AUTHORITIES;
+  if (error) {
+    console.error("Error Supabase:", error);
+    throw error;
   }
+
+  console.log("Cargando desde Supabase:", data);
+  return (data || []).map(mapRowToAuthority);
 }
 
 /**
- * Inserta o actualiza (upsert) un directivo en Supabase.
+ * Guarda o actualiza un directivo directamente en Supabase usando .upsert() con onConflict: 'id'.
  */
 export async function upsertDirectivo(auth: Authority): Promise<Authority> {
-  const row = mapAuthorityToRow(auth);
-  try {
-    const { data, error } = await supabase
-      .from('directivos')
-      .upsert([row])
-      .select();
+  const directivoData = mapAuthorityToRow(auth);
+  const { data, error } = await supabase
+    .from('directivos')
+    .upsert(directivoData, { onConflict: 'id' })
+    .select();
 
-    if (error) {
-      console.error("Error Supabase:", error);
-      return auth;
-    }
-
-    console.log("Cargando desde Supabase:", data);
-    return data && data.length > 0 ? mapRowToAuthority(data[0]) : auth;
-  } catch (err) {
-    console.error("Error Supabase:", err);
-    return auth;
+  if (error) {
+    console.error("Error Supabase:", error);
+    throw error;
   }
+
+  console.log("Cargando desde Supabase:", data);
+  return data && data.length > 0 ? mapRowToAuthority(data[0]) : auth;
 }
 
 export async function insertDirectivo(auth: Authority): Promise<Authority> {
@@ -335,45 +139,25 @@ export async function insertDirectivo(auth: Authority): Promise<Authority> {
 }
 
 export async function updateDirectivo(auth: Authority): Promise<Authority> {
-  const row = mapAuthorityToRow(auth);
-  try {
-    const { data, error } = await supabase
-      .from('directivos')
-      .update(row)
-      .eq('id', auth.id)
-      .select();
-
-    if (error) {
-      console.error("Error Supabase:", error);
-      return auth;
-    }
-
-    console.log("Cargando desde Supabase:", data);
-    return data && data.length > 0 ? mapRowToAuthority(data[0]) : auth;
-  } catch (err) {
-    console.error("Error Supabase:", err);
-    return auth;
-  }
+  return upsertDirectivo(auth);
 }
 
+/**
+ * Elimina un directivo directamente en Supabase por ID.
+ */
 export async function deleteDirectivo(id: string): Promise<boolean> {
-  try {
-    const { error } = await supabase
-      .from('directivos')
-      .delete()
-      .eq('id', id);
+  const { error } = await supabase
+    .from('directivos')
+    .delete()
+    .eq('id', id);
 
-    if (error) {
-      console.error("Error Supabase:", error);
-      return false;
-    }
-
-    console.log("Eliminado de Supabase:", id);
-    return true;
-  } catch (err) {
-    console.error("Error Supabase:", err);
-    return false;
+  if (error) {
+    console.error("Error Supabase:", error);
+    throw error;
   }
+
+  console.log("Eliminado de Supabase:", id);
+  return true;
 }
 
 /**
@@ -383,8 +167,6 @@ export async function uploadDirectivoPhoto(
   fileOrBlob: File | Blob,
   customName?: string
 ): Promise<string | null> {
-  if (!isSupabaseConfigured() || !realClient) return null;
-
   try {
     const ext = fileOrBlob.type.includes('webp')
       ? 'webp'
@@ -396,7 +178,7 @@ export async function uploadDirectivoPhoto(
     const fileName = `${cleanPrefix}-${Date.now()}.${ext}`;
     const filePath = `fotos/${fileName}`;
 
-    const { data, error } = await realClient.storage
+    const { data, error } = await supabase.storage
       .from('directivos-fotos')
       .upload(filePath, fileOrBlob, {
         contentType: fileOrBlob.type || 'image/webp',
@@ -405,10 +187,10 @@ export async function uploadDirectivoPhoto(
 
     if (error) {
       console.error("Error Supabase:", error);
-      return null;
+      throw error;
     }
 
-    const { data: publicUrlData } = realClient.storage
+    const { data: publicUrlData } = supabase.storage
       .from('directivos-fotos')
       .getPublicUrl(data.path);
 
@@ -416,80 +198,72 @@ export async function uploadDirectivoPhoto(
     return publicUrlData.publicUrl;
   } catch (err) {
     console.error("Error Supabase:", err);
-    return null;
+    throw err;
   }
 }
 
 /**
- * Organigrama persistido en Supabase.
+ * Organigrama persistido en la tabla 'portal_config' de Supabase.
  */
 export async function fetchOrganigram(): Promise<OrganigramLevel[] | null> {
-  try {
-    const { data, error } = await supabase
-      .from('portal_config')
-      .select('value')
-      .eq('key', 'organigrama')
-      .maybeSingle();
+  const { data, error } = await supabase
+    .from('portal_config')
+    .select('value')
+    .eq('key', 'organigrama')
+    .maybeSingle();
 
-    if (error) {
-      console.error("Error Supabase:", error);
-      return null;
-    }
-
-    console.log("Cargando desde Supabase (Organigrama):", data);
-    if (!data) return null;
-    return typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
-  } catch (err) {
-    console.error("Error Supabase:", err);
+  if (error) {
+    console.error("Error Supabase:", error);
     return null;
   }
+
+  console.log("Cargando desde Supabase (Organigrama):", data);
+  if (!data) return null;
+  return typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
 }
 
 export async function saveOrganigram(levels: OrganigramLevel[]): Promise<boolean> {
-  try {
-    const { error } = await supabase
-      .from('portal_config')
-      .upsert({
-        key: 'organigrama',
-        value: levels,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'key' });
+  const { error } = await supabase
+    .from('portal_config')
+    .upsert({
+      key: 'organigrama',
+      value: levels,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'key' });
 
-    if (error) {
-      console.error("Error Supabase:", error);
-      return false;
-    }
-
-    console.log("Guardado en Supabase (Organigrama): exitoso");
-    return true;
-  } catch (err) {
-    console.error("Error Supabase:", err);
-    return false;
+  if (error) {
+    console.error("Error Supabase:", error);
+    throw error;
   }
+
+  console.log("Guardado en Supabase (Organigrama): exitoso");
+  return true;
 }
 
 /**
- * Suscripciones en tiempo real.
+ * Suscripciones en tiempo real a la base de datos real.
  */
 export function subscribeToDirectivos(callback: (authorities: Authority[]) => void): () => void {
-  if (!isSupabaseConfigured() || !realClient) return () => {};
-
   try {
-    const channel = realClient
+    const channel = supabase
       .channel('realtime:directivos')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'directivos' },
         async (payload) => {
           console.log('[Supabase Realtime] Evento directivos:', payload.eventType);
-          const fresh = await fetchDirectivos();
-          callback(fresh);
+          try {
+            const fresh = await fetchDirectivos();
+            callback(fresh);
+          } catch (e) {
+            console.error("Error Supabase realtime refresh:", e);
+          }
         }
       )
       .subscribe();
 
     return () => {
-      realClient.removeChannel(channel);
+      supabase.removeChannel(channel);
     };
   } catch (e) {
     console.error("Error Supabase realtime:", e);
@@ -498,10 +272,8 @@ export function subscribeToDirectivos(callback: (authorities: Authority[]) => vo
 }
 
 export function subscribeToOrganigram(callback: (levels: OrganigramLevel[]) => void): () => void {
-  if (!isSupabaseConfigured() || !realClient) return () => {};
-
   try {
-    const channel = realClient
+    const channel = supabase
       .channel('realtime:organigram')
       .on(
         'postgres_changes',
@@ -517,7 +289,7 @@ export function subscribeToOrganigram(callback: (levels: OrganigramLevel[]) => v
       .subscribe();
 
     return () => {
-      realClient.removeChannel(channel);
+      supabase.removeChannel(channel);
     };
   } catch (e) {
     console.error("Error Supabase realtime:", e);

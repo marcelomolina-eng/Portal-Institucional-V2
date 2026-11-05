@@ -138,6 +138,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
   const [showSupabaseSqlModal, setShowSupabaseSqlModal] = React.useState(false);
   const [copiedSql, setCopiedSql] = React.useState(false);
+  const [supabaseInputUrl, setSupabaseInputUrl] = React.useState(() => {
+    return import.meta.env.VITE_SUPABASE_URL || (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_url') || '' : '');
+  });
+  const [supabaseInputKey, setSupabaseInputKey] = React.useState(() => {
+    return import.meta.env.VITE_SUPABASE_ANON_KEY || (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_anon_key') || '' : '');
+  });
+  const [savedSupabaseConfig, setSavedSupabaseConfig] = React.useState(false);
   const [backupImportError, setBackupImportError] = React.useState<string | null>(null);
   const [backupImportSuccess, setBackupImportSuccess] = React.useState(false);
   const backupFileInputRef = React.useRef<HTMLInputElement>(null);
@@ -147,6 +154,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     navigator.clipboard.writeText(SUPABASE_SETUP_SQL);
     setCopiedSql(true);
     setTimeout(() => setCopiedSql(false), 2500);
+  };
+
+  const handleSaveSupabaseConfig = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ci_supabase_url', supabaseInputUrl.trim());
+      localStorage.setItem('ci_supabase_anon_key', supabaseInputKey.trim());
+    }
+    setSavedSupabaseConfig(true);
+    setTimeout(() => {
+      setSavedSupabaseConfig(false);
+      window.location.reload();
+    }, 1200);
   };
 
   // Export Diplomas to CSV
@@ -1310,6 +1330,67 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* Formulario de Configuración Directa */}
+              <form onSubmit={handleSaveSupabaseConfig} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <Database className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Credenciales de Proyecto Supabase</span>
+                  </h4>
+                  {isSupabaseConfigured() && (
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                      Conectado
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      URL del Proyecto Supabase (Project URL)
+                    </label>
+                    <input
+                      type="url"
+                      required
+                      placeholder="https://tu-proyecto.supabase.co"
+                      value={supabaseInputUrl}
+                      onChange={(e) => setSupabaseInputUrl(e.target.value)}
+                      className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      Clave Anónima Pública (Anon Key)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="eyJhbGciOiJIUzI1NiIsIn..."
+                      value={supabaseInputKey}
+                      onChange={(e) => setSupabaseInputKey(e.target.value)}
+                      className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Guardar y Conectar Supabase</span>
+                  </button>
+
+                  {savedSupabaseConfig && (
+                    <span className="text-xs font-bold text-emerald-700 flex items-center gap-1 animate-fadeIn">
+                      <Check className="w-4 h-4" /> ¡Guardado! Reiniciando conexión...
+                    </span>
+                  )}
+                </div>
+              </form>
 
               {/* Instrucciones Rápidas */}
               <div className="space-y-2">
