@@ -18,9 +18,11 @@ import {
   Eye,
   Camera,
   RefreshCw,
-  Loader2
+  Loader2,
+  Cloud
 } from 'lucide-react';
 import { compressAndResizeImage } from '../utils/imageCompressor';
+import { uploadDirectivoPhoto, isSupabaseConfigured } from '../lib/supabase';
 
 interface AdminDirectivosProps {
   authorities: Authority[];
@@ -79,6 +81,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [previewPhoto, setPreviewPhoto] = useState<string>('');
   const [isCompressing, setIsCompressing] = useState(false);
+  const [isUploadingToStorage, setIsUploadingToStorage] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -115,6 +118,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
     setPhotoError(null);
     setSaveError(null);
     setIsCompressing(false);
+    setIsUploadingToStorage(false);
     setIsSaving(false);
     setIsModalOpen(true);
   };
@@ -135,6 +139,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
     setPhotoError(null);
     setSaveError(null);
     setIsCompressing(false);
+    setIsUploadingToStorage(false);
     setIsSaving(false);
     setIsModalOpen(true);
   };
@@ -158,15 +163,36 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
     setIsCompressing(true);
 
     try {
-      // Auto-compress and resize image to max 400x400px (WebP format, ~20-40KB)
+      // 1. Auto-compress and resize image to max 400x400px (WebP format, ~20-40KB)
       const compressedDataUrl = await compressAndResizeImage(file, {
         maxWidth: 400,
         maxHeight: 400,
         quality: 0.82
       });
 
+      // Show preview immediately for instantaneous UX
       setFormData(prev => ({ ...prev, photoUrl: compressedDataUrl }));
       setPreviewPhoto(compressedDataUrl);
+
+      // 2. Upload to Supabase Storage bucket 'directivos-fotos' if configured
+      if (isSupabaseConfigured()) {
+        setIsUploadingToStorage(true);
+        try {
+          const res = await fetch(compressedDataUrl);
+          const blob = await res.blob();
+          const targetName = formData.name || formData.id || 'directivo';
+          const publicUrl = await uploadDirectivoPhoto(blob, targetName);
+
+          if (publicUrl) {
+            setFormData(prev => ({ ...prev, photoUrl: publicUrl }));
+            setPreviewPhoto(publicUrl);
+          }
+        } catch (storageErr) {
+          console.warn('[Supabase Storage] Fallback to compressed local image:', storageErr);
+        } finally {
+          setIsUploadingToStorage(false);
+        }
+      }
     } catch (err: unknown) {
       console.error('Error al optimizar imagen local:', err);
       const msg = err instanceof Error ? err.message : 'No se pudo procesar la imagen local.';
@@ -496,11 +522,11 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
                           onChange={handleFileUpload}
                           accept="image/*"
                           className="hidden"
-                          disabled={isCompressing}
+                          disabled={isCompressing || isUploadingToStorage}
                         />
                         <button
                           type="button"
-                          disabled={isCompressing}
+                          disabled={isCompressing || isUploadingToStorage}
                           onClick={() => fileInputRef.current?.click()}
                           className="w-full py-2.5 px-3 border-2 border-dashed border-slate-300 hover:border-[#01913F] disabled:opacity-60 disabled:cursor-not-allowed rounded-xl text-xs font-bold text-slate-600 hover:text-[#01913F] bg-white flex items-center justify-center gap-2 transition"
                         >
@@ -508,6 +534,11 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
                             <>
                               <Loader2 className="w-4 h-4 animate-spin text-[#01913F]" />
                               <span>Comprimiendo imagen (WebP 400x400)...</span>
+                            </>
+                          ) : isUploadingToStorage ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                              <span>Subiendo a Supabase Storage (directivos-fotos)...</span>
                             </>
                           ) : (
                             <>
@@ -517,7 +548,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
                           )}
                         </button>
                         <p className="text-[10px] text-slate-400 mt-1">
-                          Admite JPG, PNG o WebP. Se redimensiona automáticamente a 400x400px para garantizar almacenamiento seguro y alta velocidad.
+                          Admite JPG, PNG o WebP. {isSupabaseConfigured() ? 'Se almacena en el bucket "directivos-fotos" de Supabase.' : 'Se almacena de forma persistente y segura.'}
                         </p>
                       </div>
                     ) : (

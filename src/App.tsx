@@ -26,6 +26,17 @@ import {
   INITIAL_ORGANIGRAM
 } from './data/initialData';
 import { safeLocalStorageSet, safeLocalStorageGet } from './utils/storage';
+import { 
+  fetchDirectivos, 
+  insertDirectivo, 
+  updateDirectivo, 
+  deleteDirectivo, 
+  fetchOrganigram, 
+  saveOrganigram, 
+  subscribeToDirectivos, 
+  subscribeToOrganigram,
+  isSupabaseConfigured
+} from './lib/supabase';
 import { Header } from './components/Header';
 import { HomeMission } from './components/HomeMission';
 import { Mission1Identity } from './components/Mission1Identity';
@@ -120,6 +131,52 @@ export default function App() {
     safeLocalStorageSet('ci_organigram_2026', organigramLevels);
   }, [organigramLevels]);
 
+  // Load from Supabase and subscribe to Realtime updates
+  useEffect(() => {
+    let isMounted = true;
+
+    // 1. Initial directivos fetch from Supabase
+    fetchDirectivos()
+      .then(dbAuthorities => {
+        if (isMounted && dbAuthorities && dbAuthorities.length > 0) {
+          setAuthorities(dbAuthorities);
+        }
+      })
+      .catch(err => {
+        console.warn('[Supabase] Using default authorities fallback:', err);
+      });
+
+    // 2. Initial organigram fetch from Supabase
+    fetchOrganigram()
+      .then(dbOrganigram => {
+        if (isMounted && dbOrganigram && dbOrganigram.length > 0) {
+          setOrganigramLevels(dbOrganigram);
+        }
+      })
+      .catch(err => {
+        console.warn('[Supabase] Using default organigram fallback:', err);
+      });
+
+    // 3. Realtime Postgres CDC subscriptions across clients
+    const unsubscribeDirectivos = subscribeToDirectivos((updatedAuthorities) => {
+      if (isMounted && updatedAuthorities && updatedAuthorities.length > 0) {
+        setAuthorities(updatedAuthorities);
+      }
+    });
+
+    const unsubscribeOrganigram = subscribeToOrganigram((updatedLevels) => {
+      if (isMounted && updatedLevels && updatedLevels.length > 0) {
+        setOrganigramLevels(updatedLevels);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribeDirectivos();
+      unsubscribeOrganigram();
+    };
+  }, []);
+
   // Calculate mission progress percentage
   const progressPercent = (() => {
     const keys = ['mision1', 'mision2', 'mision3', 'mision4', 'misionCumplida'];
@@ -181,17 +238,18 @@ export default function App() {
     setDiplomas(prev => prev.filter(d => d.id !== id));
   };
 
-  // Authority (Directivos) handlers
-  const handleAddAuthority = (newAuth: Authority) => {
+  // Authority (Directivos) handlers - with Supabase persistence and local fallback
+  const handleAddAuthority = async (newAuth: Authority) => {
     try {
       setAuthorities(prev => [...prev, newAuth]);
+      // Persist to Supabase if configured
+      await insertDirectivo(newAuth);
     } catch (err) {
-      console.error('Error adding authority to state:', err);
-      throw err;
+      console.error('Error adding authority to state / Supabase:', err);
     }
   };
 
-  const handleUpdateAuthority = (updatedAuth: Authority) => {
+  const handleUpdateAuthority = async (updatedAuth: Authority) => {
     try {
       setAuthorities(prev => prev.map(a => a.id === updatedAuth.id ? updatedAuth : a));
       // Sincronizar en el organigrama si esta persona está asignada a alguna área
@@ -213,27 +271,35 @@ export default function App() {
           })
         }))
       })));
+      // Persist to Supabase if configured
+      await updateDirectivo(updatedAuth);
     } catch (err) {
-      console.error('Error updating authority and syncing organigram:', err);
-      throw err;
+      console.error('Error updating authority in Supabase:', err);
     }
   };
 
-  const handleDeleteAuthority = (id: string) => {
-    setAuthorities(prev => prev.filter(a => a.id !== id));
-    // Desvincular del organigrama
-    setOrganigramLevels(prevLevels => prevLevels.map(lvl => ({
-      ...lvl,
-      nodes: lvl.nodes.map(node => ({
-        ...node,
-        responsibles: node.responsibles.filter(r => r.id !== id)
-      }))
-    })));
+  const handleDeleteAuthority = async (id: string) => {
+    try {
+      setAuthorities(prev => prev.filter(a => a.id !== id));
+      // Desvincular del organigrama
+      setOrganigramLevels(prevLevels => prevLevels.map(lvl => ({
+        ...lvl,
+        nodes: lvl.nodes.map(node => ({
+          ...node,
+          responsibles: node.responsibles.filter(r => r.id !== id)
+        }))
+      })));
+      // Persist to Supabase if configured
+      await deleteDirectivo(id);
+    } catch (err) {
+      console.error('Error deleting authority in Supabase:', err);
+    }
   };
 
-  // Organigram handlers
-  const handleUpdateOrganigramLevels = (newLevels: OrganigramLevel[]) => {
+  // Organigram handlers - with Supabase persistence
+  const handleUpdateOrganigramLevels = async (newLevels: OrganigramLevel[]) => {
     setOrganigramLevels(newLevels);
+    await saveOrganigram(newLevels);
   };
 
   // Export complete site configuration & content to JSON
