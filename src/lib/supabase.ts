@@ -1,54 +1,114 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Authority, OrganigramLevel } from '../types';
 
-// Lectura de variables de entorno de Supabase (o almacenamiento local configurado)
-const getEnvVar = (key: string): string => {
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
-    return String(import.meta.env[key]);
-  }
-  return '';
-};
+/**
+ * Lectura de variables de entorno de Supabase compatibles con:
+ * - Vite: import.meta.env.VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
+ * - Vercel Integration / Next.js: import.meta.env.NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY
+ * - Backend / Shell: import.meta.env.SUPABASE_URL / SUPABASE_ANON_KEY
+ * - Panel Administrador (Local Storage): ci_supabase_url / ci_supabase_anon_key
+ */
+const rawUrl = 
+  import.meta.env.VITE_SUPABASE_URL || 
+  import.meta.env.NEXT_PUBLIC_SUPABASE_URL || 
+  import.meta.env.SUPABASE_URL ||
+  (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_url') || '' : '');
 
-const rawUrl = getEnvVar('VITE_SUPABASE_URL') || (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_url') || '' : '');
-const rawAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY') || (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_anon_key') || '' : '');
+const rawAnonKey = 
+  import.meta.env.VITE_SUPABASE_ANON_KEY || 
+  import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
+  import.meta.env.SUPABASE_ANON_KEY ||
+  (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_anon_key') || '' : '');
 
 /**
  * Limpia la URL de Supabase eliminando barras finales y segmentos accidentales como /rest/v1.
  */
-export const cleanSupabaseUrl = (url: string): string => {
+export const cleanSupabaseUrl = (url?: string): string => {
+  if (!url) return '';
   return url.trim().replace(/\/+$/, '').replace(/\/rest\/v1\/?$/, '');
 };
 
-const supabaseUrl = cleanSupabaseUrl(rawUrl) || 'https://placeholder-ci.supabase.co';
-const supabaseAnonKey = rawAnonKey.trim() || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_anon_key';
+const cleanUrl = cleanSupabaseUrl(rawUrl);
+const cleanKey = (rawAnonKey || '').trim();
 
 /**
- * Verifica si las credenciales de Supabase están configuradas en el entorno.
+ * Verifica si las credenciales de Supabase están definidas y son válidas.
  */
 export const isSupabaseConfigured = (): boolean => {
-  const url = cleanSupabaseUrl(rawUrl);
-  const key = rawAnonKey.trim();
   return (
-    url.startsWith('https://') &&
-    url.includes('.supabase.co') &&
-    !url.includes('your-project-id') &&
-    !url.includes('placeholder') &&
-    key.length > 20 &&
-    !key.includes('your-anon-key') &&
-    !key.includes('dummy')
+    typeof cleanUrl === 'string' &&
+    cleanUrl.startsWith('https://') &&
+    cleanUrl.includes('.supabase.co') &&
+    !cleanUrl.includes('placeholder') &&
+    typeof cleanKey === 'string' &&
+    cleanKey.length > 20 &&
+    !cleanKey.includes('dummy')
   );
 };
 
+// Si ninguna variable está definida, emitir un console.warn en lugar de hacer llamadas a dominios inexistentes
+if (!isSupabaseConfigured()) {
+  console.warn(
+    '[Supabase] Variables de conexión no definidas (VITE_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_URL o SUPABASE_URL). ' +
+    'No se realizarán llamadas a dominios inexistentes. Puedes configurar las credenciales en tu entorno de despliegue o en el Panel Administrador.'
+  );
+}
+
 /**
- * Cliente REAL de Supabase.
- * Conexión directa y sin intermediarios ni fallbacks simulados.
+ * Cliente de Supabase:
+ * - Si las variables están definidas, se conecta a la instancia real en la nube.
+ * - Si no están definidas, evita llamadas a la red y emite advertencias legibles.
  */
-export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false
-  }
-});
+export const supabase: SupabaseClient = isSupabaseConfigured()
+  ? createClient(cleanUrl, cleanKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false
+      }
+    })
+  : ({
+      from: (table: string) => ({
+        select: (columns = '*') => {
+          console.warn(`[Supabase] Consulta omitida en tabla '${table}': variables de Supabase no definidas.`);
+          return Promise.resolve({ data: [], error: null });
+        },
+        upsert: (data: any, opts?: any) => {
+          console.warn(`[Supabase] Guardado (upsert) omitido en tabla '${table}': variables de Supabase no definidas.`);
+          const resultData = Array.isArray(data) ? data : [data];
+          return {
+            select: () => Promise.resolve({ data: resultData, error: null })
+          };
+        },
+        update: (data: any) => {
+          console.warn(`[Supabase] Actualización omitida en tabla '${table}': variables de Supabase no definidas.`);
+          return {
+            eq: () => ({
+              select: () => Promise.resolve({ data: [data], error: null })
+            })
+          };
+        },
+        delete: () => {
+          console.warn(`[Supabase] Eliminación omitida en tabla '${table}': variables de Supabase no definidas.`);
+          return {
+            eq: () => Promise.resolve({ data: null, error: null })
+          };
+        }
+      }),
+      storage: {
+        from: (bucket: string) => ({
+          upload: async () => {
+            console.warn(`[Supabase Storage] Subida omitida en bucket '${bucket}': variables de Supabase no definidas.`);
+            return { data: null, error: { message: 'Variables de Supabase no definidas' } };
+          },
+          getPublicUrl: () => ({ data: { publicUrl: '' } })
+        })
+      },
+      channel: () => ({
+        on: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }),
+        subscribe: () => ({ unsubscribe: () => {} })
+      }),
+      removeChannel: () => Promise.resolve('ok')
+    } as unknown as SupabaseClient);
 
 /**
  * Estructura de la tabla 'directivos' en Supabase.
@@ -101,6 +161,10 @@ export function mapAuthorityToRow(auth: Authority): DirectivoRow {
  * Carga directa de directivos desde la base de datos real de Supabase.
  */
 export async function fetchDirectivos(): Promise<Authority[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from('directivos')
     .select('*')
@@ -167,6 +231,11 @@ export async function uploadDirectivoPhoto(
   fileOrBlob: File | Blob,
   customName?: string
 ): Promise<string | null> {
+  if (!isSupabaseConfigured()) {
+    console.warn('[Supabase Storage] Subida omitida: variables de Supabase no definidas.');
+    return null;
+  }
+
   try {
     const ext = fileOrBlob.type.includes('webp')
       ? 'webp'
@@ -206,6 +275,10 @@ export async function uploadDirectivoPhoto(
  * Organigrama persistido en la tabla 'portal_config' de Supabase.
  */
 export async function fetchOrganigram(): Promise<OrganigramLevel[] | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
   const { data, error } = await supabase
     .from('portal_config')
     .select('value')
@@ -223,6 +296,11 @@ export async function fetchOrganigram(): Promise<OrganigramLevel[] | null> {
 }
 
 export async function saveOrganigram(levels: OrganigramLevel[]): Promise<boolean> {
+  if (!isSupabaseConfigured()) {
+    console.warn('[Supabase] Guardado de organigrama omitido: variables de Supabase no definidas.');
+    return false;
+  }
+
   const { error } = await supabase
     .from('portal_config')
     .upsert({
@@ -244,6 +322,8 @@ export async function saveOrganigram(levels: OrganigramLevel[]): Promise<boolean
  * Suscripciones en tiempo real a la base de datos real.
  */
 export function subscribeToDirectivos(callback: (authorities: Authority[]) => void): () => void {
+  if (!isSupabaseConfigured()) return () => {};
+
   try {
     const channel = supabase
       .channel('realtime:directivos')
@@ -272,6 +352,8 @@ export function subscribeToDirectivos(callback: (authorities: Authority[]) => vo
 }
 
 export function subscribeToOrganigram(callback: (levels: OrganigramLevel[]) => void): () => void {
+  if (!isSupabaseConfigured()) return () => {};
+
   try {
     const channel = supabase
       .channel('realtime:organigram')
