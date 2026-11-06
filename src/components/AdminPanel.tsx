@@ -385,7 +385,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           <Layers className="w-4 h-4" />
-          <span>Organigrama_Estructura ({organigramLevels.length})</span>
+          <span>organigrama_niveles ({organigramLevels.length})</span>
         </button>
 
         <button
@@ -397,7 +397,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>Respuestas_Diplomas ({diplomas.length})</span>
+          <span>diplomas_emitidos ({diplomas.length})</span>
         </button>
 
         <button
@@ -409,7 +409,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           <Calendar className="w-4 h-4" />
-          <span>Calendario_Eventos ({calendarEvents.length})</span>
+          <span>calendario_eventos ({calendarEvents.length})</span>
         </button>
 
         <button
@@ -421,7 +421,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           <BellRing className="w-4 h-4" />
-          <span>Novedades_Avisos ({notices.length})</span>
+          <span>novedades_avisos ({notices.length})</span>
         </button>
 
         <button
@@ -433,7 +433,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           <Star className="w-4 h-4" />
-          <span>Feedback_Satisfaccion ({feedbacks.length})</span>
+          <span>feedback_satisfaccion ({feedbacks.length})</span>
         </button>
 
         <button
@@ -445,7 +445,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           <Lock className="w-4 h-4" />
-          <span>Usuarios_Admin</span>
+          <span>usuarios_admin</span>
         </button>
 
         <button
@@ -480,16 +480,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         />
       )}
 
-      {/* TAB 1: DIPLOMAS EMITIDOS (Respuestas_Diplomas) */}
+      {/* TAB 1: DIPLOMAS EMITIDOS (diplomas_emitidos) */}
       {activeTab === 'diplomas' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold text-slate-900">
-                Pestaña Google Sheets: Respuestas_Diplomas
+                Tabla Supabase: diplomas_emitidos
               </h2>
               <p className="text-xs text-slate-500">
-                Registros de colaboradores que han completado la Operación Informático y emitido su constancia.
+                Registros de colaboradores que han completado la Operación Informático y emitido su constancia oficial.
               </p>
             </div>
 
@@ -580,13 +580,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       )}
 
-      {/* TAB 2: CALENDARIO DE EVENTOS (Calendario_Eventos) */}
+      {/* TAB 2: CALENDARIO DE EVENTOS (calendario_eventos) */}
       {activeTab === 'calendario' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-slate-900">
-                Pestaña Google Sheets: Calendario_Eventos
+                Tabla Supabase: calendario_eventos
               </h2>
               <p className="text-xs text-slate-500">
                 Gestiona y añade hitos que se reflejan de inmediato en la Misión 02 del portal.
@@ -631,13 +631,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       )}
 
-      {/* TAB 3: NOVEDADES Y AVISOS (Novedades_Avisos) */}
+      {/* TAB 3: NOVEDADES Y AVISOS (novedades_avisos) */}
       {activeTab === 'novedades' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-slate-900">
-                Pestaña Google Sheets: Novedades_Avisos
+                Tabla Supabase: novedades_avisos
               </h2>
               <p className="text-xs text-slate-500">
                 Publica comunicados prioritarios para todos los colaboradores que ingresen al portal.
@@ -684,13 +684,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       )}
 
-      {/* TAB 4: FEEDBACK & SATISFACCIÓN (Feedback_Satisfaccion) */}
+      {/* TAB 4: FEEDBACK & SATISFACCIÓN (feedback_satisfaccion) */}
       {activeTab === 'feedback' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-slate-900">
-                Pestaña Google Sheets: Feedback_Satisfaccion
+                Tabla Supabase: feedback_satisfaccion
               </h2>
               <p className="text-xs text-slate-500">
                 Resultados de las encuestas completadas por el talento ingresante.

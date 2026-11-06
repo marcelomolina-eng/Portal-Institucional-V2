@@ -61,10 +61,13 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
     }
   };
 
+  const [formError, setFormError] = React.useState<string | null>(null);
+
   const handleGenerateDiploma = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     if (!fullName.trim() || !role.trim()) {
-      alert('Por favor, completa tu Nombre y Apellido y el Puesto o Sector.');
+      setFormError('Por favor, completa tu Nombre y Apellido y el Puesto o Sector.');
       return;
     }
 
@@ -226,6 +229,12 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
                 </div>
               </div>
             </div>
+
+            {formError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-center gap-2">
+                <span>{formError}</span>
+              </div>
+            )}
 
             <button
               type="submit"

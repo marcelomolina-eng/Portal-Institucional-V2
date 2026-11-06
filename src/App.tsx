@@ -10,9 +10,11 @@ import {
   DiplomaRecord, 
   CalendarEvent, 
   NoticeItem, 
-  FeedbackRecord,
+  FeedbackRecord, 
   Authority,
-  OrganigramLevel
+  OrganigramLevel,
+  InitiativeItem,
+  CommitmentRule
 } from './types';
 import { 
   INITIAL_CONFIG, 
@@ -27,17 +29,28 @@ import {
 } from './data/initialData';
 import { safeLocalStorageSet, safeLocalStorageGet } from './utils/storage';
 import { 
-  supabase,
-  mapRowToAuthority,
   fetchDirectivos, 
   insertDirectivo, 
   updateDirectivo, 
   deleteDirectivo, 
   fetchOrganigram, 
-  saveOrganigram, 
-  subscribeToDirectivos, 
-  subscribeToOrganigram,
-  isSupabaseConfigured
+  saveOrganigram,
+  fetchCalendarEvents,
+  upsertCalendarEvent,
+  deleteCalendarEvent,
+  fetchNotices,
+  upsertNotice,
+  deleteNotice,
+  fetchDiplomas,
+  insertDiploma,
+  deleteDiploma,
+  fetchFeedbacks,
+  insertFeedback,
+  fetchPortalConfig,
+  savePortalConfig,
+  fetchInitiatives,
+  fetchCommitmentRules,
+  subscribeToTable
 } from './lib/supabase';
 import { Header } from './components/Header';
 import { HomeMission } from './components/HomeMission';
@@ -59,30 +72,16 @@ export default function App() {
     return safeLocalStorageGet('ci_completed_missions_2026', {});
   });
 
-  // Data states with persistence
-  const [config, setConfig] = useState<AppConfig>(() => {
-    return safeLocalStorageGet('ci_app_config_2026', INITIAL_CONFIG);
-  });
-
+  // Data states (Supabase-first with institutional fallbacks)
+  const [config, setConfig] = useState<AppConfig>(INITIAL_CONFIG);
   const [authorities, setAuthorities] = useState<Authority[]>(AUTHORITIES);
-
   const [organigramLevels, setOrganigramLevels] = useState<OrganigramLevel[]>(INITIAL_ORGANIGRAM);
-
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(() => {
-    return safeLocalStorageGet('ci_calendar_2026', INITIAL_CALENDAR);
-  });
-
-  const [notices, setNotices] = useState<NoticeItem[]>(() => {
-    return safeLocalStorageGet('ci_notices_2026', INITIAL_NOTICES);
-  });
-
-  const [diplomas, setDiplomas] = useState<DiplomaRecord[]>(() => {
-    return safeLocalStorageGet('ci_diplomas_2026', INITIAL_DIPLOMAS);
-  });
-
-  const [feedbacks, setFeedbacks] = useState<FeedbackRecord[]>(() => {
-    return safeLocalStorageGet('ci_feedbacks_2026', INITIAL_FEEDBACK);
-  });
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(INITIAL_CALENDAR);
+  const [notices, setNotices] = useState<NoticeItem[]>(INITIAL_NOTICES);
+  const [diplomas, setDiplomas] = useState<DiplomaRecord[]>(INITIAL_DIPLOMAS);
+  const [feedbacks, setFeedbacks] = useState<FeedbackRecord[]>(INITIAL_FEEDBACK);
+  const [initiatives, setInitiatives] = useState<InitiativeItem[]>(INITIATIVES);
+  const [commitmentRules, setCommitmentRules] = useState<CommitmentRule[]>(COMMITMENT_RULES);
 
   // Admin authentication state
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
@@ -96,86 +95,99 @@ export default function App() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
 
-  // Sync to localStorage safely (solo para datos de sesión y diplomas locales)
+  // Sync session progress safely
   useEffect(() => {
     safeLocalStorageSet('ci_completed_missions_2026', completedMissions);
   }, [completedMissions]);
 
-  useEffect(() => {
-    safeLocalStorageSet('ci_app_config_2026', config);
-  }, [config]);
-
-  useEffect(() => {
-    safeLocalStorageSet('ci_calendar_2026', calendarEvents);
-  }, [calendarEvents]);
-
-  useEffect(() => {
-    safeLocalStorageSet('ci_notices_2026', notices);
-  }, [notices]);
-
-  useEffect(() => {
-    safeLocalStorageSet('ci_diplomas_2026', diplomas);
-  }, [diplomas]);
-
-  useEffect(() => {
-    safeLocalStorageSet('ci_feedbacks_2026', feedbacks);
-  }, [feedbacks]);
-
-  // Load from Supabase and subscribe to Realtime updates (Directivos y Organigrama reemplazan LocalStorage)
+  // Carga inicial desde Supabase y suscripciones en tiempo real (PostgreSQL CDC)
   useEffect(() => {
     let isMounted = true;
 
-    // 1. Initial directivos fetch from Supabase
-    const loadDirectivos = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('directivos')
-          .select('*')
-          .order('id', { ascending: true });
+    // 1. Carga inicial de todas las tablas con fallback automático si están vacías
+    fetchPortalConfig()
+      .then(cfg => { if (isMounted && cfg) setConfig(cfg); })
+      .catch(err => console.error('[Supabase] Error al cargar portal_config:', err));
 
-        if (error) {
-          console.error("Error Supabase:", error);
-        } else {
-          console.log("Cargando desde Supabase:", data);
-          if (isMounted && data && data.length > 0) {
-            setAuthorities(data.map(mapRowToAuthority));
-          }
-        }
-      } catch (err) {
-        console.error("Error Supabase:", err);
-      }
-    };
+    fetchDirectivos()
+      .then(auths => { if (isMounted && auths && auths.length > 0) setAuthorities(auths); })
+      .catch(err => console.error('[Supabase] Error al cargar directivos:', err));
 
-    loadDirectivos();
-
-    // 2. Initial organigram fetch from Supabase
     fetchOrganigram()
-      .then(dbOrganigram => {
-        if (isMounted && dbOrganigram && dbOrganigram.length > 0) {
-          setOrganigramLevels(dbOrganigram);
-        }
-      })
-      .catch(err => {
-        console.error("Error Supabase:", err);
-      });
+      .then(levels => { if (isMounted && levels && levels.length > 0) setOrganigramLevels(levels); })
+      .catch(err => console.error('[Supabase] Error al cargar organigrama:', err));
 
-    // 3. Realtime Postgres CDC subscriptions across clients
-    const unsubscribeDirectivos = subscribeToDirectivos((updatedAuthorities) => {
-      if (isMounted && updatedAuthorities && updatedAuthorities.length > 0) {
-        setAuthorities(updatedAuthorities);
-      }
+    fetchCalendarEvents()
+      .then(evts => { if (isMounted && evts && evts.length > 0) setCalendarEvents(evts); })
+      .catch(err => console.error('[Supabase] Error al cargar calendario:', err));
+
+    fetchNotices()
+      .then(nts => { if (isMounted && nts && nts.length > 0) setNotices(nts); })
+      .catch(err => console.error('[Supabase] Error al cargar novedades:', err));
+
+    fetchDiplomas()
+      .then(dips => { if (isMounted && dips && dips.length > 0) setDiplomas(dips); })
+      .catch(err => console.error('[Supabase] Error al cargar diplomas:', err));
+
+    fetchFeedbacks()
+      .then(fbs => { if (isMounted && fbs && fbs.length > 0) setFeedbacks(fbs); })
+      .catch(err => console.error('[Supabase] Error al cargar feedback:', err));
+
+    fetchInitiatives()
+      .then(inits => { if (isMounted && inits && inits.length > 0) setInitiatives(inits); })
+      .catch(err => console.error('[Supabase] Error al cargar iniciativas:', err));
+
+    fetchCommitmentRules()
+      .then(rules => { if (isMounted && rules && rules.length > 0) setCommitmentRules(rules); })
+      .catch(err => console.error('[Supabase] Error al cargar compromisos:', err));
+
+    // 2. Suscripciones Realtime a cambios en Supabase (PostgreSQL CDC)
+    const unsubDirectivos = subscribeToTable('directivos', async () => {
+      const data = await fetchDirectivos();
+      if (isMounted && data && data.length > 0) setAuthorities(data);
     });
 
-    const unsubscribeOrganigram = subscribeToOrganigram((updatedLevels) => {
-      if (isMounted && updatedLevels && updatedLevels.length > 0) {
-        setOrganigramLevels(updatedLevels);
-      }
+    const unsubOrganigram = subscribeToTable('organigrama_niveles', async () => {
+      const data = await fetchOrganigram();
+      if (isMounted && data && data.length > 0) setOrganigramLevels(data);
+    });
+
+    const unsubCalendar = subscribeToTable('calendario_eventos', async () => {
+      const data = await fetchCalendarEvents();
+      if (isMounted && data && data.length > 0) setCalendarEvents(data);
+    });
+
+    const unsubNotices = subscribeToTable('novedades_avisos', async () => {
+      const data = await fetchNotices();
+      if (isMounted && data && data.length > 0) setNotices(data);
+    });
+
+    const unsubDiplomas = subscribeToTable('diplomas_emitidos', async () => {
+      const data = await fetchDiplomas();
+      if (isMounted && data && data.length > 0) setDiplomas(data);
+    });
+
+    const unsubFeedback = subscribeToTable('feedback_satisfaccion', async () => {
+      const data = await fetchFeedbacks();
+      if (isMounted && data && data.length > 0) setFeedbacks(data);
+    });
+
+    const unsubConfig = subscribeToTable('portal_config', async () => {
+      const cfg = await fetchPortalConfig();
+      if (isMounted && cfg) setConfig(cfg);
+      const levels = await fetchOrganigram();
+      if (isMounted && levels && levels.length > 0) setOrganigramLevels(levels);
     });
 
     return () => {
       isMounted = false;
-      unsubscribeDirectivos();
-      unsubscribeOrganigram();
+      unsubDirectivos();
+      unsubOrganigram();
+      unsubCalendar();
+      unsubNotices();
+      unsubDiplomas();
+      unsubFeedback();
+      unsubConfig();
     };
   }, []);
 
@@ -207,37 +219,82 @@ export default function App() {
     setCurrentMission('home');
   };
 
-  // Diploma handler
-  const handleSaveDiploma = (newDiploma: DiplomaRecord) => {
+  // Config handler with Supabase persistence
+  const handleUpdateConfig = async (newConfig: AppConfig) => {
+    setConfig(newConfig);
+    try {
+      await savePortalConfig(newConfig);
+    } catch (err) {
+      console.error('Error guardando configuración en Supabase:', err);
+    }
+  };
+
+  // Diploma handlers with Supabase persistence
+  const handleSaveDiploma = async (newDiploma: DiplomaRecord) => {
     setDiplomas(prev => [newDiploma, ...prev]);
     handleCompleteMission('misionCumplida');
+    try {
+      await insertDiploma(newDiploma);
+    } catch (err) {
+      console.error('Error guardando diploma en Supabase:', err);
+    }
   };
 
-  // Feedback handler
-  const handleSaveFeedback = (newFeedback: FeedbackRecord) => {
-    setFeedbacks(prev => [newFeedback, ...prev]);
-  };
-
-  // Calendar handlers
-  const handleAddCalendarEvent = (newEvent: CalendarEvent) => {
-    setCalendarEvents(prev => [...prev, newEvent]);
-  };
-
-  const handleDeleteCalendarEvent = (id: string) => {
-    setCalendarEvents(prev => prev.filter(e => e.id !== id));
-  };
-
-  // Notice handlers
-  const handleAddNotice = (newNotice: NoticeItem) => {
-    setNotices(prev => [newNotice, ...prev]);
-  };
-
-  const handleDeleteNotice = (id: string) => {
-    setNotices(prev => prev.filter(n => n.id !== id));
-  };
-
-  const handleDeleteDiploma = (id: string) => {
+  const handleDeleteDiploma = async (id: string) => {
     setDiplomas(prev => prev.filter(d => d.id !== id));
+    try {
+      await deleteDiploma(id);
+    } catch (err) {
+      console.error('Error eliminando diploma en Supabase:', err);
+    }
+  };
+
+  // Feedback handler with Supabase persistence
+  const handleSaveFeedback = async (newFeedback: FeedbackRecord) => {
+    setFeedbacks(prev => [newFeedback, ...prev]);
+    try {
+      await insertFeedback(newFeedback);
+    } catch (err) {
+      console.error('Error guardando feedback en Supabase:', err);
+    }
+  };
+
+  // Calendar handlers with Supabase persistence
+  const handleAddCalendarEvent = async (newEvent: CalendarEvent) => {
+    setCalendarEvents(prev => [...prev, newEvent]);
+    try {
+      await upsertCalendarEvent(newEvent);
+    } catch (err) {
+      console.error('Error guardando evento en Supabase:', err);
+    }
+  };
+
+  const handleDeleteCalendarEvent = async (id: string) => {
+    setCalendarEvents(prev => prev.filter(e => e.id !== id));
+    try {
+      await deleteCalendarEvent(id);
+    } catch (err) {
+      console.error('Error eliminando evento en Supabase:', err);
+    }
+  };
+
+  // Notice handlers with Supabase persistence
+  const handleAddNotice = async (newNotice: NoticeItem) => {
+    setNotices(prev => [newNotice, ...prev]);
+    try {
+      await upsertNotice(newNotice);
+    } catch (err) {
+      console.error('Error guardando aviso en Supabase:', err);
+    }
+  };
+
+  const handleDeleteNotice = async (id: string) => {
+    setNotices(prev => prev.filter(n => n.id !== id));
+    try {
+      await deleteNotice(id);
+    } catch (err) {
+      console.error('Error eliminando aviso en Supabase:', err);
+    }
   };
 
   // Authority (Directivos) handlers - with Supabase persistence and local fallback
@@ -330,11 +387,26 @@ export default function App() {
   const handleImportBackup = (backupJson: string): boolean => {
     try {
       const data = JSON.parse(backupJson);
-      if (data.config) setConfig(data.config);
-      if (Array.isArray(data.authorities)) setAuthorities(data.authorities);
-      if (Array.isArray(data.organigramLevels)) setOrganigramLevels(data.organigramLevels);
-      if (Array.isArray(data.calendarEvents)) setCalendarEvents(data.calendarEvents);
-      if (Array.isArray(data.notices)) setNotices(data.notices);
+      if (data.config) {
+        setConfig(data.config);
+        savePortalConfig(data.config).catch(() => {});
+      }
+      if (Array.isArray(data.authorities)) {
+        setAuthorities(data.authorities);
+        data.authorities.forEach((a: Authority) => insertDirectivo(a).catch(() => {}));
+      }
+      if (Array.isArray(data.organigramLevels)) {
+        setOrganigramLevels(data.organigramLevels);
+        saveOrganigram(data.organigramLevels).catch(() => {});
+      }
+      if (Array.isArray(data.calendarEvents)) {
+        setCalendarEvents(data.calendarEvents);
+        data.calendarEvents.forEach((e: CalendarEvent) => upsertCalendarEvent(e).catch(() => {}));
+      }
+      if (Array.isArray(data.notices)) {
+        setNotices(data.notices);
+        data.notices.forEach((n: NoticeItem) => upsertNotice(n).catch(() => {}));
+      }
       return true;
     } catch (e) {
       console.error('Error importando JSON:', e);
@@ -354,6 +426,8 @@ export default function App() {
     localStorage.removeItem('ci_organigram_2026');
     localStorage.removeItem('ci_calendar_2026');
     localStorage.removeItem('ci_notices_2026');
+    savePortalConfig(INITIAL_CONFIG).catch(() => {});
+    saveOrganigram(INITIAL_ORGANIGRAM).catch(() => {});
   };
 
   return (
@@ -410,7 +484,7 @@ export default function App() {
 
         {currentMission === 'mision2' && (
           <Mission2Essence
-            initiatives={INITIATIVES}
+            initiatives={initiatives}
             calendarEvents={calendarEvents}
             onComplete={() => handleCompleteMission('mision2')}
             onNavigateNext={() => {
@@ -436,7 +510,7 @@ export default function App() {
 
         {currentMission === 'mision4' && (
           <Mission4Role
-            commitmentRules={COMMITMENT_RULES}
+            commitmentRules={commitmentRules}
             onComplete={() => handleCompleteMission('mision4')}
             onNavigateNext={() => {
               setCurrentMission('misionCumplida');
@@ -467,7 +541,7 @@ export default function App() {
             onDeleteNotice={handleDeleteNotice}
             feedbacks={feedbacks}
             config={config}
-            onUpdateConfig={setConfig}
+            onUpdateConfig={handleUpdateConfig}
             onOpenGasFiles={() => setCurrentMission('gasFiles')}
             authorities={authorities}
             onAddAuthority={handleAddAuthority}
