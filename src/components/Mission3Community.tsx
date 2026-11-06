@@ -86,13 +86,13 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
       <div className="bg-gradient-to-r from-[#1E3A8A] via-[#1e40af] to-[#172554] text-white p-6 sm:p-8 rounded-3xl border-2 border-[#D4B26F]/60 shadow-xl relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4B26F]/20 text-[#D4B26F] text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4B26F]/20 text-[#CFB07A] text-xs font-bold uppercase tracking-[0.06em]">
               <Users className="w-4 h-4" /> MISIÓN 03: OPERACIÓN INFORMÁTICO
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
               Conocer Nuestra Comunidad
             </h1>
-            <p className="text-sm sm:text-base text-blue-100 max-w-2xl leading-relaxed">
+            <p className="text-base text-blue-50 max-w-[65ch] leading-[1.5] text-left">
               Te presentamos a las autoridades, el organigrama y los canales oficiales para estar siempre comunicado.
             </p>
           </div>
@@ -102,10 +102,10 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
               onComplete();
               onNavigateNext();
             }}
-            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg ${
+            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-[0.06em] transition-all flex items-center gap-2 shadow-lg ${
               isCompleted
-                ? 'bg-[#008751] text-white border border-emerald-400'
-                : 'bg-[#D4B26F] text-[#5A1212] hover:bg-[#e4c485]'
+                ? 'bg-[#01913F] text-white border border-emerald-400'
+                : 'bg-[#CFB07A] text-[#1C1A17] hover:bg-[#e4c485]'
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
@@ -121,8 +121,8 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
           onClick={() => setActiveTab('autoridades')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
             activeTab === 'autoridades'
-              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/70 rounded-t-lg'
+              : 'border-transparent text-slate-700 hover:text-slate-900'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -133,8 +133,8 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
           onClick={() => setActiveTab('organigrama')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
             activeTab === 'organigrama'
-              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/70 rounded-t-lg'
+              : 'border-transparent text-slate-700 hover:text-slate-900'
           }`}
         >
           <Building className="w-4 h-4" />
@@ -145,8 +145,8 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
           onClick={() => setActiveTab('canales')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
             activeTab === 'canales'
-              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/70 rounded-t-lg'
+              : 'border-transparent text-slate-700 hover:text-slate-900'
           }`}
         >
           <MessageSquare className="w-4 h-4" />
@@ -159,14 +159,14 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">
+              <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
                 Equipo de Conducción y Referentes
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500">
+              <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                 Ponte en contacto con cada uno para evacuar dudas o coordinar acciones.
               </p>
             </div>
-            <span className="text-xs font-semibold px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-200">
+            <span className="text-xs font-bold uppercase tracking-[0.06em] px-3 py-1 bg-blue-50 text-[#1E3A8A] rounded-full border border-blue-200">
               {authorities.length} Referentes Clave
             </span>
           </div>
@@ -183,28 +183,28 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                     <img
                       src={auth.photoUrl}
                       alt={auth.name}
-                      className="w-16 h-16 rounded-2xl object-cover border-2 border-[#D4B26F] shadow-sm group-hover:scale-105 transition"
+                      className="w-16 h-16 rounded-2xl object-cover border-2 border-[#CFB07A] shadow-sm group-hover:scale-105 transition"
                     />
                     <div>
-                      <h3 className="font-extrabold text-slate-900 text-base group-hover:text-[#1E3A8A] transition">
+                      <h3 className="font-bold text-slate-900 text-[1.125rem] leading-[1.3] text-left group-hover:text-[#1E3A8A] transition">
                         {auth.name}
                       </h3>
-                      <p className="text-xs text-[#008751] font-semibold">
+                      <p className="text-xs text-[#00602A] font-bold mt-0.5 text-left">
                         {auth.role}
                       </p>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-xs text-slate-700 font-mono text-left block">
                         {auth.area}
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left line-clamp-3">
                     {auth.bio}
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
-                  <span className="font-mono text-slate-500 text-[11px] truncate max-w-[170px]">
+                  <span className="font-mono text-slate-700 text-xs truncate max-w-[170px]">
                     {auth.email}
                   </span>
                   <span className="text-[#1E3A8A] font-bold group-hover:translate-x-1 transition flex items-center gap-1">
@@ -222,14 +222,14 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
                 Estructura Organizacional Institucional
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                 Visualiza los niveles jerárquicos de decisión, conducción y acompañamiento de la comunidad escolar.
               </p>
             </div>
-            <span className="self-start sm:self-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#CFB07A]/15 text-[#8F6A24] border border-[#CFB07A]/40">
+            <span className="self-start sm:self-center px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.06em] bg-[#CFB07A]/15 text-[#634816] border border-[#CFB07A]/40">
               {organigramLevels.length} Niveles Jerárquicos
             </span>
           </div>

@@ -160,22 +160,22 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* BANNER CELEBRATORIO DE MISIÓN CUMPLIDA */}
+      {/* BANNER CELEBRATORIO DE MISIÓN CUMPLIDA - H1: 32px (2rem), line-height 1.25 */}
       <div className="bg-gradient-to-r from-[#1C1A17] via-[#2A1513] to-[#12231A] text-white p-6 sm:p-10 rounded-3xl border-3 border-[#CFB07A] shadow-2xl relative overflow-hidden">
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#CFB07A] text-[#1C1A17] text-xs font-black uppercase tracking-widest shadow-md">
+        <div className="relative z-10 max-w-[65ch] space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#CFB07A] text-[#1C1A17] text-xs font-bold uppercase tracking-[0.06em] shadow-md">
             <Award className="w-4 h-4 text-[#DE4034]" /> MISIÓN CUMPLIDA • CICLO LECTIVO 2026
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+          <h1 className="text-[2rem] font-bold text-white tracking-tight leading-[1.25] text-left">
             ¡OPERACIÓN CUMPLIDA!
           </h1>
 
-          <p className="text-base sm:text-xl text-[#F7F3EA] font-medium leading-relaxed">
+          <p className="text-base text-[#F7F3EA] font-normal leading-[1.5] max-w-[65ch] text-left">
             ¡Felicitaciones! Completaste tu recorrido por el Colegio Informático. Bajo nuestro blasón <span className="text-[#CFB07A] font-serif-title font-bold">"VERITA VINCI"</span>, hoy comienzas a escribir tu historia junto a nosotros.
           </p>
 
-          <p className="text-xs sm:text-sm text-slate-200">
+          <p className="text-sm text-slate-200 leading-[1.5] max-w-[65ch] text-left">
             Completa tus datos a continuación para registrar tu ingreso en la base de datos de RRHH y obtener tu Diploma Oficial de Incorporación.
           </p>
         </div>
@@ -190,10 +190,10 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
               <FileCheck className="w-5 h-5 text-[#DE4034]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
                 Formulario de Certificación
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                 Datos que figurarán en tu constancia oficial
               </p>
             </div>
@@ -343,40 +343,40 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
                 alt="Escudo Oficial Colegio Informático - Verita Vinci"
                 className="w-20 h-auto mx-auto object-contain drop-shadow-md"
               />
-              <div className="text-[12px] font-extrabold tracking-widest text-[#22201B] uppercase font-sans">
+              <div className="text-xs font-bold tracking-[0.06em] text-[#1C1A17] uppercase font-sans">
                 Colegio Informático • Comunidad Educativa Educar SRL
               </div>
-              <div className="text-xs font-serif-title font-bold text-[#8F6A28] uppercase tracking-widest">
+              <div className="text-xs font-serif-title font-bold text-[#634816] uppercase tracking-[0.06em]">
                 — VERITA VINCI —
               </div>
-              <h2 className="text-2xl sm:text-3xl font-serif-title font-bold text-slate-900 tracking-tight pt-1">
+              <h2 className="text-[1.5rem] font-serif-title font-bold text-slate-900 tracking-tight leading-[1.25] pt-1 text-center">
                 CERTIFICADO DE INDUCCIÓN E INTEGRACIÓN
               </h2>
               <div className="w-28 h-0.5 bg-[#CFB07A] mx-auto my-2" />
             </div>
 
             {/* Cuerpo del Diploma */}
-            <div className="relative z-10 space-y-3 max-w-lg mx-auto">
-              <p className="text-xs sm:text-sm text-slate-600 italic font-serif">
+            <div className="relative z-10 space-y-3 max-w-[65ch] mx-auto">
+              <p className="text-sm text-slate-700 font-serif leading-[1.5] text-center">
                 Por cuanto ha completado satisfactoriamente el programa de inducción institucional
               </p>
-              <div className="text-xs font-bold uppercase tracking-wider text-[#01913F] font-mono">
+              <div className="text-xs font-bold uppercase tracking-[0.06em] text-[#00602A] font-mono text-center">
                 "Operación Informático: Una misión: descubrir todo lo que nos une"
               </div>
 
-              <p className="text-xs text-slate-500 pt-2">Se otorga la presente distinción a:</p>
+              <p className="text-xs text-slate-600 pt-2 text-center">Se otorga la presente distinción a:</p>
               
-              <div className="py-2">
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#DE4034] font-serif-title border-b-2 border-[#CFB07A] pb-1 inline-block px-6 min-w-[260px]">
+              <div className="py-2 text-center">
+                <h3 className="text-[1.5rem] sm:text-[1.75rem] font-bold text-[#8F1F17] font-serif-title border-b-2 border-[#CFB07A] pb-1 inline-block px-6 min-w-[260px] text-center">
                   {generatedDiploma ? generatedDiploma.fullName : (fullName || 'Nombre del Colaborador')}
                 </h3>
               </div>
 
-              <div className="text-xs sm:text-sm font-semibold text-slate-800">
+              <div className="text-sm font-bold text-slate-800 text-center">
                 {generatedDiploma ? generatedDiploma.role : (role || 'Puesto / Sector')}
               </div>
 
-              <p className="text-xs text-slate-600 leading-relaxed pt-2">
+              <p className="text-sm text-slate-700 leading-[1.5] pt-2 text-center max-w-[65ch] mx-auto">
                 Reconociendo su compromiso ético, vocación pedagógica y bienvenida oficial a la familia educativa Educar SRL para el Ciclo Lectivo 2026.
               </p>
             </div>

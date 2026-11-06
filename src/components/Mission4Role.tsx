@@ -81,13 +81,13 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       <div className="bg-gradient-to-r from-[#EA580C] via-[#c2410c] to-[#9a3412] text-white p-6 sm:p-8 rounded-3xl border-2 border-[#D4B26F]/60 shadow-xl relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4B26F]/20 text-[#D4B26F] text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4B26F]/20 text-[#CFB07A] text-xs font-bold uppercase tracking-[0.06em]">
               <Compass className="w-4 h-4" /> MISIÓN 04: OPERACIÓN INFORMÁTICO
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
               Ser Parte y Construir Juntos: Mi Rol en Educar
             </h1>
-            <p className="text-sm sm:text-base text-orange-100 max-w-2xl leading-relaxed">
+            <p className="text-base text-orange-50 max-w-[65ch] leading-[1.5] text-left">
               Las 6 pautas de compromiso que dan sentido a nuestro trabajo cotidiano y consolidan el prestigio del Colegio Informático.
             </p>
           </div>
@@ -97,10 +97,10 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
               onComplete();
               onNavigateNext();
             }}
-            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg ${
+            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-[0.06em] transition-all flex items-center gap-2 shadow-lg ${
               isCompleted
                 ? 'bg-white text-[#EA580C] border border-white'
-                : 'bg-[#D4B26F] text-[#5A1212] hover:bg-[#e4c485]'
+                : 'bg-[#CFB07A] text-[#1C1A17] hover:bg-[#e4c485]'
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
@@ -118,10 +118,10 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
               {getRuleIcon(rule.iconName)}
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#7A1C1C]">
+              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#8F1F17] block">
                 Compromiso #{rule.number} de {commitmentRules.length}
               </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+              <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
                 {rule.title}
               </h2>
             </div>
@@ -209,11 +209,11 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       {/* CHECKLIST DE PRIMEROS DÍAS */}
       <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-4">
         <div>
-          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-[#008751]" />
+          <h3 className="text-[1.125rem] font-bold text-slate-900 flex items-center gap-2 leading-[1.3] text-left">
+            <Shield className="w-5 h-5 text-[#00602A]" />
             <span>Autocomprobación: Tu Kit de Bienvenida</span>
           </h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
             Marca los puntos a medida que los vayas completando en tu primera semana.
           </p>
         </div>
@@ -227,16 +227,16 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
                 onClick={() => toggleCheck(item)}
                 className={`cursor-pointer p-3.5 rounded-xl border transition flex items-start gap-3 ${
                   isChecked
-                    ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-medium'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                    ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-medium'
+                    : 'bg-white border-slate-200 text-slate-800 hover:border-slate-300'
                 }`}
               >
                 <div className={`w-5 h-5 rounded-md flex items-center justify-center border mt-0.5 transition ${
-                  isChecked ? 'bg-[#008751] border-[#008751] text-white' : 'border-slate-300'
+                  isChecked ? 'bg-[#00602A] border-[#00602A] text-white' : 'border-slate-400'
                 }`}>
                   {isChecked && <CheckCircle2 className="w-3.5 h-3.5" />}
                 </div>
-                <span className="text-xs leading-relaxed">{item}</span>
+                <span className="text-sm leading-[1.5] text-left">{item}</span>
               </div>
             );
           })}
@@ -244,27 +244,27 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       </div>
 
       {/* FOTO DE CIERRE DEL EQUIPO CON FRASE INSTITUCIONAL INSPIRADORA */}
-      <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-[#D4B26F] bg-slate-900 text-white p-8 sm:p-12 text-center space-y-6">
+      <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-[#CFB07A] bg-slate-900 text-white p-8 sm:p-12 text-center space-y-6">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 filter blur-xs"
           style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80")' }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#5A1212] via-black/60 to-transparent" />
 
-        <div className="relative z-10 max-w-2xl mx-auto space-y-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#D4B26F] text-[#5A1212] flex items-center justify-center mx-auto shadow-lg">
+        <div className="relative z-10 max-w-[65ch] mx-auto space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#CFB07A] text-[#1C1A17] flex items-center justify-center mx-auto shadow-lg">
             <Heart className="w-8 h-8 fill-current" />
           </div>
 
-          <p className="text-lg sm:text-2xl font-serif-title italic text-slate-100 font-semibold leading-relaxed">
+          <p className="text-base sm:text-lg font-serif-title text-slate-100 font-semibold leading-[1.5] max-w-[65ch] mx-auto">
             "No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad."
           </p>
 
           <div className="pt-2">
-            <span className="text-xs uppercase font-extrabold tracking-widest text-[#D4B26F] block">
+            <span className="text-xs uppercase font-bold tracking-[0.06em] text-[#CFB07A] block">
               Comunidad Educativa Educar SRL
             </span>
-            <span className="text-[11px] text-slate-300">
+            <span className="text-xs text-slate-300 tracking-[0.04em]">
               Colegio Informático • Ciclo Lectivo 2026
             </span>
           </div>

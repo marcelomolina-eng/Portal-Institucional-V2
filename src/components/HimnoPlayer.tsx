@@ -166,10 +166,10 @@ export const HimnoPlayer: React.FC<HimnoPlayerProps> = ({
                 <Sparkles className="w-3 h-3 text-[#01913F]" />
                 <span>Patrimonio Cultural & Musical</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-white mt-1 flex items-center gap-2">
+              <h2 className="text-[1.5rem] font-bold text-white mt-1 leading-[1.25] text-left flex items-center gap-2">
                 <span>Himno Institucional</span>
               </h2>
-              <p className="text-xs sm:text-sm text-slate-300 font-serif-title italic">
+              <p className="text-sm text-slate-200 font-serif-title text-left mt-0.5">
                 Colegio Informático San Juan de Vera • <span className="text-[#CFB07A] font-bold">"VERITA VINCI"</span>
               </p>
             </div>
@@ -295,16 +295,16 @@ export const HimnoPlayer: React.FC<HimnoPlayerProps> = ({
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#CFB07A] block">
+              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#CFB07A] block text-left">
                 Poesía & Canto
               </span>
-              <h3 className="text-sm sm:text-base font-extrabold text-white group-hover:text-[#CFB07A] transition">
+              <h3 className="text-[1.125rem] font-bold text-white group-hover:text-[#CFB07A] leading-[1.3] text-left transition">
                 Letra Completa del Himno Oficial
               </h3>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-bold text-[#CFB07A]">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.06em] text-[#CFB07A]">
             <span className="hidden sm:inline">
               {isLyricsOpen ? 'Ocultar Letra' : 'Ver Letra'}
             </span>
@@ -320,13 +320,13 @@ export const HimnoPlayer: React.FC<HimnoPlayerProps> = ({
         {isLyricsOpen && (
           <div className="mt-4 p-6 sm:p-8 rounded-2xl bg-[#221F1B] border border-white/10 shadow-inner space-y-6 animate-fadeIn">
             <div className="text-center space-y-1 pb-4 border-b border-white/10">
-              <span className="text-[11px] font-mono uppercase text-[#01913F] font-bold tracking-widest">
+              <span className="text-xs font-mono uppercase text-[#01913F] font-bold tracking-[0.06em]">
                 Colegio Informático San Juan de Vera
               </span>
-              <h4 className="text-lg font-serif-title font-bold text-[#CFB07A] tracking-wider uppercase">
+              <h4 className="text-[1.125rem] font-serif-title font-bold text-[#CFB07A] tracking-[0.06em] uppercase">
                 Himno Institucional
               </h4>
-              <p className="text-xs text-slate-400 italic">
+              <p className="text-xs text-slate-300">
                 Fundación Torres Vera y Aragón • Educar SRL
               </p>
             </div>

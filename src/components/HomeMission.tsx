@@ -96,25 +96,25 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-5">
 
-            {/* Frase de Bienvenida Protagonista */}
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white">
+            {/* Frase de Bienvenida Protagonista - H1: 32px (2rem), line-height 1.25, max-w-[65ch] */}
+            <h1 className="text-[2rem] font-bold tracking-tight leading-[1.25] text-white text-left">
               ¡Bienvenido al <span className="text-[#DE4034]">Colegio</span> <span className="text-[#01913F]">Informático</span>!
             </h1>
             
-            <p className="text-base sm:text-lg text-slate-200 font-normal leading-relaxed">
+            <p className="text-base text-slate-100 font-normal leading-[1.5] max-w-[65ch] text-left">
               Nos alegra que hoy comiences a ser parte de nuestra comunidad. Bajo nuestro lema <strong className="text-[#CFB07A] font-serif-title font-bold">"VERITA VINCI"</strong> (La verdad triunfa), cada paso que des aquí sumará a la misión colectiva de educar con calidez, rigor y vanguardia tecnológica.
             </p>
 
             {/* Presentación del Programa */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-[#CFB07A]/40 backdrop-blur-sm">
-              <div className="text-xs font-bold uppercase tracking-widest text-[#CFB07A] mb-1">
+            <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-[#CFB07A]/40 backdrop-blur-sm max-w-[65ch]">
+              <div className="text-xs font-bold uppercase tracking-[0.06em] text-[#CFB07A] mb-1 text-left">
                 Nombre Clave de la Misión
               </div>
-              <div className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+              <div className="text-lg sm:text-xl font-bold text-white flex items-center gap-2 text-left">
                 <span>Operación Informático</span>
-                <span className="text-xs bg-[#01913F] px-2 py-0.5 rounded text-white font-mono">2026</span>
+                <span className="text-xs bg-[#01913F] px-2 py-0.5 rounded text-white font-mono tracking-normal">2026</span>
               </div>
-              <p className="text-sm text-[#F7F3EA] mt-1 italic">
+              <p className="text-sm text-[#F7F3EA] mt-1 italic leading-[1.5] text-left">
                 "Una misión: descubrir todo lo que nos une."
               </p>
             </div>
@@ -219,13 +219,13 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <h2 className="text-[1.5rem] font-bold leading-[1.25] text-slate-900 flex items-center gap-2 text-left">
               <span>El Mapa de tu Misión</span>
-              <span className="text-xs font-semibold bg-[#DE4034] text-white px-2 py-0.5 rounded-md">
+              <span className="text-xs font-bold bg-[#DE4034] text-white px-2.5 py-0.5 rounded-md uppercase tracking-[0.06em]">
                 Paso a Paso
               </span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500">
+            <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
               Explora cada capítulo para desbloquear tu Certificado Oficial de Incorporación 2026.
             </p>
           </div>
@@ -241,7 +241,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <span className="font-mono text-[11px] font-bold text-slate-600">{progressPercent}%</span>
+            <span className="font-mono text-xs font-bold text-slate-700">{progressPercent}%</span>
           </div>
         </div>
 
@@ -256,15 +256,15 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-extrabold text-[#7A1C1C] tracking-wider uppercase font-mono">
+                    <span className="text-xs font-extrabold text-[#8F1F17] tracking-[0.06em] uppercase font-mono">
                       {m.code}
                     </span>
                     {isCompleted ? (
-                      <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                      <span className="flex items-center gap-1 text-xs font-bold text-[#00602A] bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
                         <CheckCircle className="w-3.5 h-3.5" /> Completada
                       </span>
                     ) : (
-                      <span className="text-[10px] bg-white/80 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-xs bg-white/90 border border-slate-300 text-slate-700 px-2 py-0.5 rounded-full font-medium">
                         Pendiente
                       </span>
                     )}
@@ -275,20 +275,20 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                   </div>
 
                   <div>
-                    <h3 className="font-extrabold text-slate-900 text-base leading-snug">
+                    <h3 className="font-bold text-slate-900 text-[1.125rem] leading-[1.3] text-left">
                       {m.title}
                     </h3>
-                    <p className="text-xs text-[#008751] font-semibold mt-0.5">
+                    <p className="text-xs text-[#00602A] font-bold mt-0.5 text-left">
                       {m.subtitle}
                     </p>
                   </div>
 
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left">
                     {m.desc}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-200/60 mt-4 flex items-center justify-between text-xs font-bold text-[#7A1C1C]">
+                <div className="pt-4 border-t border-slate-200/60 mt-4 flex items-center justify-between text-xs font-bold text-[#8F1F17] uppercase tracking-[0.06em]">
                   <span>Ingresar a la Misión</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                 </div>
@@ -314,18 +314,18 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className={`text-xs font-bold uppercase px-2.5 py-0.5 rounded-full ${
+              <span className={`text-xs font-bold uppercase tracking-[0.06em] px-2.5 py-0.5 rounded-full ${
                 isDiplomaUnlocked
                   ? 'bg-emerald-200 text-emerald-950 font-extrabold'
                   : 'bg-amber-200/80 text-amber-900 font-extrabold'
               }`}>
                 {isDiplomaUnlocked ? '¡Meta Desbloqueada!' : 'Meta Final (Bloqueada)'}
               </span>
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-[1.125rem] font-bold text-slate-900 leading-[1.3] text-left">
                 Certificación y Diploma Oficial 2026
               </h3>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl leading-relaxed">
+            <p className="text-sm text-slate-700 mt-1 max-w-[65ch] leading-[1.5] text-left">
               {isDiplomaUnlocked
                 ? '¡Felicitaciones! Has completado el recorrido formativo. Ya puedes generar y descargar tu diploma oficial registrado.'
                 : '¡Casi llegas! Completa las misiones 01, 02 y 03 para desbloquear tu Certificado Institucional con folio criptográfico único.'}

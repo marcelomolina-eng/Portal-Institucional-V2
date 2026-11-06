@@ -2,6 +2,12 @@
 
 @layer base {
   :root {
+    font-size: 16px;
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
     /* Paleta Oficial extraída del Escudo Institucional "VERITA VINCI" */
     --color-escudo-rojo: #DE4034;
     --color-escudo-rojo-dark: #8F1F17;
@@ -12,7 +18,7 @@
     --color-escudo-arena: #CFB07A;
     --color-escudo-arena-light: #F7F3EA;
     --color-escudo-arena-dark: #9E7F47;
-    --color-escudo-negro: #22201B;
+    --color-escudo-negro: #1C1A17;
     --color-escudo-blanco: #FFFFFF;
 
     /* Legacy mapping mapped to the new authentic shield palette */
@@ -23,19 +29,96 @@
     --color-dorado-light: var(--color-escudo-arena-light);
   }
 
+  html {
+    font-size: 16px;
+  }
+
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #F8F9FA;
-    color: #22201B;
+    color: #1C1A17;
+    font-size: 1rem; /* 16px base */
+    line-height: 1.5; /* 150% line height */
+    letter-spacing: 0;
+    text-align: left;
     overflow-x: hidden;
   }
 
+  /* Jerarquía visual proporcional WCAG (rem) */
+  /* H1: 32px (2rem), line-height: 1.25 (1.2 a 1.3) */
+  h1 {
+    font-size: 2rem;
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-align: left;
+    color: #1C1A17;
+  }
+
+  /* H2: 24px (1.5rem), line-height: 1.25 (1.2 a 1.3) */
+  h2 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #1C1A17;
+  }
+
+  /* H3: 18px (1.125rem), line-height: 1.3 */
+  h3 {
+    font-size: 1.125rem;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    text-align: left;
+    color: #1C1A17;
+  }
+
+  /* H4: 16px (1rem), line-height: 1.35 */
+  h4 {
+    font-size: 1rem;
+    line-height: 1.35;
+    font-weight: 700;
+    text-align: left;
+    color: #1C1A17;
+  }
+
+  /* Texto base / Párrafo: 16px (1rem), line-height: 1.5, letter-spacing: 0 */
+  p {
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-align: left;
+    color: #1E293B; /* slate-800 WCAG AA high contrast */
+  }
+
+  /* Bloque de lectura con límite de longitud entre 45 y 75 caracteres */
+  .prose-reading,
+  .reading-block {
+    max-width: 65ch;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  /* Alineación estricta a la izquierda y eliminación de texto justificado */
+  p, div, article, section, h1, h2, h3, h4, span {
+    text-align: left;
+  }
+
+  /* Interletraje positivo para títulos breves y badges en mayúsculas */
+  .tracking-label,
+  .uppercase {
+    letter-spacing: 0.06em;
+  }
+
   .font-serif-title {
-    font-family: 'Cinzel', serif;
+    font-family: 'Cinzel', Georgia, serif;
   }
 
   .font-mono-code {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'JetBrains Mono', Menlo, monospace;
   }
 }
 

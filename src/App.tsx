@@ -583,15 +583,15 @@ export default function App() {
       </main>
 
       {/* Institutional Footer */}
-      <footer className="bg-[#1C1A17] text-slate-400 py-6 border-t-2 border-[#CFB07A] text-xs no-print">
+      <footer className="bg-[#1C1A17] text-slate-300 py-6 border-t-2 border-[#CFB07A] text-sm no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <InstitutionalLogo size="sm" showSubtitle={false} />
-            <div>
-              <p className="font-bold text-slate-200">
+            <div className="text-left space-y-0.5">
+              <p className="font-bold text-slate-100 text-sm leading-[1.5]">
                 Colegio Informático • Comunidad Educativa Educar SRL
               </p>
-              <p className="text-[11px] text-[#CFB07A] font-serif-title font-semibold tracking-wider">
+              <p className="text-xs text-[#CFB07A] font-serif-title font-semibold tracking-[0.06em] leading-[1.5]">
                 Verita Vinci • Operación Informático: Una misión: descubrir todo lo que nos une © 2026
               </p>
             </div>

@@ -91,13 +91,13 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               className="w-14 h-18 object-contain drop-shadow-md hidden sm:block"
             />
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#CFB07A]/20 text-[#CFB07A] text-xs font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#CFB07A]/20 text-[#CFB07A] text-xs font-bold uppercase tracking-[0.06em]">
                 <ShieldCheck className="w-4 h-4 text-[#01913F]" /> MISIÓN 01: OPERACIÓN INFORMÁTICO
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+              <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
                 Descubrir Quiénes Somos
               </h1>
-              <p className="text-xs sm:text-sm text-slate-200 max-w-2xl leading-relaxed">
+              <p className="text-base text-slate-100 max-w-[65ch] leading-[1.5] text-left">
                 Nuestras raíces, la filosofía educativa y el significado de nuestro escudo institucional bajo el lema <span className="font-serif-title text-[#CFB07A] font-bold">"VERITA VINCI"</span>.
               </p>
             </div>
@@ -108,7 +108,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               onComplete();
               onNavigateNext();
             }}
-            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg ${
+            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-[0.06em] transition-all flex items-center gap-2 shadow-lg ${
               isCompleted
                 ? 'bg-[#01913F] text-white border border-emerald-400'
                 : 'bg-[#CFB07A] text-[#1C1A17] hover:bg-[#dec28e]'
@@ -127,8 +127,8 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           onClick={() => setActiveTab('filosofia')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
             activeTab === 'filosofia'
-              ? 'border-[#DE4034] text-[#DE4034] bg-red-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#DE4034] text-[#8F1F17] bg-red-50/70 rounded-t-lg'
+              : 'border-transparent text-slate-700 hover:text-slate-900'
           }`}
         >
           <Layers className="w-4 h-4" />
@@ -140,7 +140,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
             activeTab === 'himno'
               ? 'border-[#CFB07A] text-[#1C1A17] bg-[#CFB07A]/25 rounded-t-lg font-extrabold'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-slate-700 hover:text-slate-900'
           }`}
         >
           <Music className="w-4 h-4 text-[#CFB07A]" />
@@ -151,8 +151,8 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           onClick={() => setActiveTab('videos')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
             activeTab === 'videos'
-              ? 'border-[#01913F] text-[#01913F] bg-emerald-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#01913F] text-[#00602A] bg-emerald-50/70 rounded-t-lg'
+              : 'border-transparent text-slate-700 hover:text-slate-900'
           }`}
         >
           <Video className="w-4 h-4" />
@@ -163,8 +163,8 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           onClick={() => setActiveTab('historia')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
             activeTab === 'historia'
-              ? 'border-[#CFB07A] text-[#8F6A28] bg-amber-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#CFB07A] text-[#634816] bg-amber-50/70 rounded-t-lg'
+              : 'border-transparent text-slate-700 hover:text-slate-900'
           }`}
         >
           <History className="w-4 h-4" />
@@ -177,33 +177,33 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* MISIÓN */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden group hover:border-[#7A1C1C] transition">
-              <div className="w-12 h-12 rounded-xl bg-[#7A1C1C]/10 text-[#7A1C1C] flex items-center justify-center mb-4">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden group hover:border-[#8F1F17] transition">
+              <div className="w-12 h-12 rounded-xl bg-[#8F1F17]/10 text-[#8F1F17] flex items-center justify-center mb-4">
                 <Target className="w-6 h-6" />
               </div>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#7A1C1C]">
+              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#8F1F17]">
                 Nuestra Razón de Ser
               </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1 mb-3">
+              <h2 className="text-[1.5rem] font-bold text-slate-900 mt-1 mb-3 leading-[1.25] text-left">
                 Misión Institucional
               </h2>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left">
                 Brindar una formación integral de excelencia que conjugue una sólida base académica y humana con la vanguardia científica y tecnológica, preparando a niños y jóvenes con valores cívicos, pensamiento crítico y sensibilidad social para transformar su entorno con libertad y responsabilidad.
               </p>
             </div>
 
             {/* VISIÓN */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden group hover:border-[#008751] transition">
-              <div className="w-12 h-12 rounded-xl bg-[#008751]/10 text-[#008751] flex items-center justify-center mb-4">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden group hover:border-[#00602A] transition">
+              <div className="w-12 h-12 rounded-xl bg-[#00602A]/10 text-[#00602A] flex items-center justify-center mb-4">
                 <Eye className="w-6 h-6" />
               </div>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#008751]">
+              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#00602A]">
                 Hacia Dónde Vamos
               </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1 mb-3">
+              <h2 className="text-[1.5rem] font-bold text-slate-900 mt-1 mb-3 leading-[1.25] text-left">
                 Visión Institucional
               </h2>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left">
                 Ser la comunidad educativa referente en el nordeste argentino en innovación pedagógica, liderazgo ético e inclusión real, reconocida por la calidad humana de sus egresados, la excelencia de sus educadores y su capacidad constante para anticipar el futuro.
               </p>
             </div>
@@ -213,18 +213,18 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           <div className="bg-white rounded-2xl p-6 sm:p-8 border-2 border-[#CFB07A] shadow-md space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
               <div>
-                <span className="text-xs font-extrabold uppercase tracking-widest text-[#DE4034] font-mono">
+                <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#8F1F17] font-mono">
                   Identidad Visual y Blasón
                 </span>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">
+                <h3 className="text-[1.125rem] font-bold text-slate-900 mt-0.5 leading-[1.3] text-left">
                   El Escudo Oficial y el Lema "Verita Vinci"
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500">
+                <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                   Conoce la historia y el significado de los colores y figuras que presiden nuestra institución.
                 </p>
               </div>
 
-              <div className="px-3.5 py-1.5 rounded-full bg-[#CFB07A]/20 border border-[#CFB07A] text-[#8F6A28] font-serif-title text-xs font-bold uppercase tracking-wider">
+              <div className="px-3.5 py-1.5 rounded-full bg-[#CFB07A]/20 border border-[#CFB07A] text-[#634816] font-serif-title text-xs font-bold uppercase tracking-[0.06em]">
                 Verita Vinci • La Verdad Triunfa
               </div>
             </div>
@@ -301,13 +301,13 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           {/* VALORES INSTITUCIONALES */}
           <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
             <div className="border-b border-slate-100 pb-3">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#01913F] font-mono">
+              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#00602A] font-mono">
                 Pilares Formativos
               </span>
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">
+              <h3 className="text-[1.125rem] font-bold text-slate-900 mt-0.5 leading-[1.3] text-left">
                 Valores Institucionales del Colegio Informático
               </h3>
-              <p className="text-xs sm:text-sm text-slate-500">
+              <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                 Principios rectores que guían nuestra labor diaria con los estudiantes y las familias.
               </p>
             </div>
@@ -318,10 +318,10 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                   <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-xs">
                     {v.icon}
                   </div>
-                  <h4 className="font-bold text-slate-900 text-sm">
+                  <h4 className="font-bold text-slate-900 text-sm leading-[1.35] text-left">
                     {v.title}
                   </h4>
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left">
                     {v.desc}
                   </p>
                 </div>

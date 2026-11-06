@@ -62,23 +62,23 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
             <span>Misiones en Curso • Certificación Bloqueada</span>
           </div>
 
-          {/* Main Required Headline */}
+          {/* Main Required Headline - H1: 32px (2rem), line-height 1.25 */}
           <div className="space-y-3">
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            <h1 className="text-[2rem] font-bold text-white tracking-tight leading-[1.25] text-left">
               ¡Casi llegas! Completa las misiones 01, 02 y 03 para desbloquear tu Certificado Institucional
             </h1>
-            <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-base text-slate-100 max-w-[65ch] leading-[1.5] text-left">
               Para garantizar que cada nuevo integrante conozca la cultura, los valores y el equipo de Educar SRL, el diploma oficial se emite una vez completadas las tres misiones de inducción.
             </p>
           </div>
 
           {/* Progress Bar & Status Pill */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-[#CFB07A]/40 space-y-3">
+          <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-[#CFB07A]/40 space-y-3 max-w-[65ch]">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-              <span className="font-bold text-[#CFB07A] uppercase tracking-wider">
+              <span className="font-bold text-[#CFB07A] uppercase tracking-[0.06em]">
                 Progreso: {completedCount}/{totalRequired} misiones completadas
               </span>
-              <span className="font-mono text-white text-xs font-extrabold bg-[#01913F]/30 px-2.5 py-0.5 rounded-full border border-emerald-400/40">
+              <span className="font-mono text-white text-xs font-bold bg-[#01913F]/30 px-2.5 py-0.5 rounded-full border border-emerald-400/40">
                 {progressPercent}% Completado
               </span>
             </div>
@@ -96,7 +96,7 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               onClick={() => onNavigateToMission(nextPendingMission)}
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#01913F] to-[#007031] hover:from-[#00a848] hover:to-[#01913F] text-white font-bold text-sm shadow-xl border border-emerald-400/40 transition-all transform hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#01913F] to-[#007031] hover:from-[#00a848] hover:to-[#01913F] text-white font-bold text-sm uppercase tracking-[0.06em] shadow-xl border border-emerald-400/40 transition-all transform hover:-translate-y-0.5"
             >
               <span>Continuar con {nextPendingMissionTitle}</span>
               <ArrowRight className="w-4 h-4 text-[#CFB07A]" />
@@ -104,7 +104,7 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
 
             <button
               onClick={onBackToHome}
-              className="inline-flex items-center gap-2 px-4 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs border border-white/20 transition"
+              className="inline-flex items-center gap-2 px-4 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs uppercase tracking-[0.06em] border border-white/20 transition"
             >
               <span>Volver al Inicio</span>
             </button>
@@ -116,10 +116,10 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
               Requisitos de Certificación Operación 2026
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
               Haz clic en cualquier misión para ingresar y completarla.
             </p>
           </div>
