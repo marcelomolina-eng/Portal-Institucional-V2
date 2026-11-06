@@ -14,8 +14,8 @@ import {
   ChevronRight,
   Shield,
   Heart,
-  Award
 } from 'lucide-react';
+import { MissionCheckpointFooter } from './MissionCheckpointFooter';
 
 interface Mission4RoleProps {
   commitmentRules: CommitmentRule[];
@@ -272,32 +272,15 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       </div>
 
       {/* Footer Checkpoint de la Misión */}
-      <div className="p-6 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-            <Award className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-900 text-sm">
-              ¡Has recorrido las 4 misiones de la Operación Informático!
-            </h4>
-            <p className="text-xs text-slate-500">
-              Ahora completa tus datos para emitir tu Diploma Oficial 2026 y responder la breve encuesta de inducción.
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => {
-            onComplete();
-            onNavigateNext();
-          }}
-          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#7A1C1C] hover:bg-[#5A1212] text-white font-bold text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center gap-2"
-        >
-          <span>Ir a Certificación Final</span>
-          <ArrowRight className="w-4 h-4 text-[#D4B26F]" />
-        </button>
-      </div>
+      <MissionCheckpointFooter
+        missionCode="Misión 04"
+        missionTitle="Mi Rol en Educar"
+        nextMissionTitle="Certificación Final"
+        isCompleted={isCompleted}
+        onComplete={onComplete}
+        onNavigateNext={onNavigateNext}
+        isFinalMission={true}
+      />
     </div>
   );
 };

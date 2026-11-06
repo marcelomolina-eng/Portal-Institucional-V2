@@ -18,6 +18,9 @@ interface HeaderProps {
   currentMission: MissionId;
   onSelectMission: (mission: MissionId) => void;
   progressPercent: number;
+  completedCount?: number;
+  totalRequired?: number;
+  isDiplomaUnlocked?: boolean;
   config: AppConfig;
   onOpenQrModal: () => void;
   onOpenAdminLogin: () => void;
@@ -29,6 +32,9 @@ export const Header: React.FC<HeaderProps> = ({
   currentMission,
   onSelectMission,
   progressPercent,
+  completedCount = 0,
+  totalRequired = 3,
+  isDiplomaUnlocked = false,
   config,
   onOpenQrModal,
   onOpenAdminLogin,
@@ -37,13 +43,18 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  const navItems: { id: MissionId; label: string; icon: React.ReactNode; shortLabel: string }[] = [
-    { id: 'home', label: 'Inicio', shortLabel: 'Inicio', icon: <Compass className="w-4 h-4" /> },
-    { id: 'mision1', label: 'Misión 01: Identidad', shortLabel: '01. Identidad', icon: <ShieldCheck className="w-4 h-4" /> },
-    { id: 'mision2', label: 'Misión 02: Esencia', shortLabel: '02. Esencia', icon: <Sparkles className="w-4 h-4" /> },
-    { id: 'mision3', label: 'Misión 03: Comunidad', shortLabel: '03. Comunidad', icon: <Users className="w-4 h-4" /> },
-    { id: 'mision4', label: 'Misión 04: Mi Rol', shortLabel: '04. Mi Rol', icon: <Compass className="w-4 h-4" /> },
-    { id: 'misionCumplida', label: 'Certificación', shortLabel: 'Diploma', icon: <Award className="w-4 h-4" /> },
+  const navItems: { id: MissionId; label: string; icon: React.ReactNode; isLocked?: boolean }[] = [
+    { id: 'home', label: 'Inicio', icon: <Compass className="w-4 h-4" /> },
+    { id: 'mision1', label: 'Misión 01: Identidad', icon: <ShieldCheck className="w-4 h-4" /> },
+    { id: 'mision2', label: 'Misión 02: Esencia', icon: <Sparkles className="w-4 h-4" /> },
+    { id: 'mision3', label: 'Misión 03: Comunidad', icon: <Users className="w-4 h-4" /> },
+    { id: 'mision4', label: 'Misión 04: Mi Rol', icon: <Compass className="w-4 h-4" /> },
+    { 
+      id: 'misionCumplida', 
+      label: 'Certificación', 
+      icon: isDiplomaUnlocked ? <Award className="w-4 h-4" /> : <Lock className="w-4 h-4 text-amber-400" />,
+      isLocked: !isDiplomaUnlocked
+    },
   ];
 
   return (
@@ -61,9 +72,11 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Right utility actions */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Progress Tracker Pill */}
-            <div className="hidden lg:flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-full border border-[#CFB07A]/50 text-xs shadow-inner">
-              <span className="text-[#CFB07A] font-semibold">Misión:</span>
-              <div className="w-20 bg-black/60 h-2 rounded-full overflow-hidden">
+            <div className="hidden sm:flex items-center gap-2 bg-black/45 px-3 py-1.5 rounded-full border border-[#CFB07A]/50 text-xs shadow-inner">
+              <span className="text-[#CFB07A] font-bold text-[11px] whitespace-nowrap">
+                Progreso: {completedCount}/{totalRequired} misiones completadas
+              </span>
+              <div className="w-16 bg-black/70 h-2 rounded-full overflow-hidden">
                 <div 
                   className="bg-gradient-to-r from-[#DE4034] via-[#CFB07A] to-[#01913F] h-full rounded-full transition-all duration-500"
                   style={{ width: `${progressPercent}%` }}
@@ -124,10 +137,17 @@ export const Header: React.FC<HeaderProps> = ({
                       : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  <span className={isActive ? 'text-[#1C1A17]' : 'text-[#CFB07A]'}>
+                  <span className={isActive ? 'text-[#1C1A17]' : item.isLocked ? 'text-amber-400' : 'text-[#CFB07A]'}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
+                  {item.isLocked && (
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
+                      isActive ? 'bg-[#1C1A17] text-[#CFB07A]' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                    }`}>
+                      Bloqueado
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -142,6 +162,20 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#24211D] border-t border-white/10 px-4 py-3 space-y-2">
+          {/* Mobile Progress Bar */}
+          <div className="p-3 rounded-xl bg-black/50 border border-[#CFB07A]/40 mb-2 space-y-1.5">
+            <div className="flex items-center justify-between text-xs font-bold text-[#CFB07A]">
+              <span>Progreso: {completedCount}/{totalRequired} misiones completadas</span>
+              <span>{progressPercent}%</span>
+            </div>
+            <div className="w-full bg-black/70 h-2 rounded-full overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-[#DE4034] via-[#CFB07A] to-[#01913F] h-full rounded-full transition-all duration-500"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+
           {navItems.map((item) => {
             const isActive = currentMission === item.id;
             return (
@@ -158,10 +192,15 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <span className={isActive ? 'text-[#1C1A17]' : 'text-[#CFB07A]'}>
+                  <span className={isActive ? 'text-[#1C1A17]' : item.isLocked ? 'text-amber-400' : 'text-[#CFB07A]'}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
+                  {item.isLocked && (
+                    <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-semibold">
+                      Bloqueado
+                    </span>
+                  )}
                 </div>
                 {isActive && <CheckCircle2 className="w-4 h-4 text-[#1C1A17]" />}
               </button>

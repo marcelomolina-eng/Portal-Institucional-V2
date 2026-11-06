@@ -20,16 +20,53 @@ import {
   Check,
   RotateCcw
 } from 'lucide-react';
+import { DiplomaLockedCard } from './DiplomaLockedCard';
+import { MissionProgressInfo } from '../hooks/useMissionProgress';
+import { MissionId } from '../types';
 
 interface MissionCompletedProps {
   onSaveDiploma: (diploma: DiplomaRecord) => void;
   onSaveFeedback: (feedback: FeedbackRecord) => void;
+  isDiplomaUnlocked?: boolean;
+  completedCount?: number;
+  totalRequired?: number;
+  progressPercent?: number;
+  requiredMissionsList?: MissionProgressInfo[];
+  nextPendingMission?: MissionId;
+  nextPendingMissionTitle?: string;
+  onNavigateToMission?: (id: MissionId) => void;
+  onBackToHome?: () => void;
 }
 
 export const MissionCompleted: React.FC<MissionCompletedProps> = ({
   onSaveDiploma,
-  onSaveFeedback
+  onSaveFeedback,
+  isDiplomaUnlocked = true,
+  completedCount = 3,
+  totalRequired = 3,
+  progressPercent = 100,
+  requiredMissionsList = [],
+  nextPendingMission = 'mision1',
+  nextPendingMissionTitle = 'Misión 01: Identidad Institucional',
+  onNavigateToMission = () => {},
+  onBackToHome = () => {}
 }) => {
+  // Si el diploma aún está bloqueado, mostrar la pantalla informativa
+  if (!isDiplomaUnlocked) {
+    return (
+      <DiplomaLockedCard
+        completedCount={completedCount}
+        totalRequired={totalRequired}
+        progressPercent={progressPercent}
+        requiredMissionsList={requiredMissionsList}
+        nextPendingMission={nextPendingMission}
+        nextPendingMissionTitle={nextPendingMissionTitle}
+        onNavigateToMission={onNavigateToMission}
+        onBackToHome={onBackToHome}
+      />
+    );
+  }
+
   // Diploma form state
   const [fullName, setFullName] = React.useState('');
   const [role, setRole] = React.useState('');

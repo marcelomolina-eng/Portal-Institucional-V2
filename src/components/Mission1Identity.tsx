@@ -17,6 +17,7 @@ import {
   Music
 } from 'lucide-react';
 import { HimnoPlayer } from './HimnoPlayer';
+import { MissionCheckpointFooter } from './MissionCheckpointFooter';
 
 interface Mission1IdentityProps {
   onComplete: () => void;
@@ -460,32 +461,14 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
       )}
 
       {/* Footer Checkpoint de la Misión */}
-      <div className="p-6 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-900 text-sm">
-              ¿Listo para dar el siguiente paso?
-            </h4>
-            <p className="text-xs text-slate-500">
-              Marca esta misión como leída y continúa con "Misión 02: Explorar nuestra esencia".
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => {
-            onComplete();
-            onNavigateNext();
-          }}
-          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#008751] hover:bg-[#007043] text-white font-bold text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center gap-2"
-        >
-          <span>Avanzar a Misión 02</span>
-          <ArrowRight className="w-4 h-4 text-[#D4B26F]" />
-        </button>
-      </div>
+      <MissionCheckpointFooter
+        missionCode="Misión 01"
+        missionTitle="Identidad Institucional"
+        nextMissionTitle="Misión 02: Esencia en Acción"
+        isCompleted={isCompleted}
+        onComplete={onComplete}
+        onNavigateNext={onNavigateNext}
+      />
     </div>
   );
 };

@@ -16,8 +16,8 @@ import {
   Sparkles,
   ChevronRight,
   ExternalLink,
-  UserCheck
 } from 'lucide-react';
+import { MissionCheckpointFooter } from './MissionCheckpointFooter';
 
 interface Mission3CommunityProps {
   authorities: Authority[];
@@ -468,32 +468,14 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
       )}
 
       {/* Footer Checkpoint de la Misión */}
-      <div className="p-6 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-900 text-sm">
-              Misión 03 completada
-            </h4>
-            <p className="text-xs text-slate-500">
-              Conoces al equipo de conducción y los canales oficiales. Ahora explora "Misión 04: Mi Rol en Educar".
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => {
-            onComplete();
-            onNavigateNext();
-          }}
-          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#008751] hover:bg-[#007043] text-white font-bold text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center gap-2"
-        >
-          <span>Avanzar a Misión 04</span>
-          <ArrowRight className="w-4 h-4 text-[#D4B26F]" />
-        </button>
-      </div>
+      <MissionCheckpointFooter
+        missionCode="Misión 03"
+        missionTitle="Comunidad Educativa"
+        nextMissionTitle="Misión 04: Mi Rol / Certificación"
+        isCompleted={isCompleted}
+        onComplete={onComplete}
+        onNavigateNext={onNavigateNext}
+      />
     </div>
   );
 };

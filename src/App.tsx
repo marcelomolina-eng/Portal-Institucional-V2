@@ -64,13 +64,22 @@ import { AdminLoginModal } from './components/AdminLoginModal';
 import { QrCodeModal } from './components/QrCodeModal';
 import { GasFilesViewer } from './components/GasFilesViewer';
 import { InstitutionalLogo } from './components/InstitutionalLogo';
+import { useMissionProgress } from './hooks/useMissionProgress';
 
 export default function App() {
   // Navigation & Mission state
   const [currentMission, setCurrentMission] = useState<MissionId>('home');
-  const [completedMissions, setCompletedMissions] = useState<Record<string, boolean>>(() => {
-    return safeLocalStorageGet('ci_completed_missions_2026', {});
-  });
+  const {
+    completedMissions,
+    markMissionCompleted,
+    requiredMissionsList,
+    completedCount,
+    totalRequired,
+    progressPercent,
+    isDiplomaUnlocked,
+    nextPendingMission,
+    nextPendingMissionTitle
+  } = useMissionProgress();
 
   // Data states (Supabase-first with institutional fallbacks)
   const [config, setConfig] = useState<AppConfig>(INITIAL_CONFIG);
@@ -94,11 +103,6 @@ export default function App() {
   // Modals state
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
-
-  // Sync session progress safely
-  useEffect(() => {
-    safeLocalStorageSet('ci_completed_missions_2026', completedMissions);
-  }, [completedMissions]);
 
   // Carga inicial desde Supabase y suscripciones en tiempo real (PostgreSQL CDC)
   useEffect(() => {
@@ -191,16 +195,9 @@ export default function App() {
     };
   }, []);
 
-  // Calculate mission progress percentage
-  const progressPercent = (() => {
-    const keys = ['mision1', 'mision2', 'mision3', 'mision4', 'misionCumplida'];
-    const done = keys.filter(k => completedMissions[k]).length;
-    return Math.round((done / keys.length) * 100);
-  })();
-
   // Mission completion handler
   const handleCompleteMission = (missionKey: string) => {
-    setCompletedMissions(prev => ({ ...prev, [missionKey]: true }));
+    markMissionCompleted(missionKey);
   };
 
   // Admin login handler
@@ -444,6 +441,9 @@ export default function App() {
           }
         }}
         progressPercent={progressPercent}
+        completedCount={completedCount}
+        totalRequired={totalRequired}
+        isDiplomaUnlocked={isDiplomaUnlocked}
         config={config}
         onOpenQrModal={() => setIsQrModalOpen(true)}
         onOpenAdminLogin={() => {
@@ -468,6 +468,11 @@ export default function App() {
             }}
             notices={notices}
             completedMissions={completedMissions}
+            completedCount={completedCount}
+            totalRequired={totalRequired}
+            progressPercent={progressPercent}
+            isDiplomaUnlocked={isDiplomaUnlocked}
+            nextPendingMissionTitle={nextPendingMissionTitle}
           />
         )}
 
@@ -524,6 +529,21 @@ export default function App() {
           <MissionCompleted
             onSaveDiploma={handleSaveDiploma}
             onSaveFeedback={handleSaveFeedback}
+            isDiplomaUnlocked={isDiplomaUnlocked}
+            completedCount={completedCount}
+            totalRequired={totalRequired}
+            progressPercent={progressPercent}
+            requiredMissionsList={requiredMissionsList}
+            nextPendingMission={nextPendingMission}
+            nextPendingMissionTitle={nextPendingMissionTitle}
+            onNavigateToMission={(id) => {
+              setCurrentMission(id);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onBackToHome={() => {
+              setCurrentMission('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
 

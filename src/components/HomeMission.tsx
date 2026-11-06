@@ -12,7 +12,8 @@ import {
   BellRing, 
   CheckCircle,
   BookOpen,
-  CalendarDays
+  CalendarDays,
+  Lock
 } from 'lucide-react';
 
 interface HomeMissionProps {
@@ -20,13 +21,23 @@ interface HomeMissionProps {
   onNavigate: (mission: MissionId) => void;
   notices: NoticeItem[];
   completedMissions: Record<string, boolean>;
+  completedCount?: number;
+  totalRequired?: number;
+  progressPercent?: number;
+  isDiplomaUnlocked?: boolean;
+  nextPendingMissionTitle?: string;
 }
 
 export const HomeMission: React.FC<HomeMissionProps> = ({
   config,
   onNavigate,
   notices,
-  completedMissions
+  completedMissions,
+  completedCount = 0,
+  totalRequired = 3,
+  progressPercent = 0,
+  isDiplomaUnlocked = false,
+  nextPendingMissionTitle = 'Misión 01: Identidad'
 }) => {
   const [videoModalOpen, setVideoModalOpen] = React.useState(false);
 
@@ -128,10 +139,18 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
 
               <button
                 onClick={() => onNavigate('misionCumplida')}
-                className="inline-flex items-center gap-2 px-4 py-3.5 rounded-xl bg-[#DE4034]/20 hover:bg-[#DE4034]/40 text-[#F7F3EA] font-medium text-sm border border-[#DE4034]/50 transition"
+                className={`inline-flex items-center gap-2 px-4 py-3.5 rounded-xl font-medium text-sm border transition ${
+                  isDiplomaUnlocked
+                    ? 'bg-[#01913F]/30 hover:bg-[#01913F]/50 text-[#F7F3EA] border-[#01913F]/60'
+                    : 'bg-black/40 hover:bg-black/60 text-[#CFB07A] border-[#CFB07A]/50'
+                }`}
               >
-                <Award className="w-4 h-4 text-[#CFB07A]" />
-                <span>Certificación</span>
+                {isDiplomaUnlocked ? (
+                  <Award className="w-4 h-4 text-[#CFB07A]" />
+                ) : (
+                  <Lock className="w-4 h-4 text-amber-400" />
+                )}
+                <span>{isDiplomaUnlocked ? 'Certificación' : 'Certificación (Bloqueada)'}</span>
               </button>
             </div>
           </div>
@@ -198,17 +217,31 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
 
       {/* MAPA DE LAS 4 MISIONES DEL ONBOARDING */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
               <span>El Mapa de tu Misión</span>
-              <span className="text-xs font-semibold bg-[#7A1C1C] text-white px-2 py-0.5 rounded-md">
+              <span className="text-xs font-semibold bg-[#DE4034] text-white px-2 py-0.5 rounded-md">
                 Paso a Paso
               </span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
               Explora cada capítulo para desbloquear tu Certificado Oficial de Incorporación 2026.
             </p>
+          </div>
+
+          {/* Indicador Visual de Progreso Solicitado */}
+          <div className="flex items-center gap-2.5 bg-slate-100/90 px-3.5 py-1.5 rounded-2xl border border-slate-200 text-xs shadow-xs self-start sm:self-auto">
+            <span className="font-bold text-slate-800">
+              Progreso: {completedCount}/{totalRequired} misiones completadas
+            </span>
+            <div className="w-16 bg-slate-300 h-2 rounded-full overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-[#DE4034] via-[#CFB07A] to-[#01913F] h-full rounded-full transition-all duration-500"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <span className="font-mono text-[11px] font-bold text-slate-600">{progressPercent}%</span>
           </div>
         </div>
 
@@ -266,32 +299,59 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
       </section>
 
       {/* CALLOUT: CERTIFICACIÓN FINAL */}
-      <section className="bg-gradient-to-r from-amber-50 via-amber-100/60 to-yellow-50 rounded-2xl p-6 border-2 border-[#D4B26F] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+      <section className={`rounded-3xl p-6 sm:p-7 border-2 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 ${
+        isDiplomaUnlocked
+          ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100/60 border-emerald-300'
+          : 'bg-gradient-to-r from-amber-50 via-amber-100/60 to-yellow-50 border-[#D4B26F]'
+      }`}>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#7A1C1C] text-[#D4B26F] flex items-center justify-center flex-shrink-0 shadow-md">
-            <Award className="w-8 h-8" />
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md ${
+            isDiplomaUnlocked
+              ? 'bg-[#01913F] text-white'
+              : 'bg-[#1C1A17] text-[#CFB07A] border border-[#CFB07A]/40'
+          }`}>
+            {isDiplomaUnlocked ? <Award className="w-8 h-8" /> : <Lock className="w-7 h-7 text-amber-400" />}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase bg-[#D4B26F] text-[#5A1212] px-2 py-0.5 rounded">
-                Meta Final
+              <span className={`text-xs font-bold uppercase px-2.5 py-0.5 rounded-full ${
+                isDiplomaUnlocked
+                  ? 'bg-emerald-200 text-emerald-950 font-extrabold'
+                  : 'bg-amber-200/80 text-amber-900 font-extrabold'
+              }`}>
+                {isDiplomaUnlocked ? '¡Meta Desbloqueada!' : 'Meta Final (Bloqueada)'}
               </span>
               <h3 className="text-lg font-bold text-slate-900">
                 Certificación y Diploma Oficial 2026
               </h3>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
-              Al concluir tu recorrido por las 4 misiones, podrás generar tu diploma oficial, registrado automáticamente en Google Sheets y listo para descargar o imprimir.
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl leading-relaxed">
+              {isDiplomaUnlocked
+                ? '¡Felicitaciones! Has completado el recorrido formativo. Ya puedes generar y descargar tu diploma oficial registrado.'
+                : '¡Casi llegas! Completa las misiones 01, 02 y 03 para desbloquear tu Certificado Institucional con folio criptográfico único.'}
             </p>
           </div>
         </div>
 
         <button
           onClick={() => onNavigate('misionCumplida')}
-          className="whitespace-nowrap px-6 py-3 rounded-xl bg-[#7A1C1C] hover:bg-[#5A1212] text-white font-bold text-sm shadow-md transition flex items-center gap-2"
+          className={`whitespace-nowrap px-6 py-3 rounded-xl font-bold text-sm shadow-md transition flex items-center gap-2 ${
+            isDiplomaUnlocked
+              ? 'bg-[#01913F] hover:bg-[#007031] text-white'
+              : 'bg-[#1C1A17] hover:bg-[#2A1513] text-[#CFB07A] border border-[#CFB07A]/40'
+          }`}
         >
-          <span>Ir a Certificación</span>
-          <ArrowRight className="w-4 h-4 text-[#D4B26F]" />
+          {isDiplomaUnlocked ? (
+            <>
+              <span>Obtener mi Diploma</span>
+              <Award className="w-4 h-4 text-[#CFB07A]" />
+            </>
+          ) : (
+            <>
+              <Lock className="w-4 h-4 text-amber-400" />
+              <span>Ver Estado de Certificación</span>
+            </>
+          )}
         </button>
       </section>
 
