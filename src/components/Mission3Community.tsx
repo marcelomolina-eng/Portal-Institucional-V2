@@ -198,7 +198,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left line-clamp-3">
+                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left line-clamp-3 whitespace-pre-wrap">
                     {auth.bio}
                   </p>
                 </div>
@@ -265,7 +265,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                           </h3>
                         </div>
                         {level.description && (
-                          <span className="text-xs text-slate-500 italic hidden md:inline">
+                          <span className="text-xs text-slate-500 italic hidden md:inline whitespace-pre-wrap">
                             {level.description}
                           </span>
                         )}
@@ -296,7 +296,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                                 {node.title}
                               </h4>
                               {node.description && (
-                                <p className="text-xs text-slate-500 leading-relaxed pt-1">
+                                <p className="text-xs text-slate-500 leading-relaxed pt-1 whitespace-pre-wrap">
                                   {node.description}
                                 </p>
                               )}
@@ -431,9 +431,9 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
               </button>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
               <span className="font-bold text-slate-900 block mb-1">Acerca de su función:</span>
-              {selectedAuthority.bio}
+              <p className="whitespace-pre-wrap">{selectedAuthority.bio}</p>
             </div>
 
             <div className="space-y-2 text-xs">

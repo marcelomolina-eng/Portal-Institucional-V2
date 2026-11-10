@@ -391,7 +391,7 @@ export const AdminOrganigram: React.FC<AdminOrganigramProps> = ({
                         </span>
                         <h4 className="font-bold text-slate-800 text-sm">{level.levelName}</h4>
                       </div>
-                      <span className="text-xs text-slate-400 italic hidden sm:inline">{level.description}</span>
+                      <span className="text-xs text-slate-400 italic hidden sm:inline whitespace-pre-wrap">{level.description}</span>
                     </div>
 
                     <div className={`grid gap-4 ${
@@ -415,7 +415,7 @@ export const AdminOrganigram: React.FC<AdminOrganigramProps> = ({
                           </span>
                           <h5 className="font-bold text-slate-900 text-sm leading-snug">{node.title}</h5>
                           {node.description && (
-                            <p className="text-xs text-slate-500 leading-relaxed">{node.description}</p>
+                            <p className="text-xs text-slate-500 leading-relaxed whitespace-pre-wrap">{node.description}</p>
                           )}
                           {node.responsibles.length > 0 && (
                             <div className="pt-2 border-t border-slate-100 space-y-1.5">
@@ -627,7 +627,7 @@ export const AdminOrganigram: React.FC<AdminOrganigramProps> = ({
                               </h4>
 
                               {node.description && (
-                                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed whitespace-pre-wrap">
                                   {node.description}
                                 </p>
                               )}
@@ -756,14 +756,14 @@ export const AdminOrganigram: React.FC<AdminOrganigramProps> = ({
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">
-                  Descripción / Alcance General
+                  Descripción / Alcance General (Soporta múltiples párrafos)
                 </label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   value={levelFormData.description}
                   onChange={(e) => setLevelFormData(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Describe la función central de este nivel en el colegio..."
-                  className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#DE4034] resize-none"
+                  className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#DE4034] resize-y font-sans whitespace-pre-wrap"
                 />
               </div>
 
@@ -861,14 +861,14 @@ export const AdminOrganigram: React.FC<AdminOrganigramProps> = ({
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">
-                  Descripción o Funciones del Área
+                  Descripción o Funciones del Área (Soporta múltiples párrafos)
                 </label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   value={nodeFormData.description}
                   onChange={(e) => setNodeFormData(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Supervisión curricular, proyectos ABP, acompañamiento docente y vínculo con familias..."
-                  className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01913F] resize-none"
+                  className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01913F] resize-y font-sans whitespace-pre-wrap"
                 />
               </div>
 

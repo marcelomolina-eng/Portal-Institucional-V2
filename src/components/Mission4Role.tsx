@@ -171,7 +171,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
               {rule.highlight}
             </div>
 
-            <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-wrap">
               {rule.description}
             </p>
 

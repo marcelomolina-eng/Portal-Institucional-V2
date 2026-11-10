@@ -97,9 +97,14 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
                 Descubrir Quiénes Somos
               </h1>
-              <p className="text-base text-slate-100 max-w-[65ch] leading-[1.5] text-left">
-                Nuestras raíces, la filosofía educativa y el significado de nuestro escudo institucional bajo el lema <span className="font-serif-title text-[#CFB07A] font-bold">"VERITA VINCI"</span>.
-              </p>
+              <div className="space-y-1 max-w-[65ch] text-left">
+                <p className="text-base font-bold text-[#CFB07A]">
+                  El comienzo de nuestra historia
+                </p>
+                <p className="text-base text-slate-100 leading-[1.5] whitespace-pre-wrap">
+                  Todo lo que somos tiene un origen. Descubrí cómo nació el Colegio Informático y los valores que nos unen. Hoy, vos también comenzás a ser parte de esta historia.
+                </p>
+              </div>
             </div>
           </div>
 

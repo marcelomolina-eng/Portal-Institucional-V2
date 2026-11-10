@@ -544,7 +544,7 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
                 </div>
 
                 {/* Biografía / Funciones */}
-                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed bg-slate-50/70 p-3 rounded-xl border border-slate-100 whitespace-pre-wrap">
                   {auth.bio}
                 </p>
 
@@ -830,14 +830,14 @@ export const AdminDirectivos: React.FC<AdminDirectivosProps> = ({
               {/* Biografía / Descripción de funciones */}
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">
-                  Biografía / Responsabilidades Principales
+                  Biografía / Responsabilidades Principales (Soporta múltiples párrafos)
                 </label>
                 <textarea
-                  rows={3}
+                  rows={4}
                   value={formData.bio}
                   onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  placeholder="Describe brevemente su rol formativo, experiencia y proyectos que lidera en la comunidad..."
-                  className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01913F] leading-relaxed resize-none"
+                  placeholder="Describe su rol formativo, experiencia, responsabilidades y proyectos que lidera en la comunidad..."
+                  className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01913F] leading-relaxed resize-y font-sans whitespace-pre-wrap"
                 />
               </div>
 

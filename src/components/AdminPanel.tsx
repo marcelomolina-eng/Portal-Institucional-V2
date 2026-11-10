@@ -600,7 +600,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </div>
 
                 <h4 className="font-bold text-slate-900 text-sm">{evt.title}</h4>
-                <p className="text-xs text-slate-600">{evt.description}</p>
+                <p className="text-xs text-slate-600 whitespace-pre-wrap">{evt.description}</p>
                 <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200">
                   Responsable: <span className="font-semibold text-slate-700">{evt.responsible}</span>
                 </div>
@@ -653,7 +653,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </div>
 
                 <h4 className="font-bold text-slate-900 text-sm">{n.title}</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">{n.content}</p>
+                <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">{n.content}</p>
                 <div className="pt-2 border-t border-slate-200 text-[11px] text-slate-500">
                   Emitido por: <span className="font-semibold text-slate-700">{n.author}</span>
                 </div>
@@ -728,7 +728,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     <span className="text-[#008751] font-semibold">Útil: {f.mostUsefulSection}</span>
                   </div>
                   {f.suggestions && (
-                    <p className="text-xs text-slate-700 italic bg-white p-2.5 rounded-lg border border-slate-200">
+                    <p className="text-xs text-slate-700 italic bg-white p-2.5 rounded-lg border border-slate-200 whitespace-pre-wrap">
                       "{f.suggestions}"
                     </p>
                   )}
@@ -918,13 +918,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Mensaje de Bienvenida Protagonista
+                  Mensaje de Bienvenida Protagonista (Soporte multilínea / párrafos)
                 </label>
                 <textarea
-                  rows={3}
+                  rows={6}
                   value={customWelcome}
                   onChange={(e) => setCustomWelcome(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#DE4034] resize-none leading-relaxed"
+                  placeholder="Mensaje inspirador para el talento que inicia..."
+                  className="w-full p-3 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00875A] resize-y leading-relaxed font-sans whitespace-pre-wrap"
                 />
               </div>
 
@@ -1166,12 +1167,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Descripción Breve</label>
+                <label className="block font-bold text-slate-700 mb-1">Descripción Breve (Soporta múltiples párrafos)</label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   value={newEvent.description}
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                  className="w-full p-2 rounded-lg border border-slate-200"
+                  placeholder="Detalles sobre el evento, horarios, lugar..."
+                  className="w-full p-2.5 rounded-lg border border-slate-200 text-xs resize-y leading-relaxed font-sans"
                 />
               </div>
 
@@ -1218,14 +1220,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Contenido *</label>
+                <label className="block font-bold text-slate-700 mb-1">Contenido (Soporta múltiples párrafos) *</label>
                 <textarea
-                  rows={3}
+                  rows={5}
                   required
-                  placeholder="Detalla el aviso..."
+                  placeholder="Escribe el cuerpo del aviso o comunicado oficial..."
                   value={newNotice.content}
                   onChange={(e) => setNewNotice({ ...newNotice, content: e.target.value })}
-                  className="w-full p-2 rounded-lg border border-slate-200"
+                  className="w-full p-2.5 rounded-lg border border-slate-200 text-xs resize-y leading-relaxed font-sans whitespace-pre-wrap"
                 />
               </div>
 

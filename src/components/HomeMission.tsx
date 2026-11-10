@@ -46,8 +46,8 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
       id: 'mision1' as MissionId,
       code: 'MISIÓN 01',
       title: 'Descubrir quiénes somos',
-      subtitle: 'Nuestra Identidad Institucional',
-      desc: 'Conoce los orígenes del Colegio Informático, nuestra filosofía educativa, misión, visión y los valores que forjan nuestro día a día.',
+      subtitle: 'El comienzo de nuestra historia',
+      desc: 'Todo lo que somos tiene un origen. Descubrí cómo nació el Colegio Informático y los valores que nos unen. Hoy, vos también comenzás a ser parte de esta historia.',
       icon: <ShieldCheck className="w-6 h-6 text-[#7A1C1C]" />,
       badge: 'Historia & Pilares',
       bgGrad: 'from-amber-50 to-orange-50 border-amber-200'
@@ -101,21 +101,33 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
               ¡Bienvenido al <span className="text-[#DE4034]">Colegio</span> <span className="text-[#01913F]">Informático</span>!
             </h1>
             
-            <p className="text-base text-slate-100 font-normal leading-[1.5] max-w-[65ch] text-left">
-              Nos alegra que hoy comiences a ser parte de nuestra comunidad. Bajo nuestro lema <strong className="text-[#CFB07A] font-serif-title font-bold">"VERITA VINCI"</strong> (La verdad triunfa), cada paso que des aquí sumará a la misión colectiva de educar con calidez, rigor y vanguardia tecnológica.
-            </p>
+            <div className="space-y-3.5 max-w-[65ch] text-left">
+              <p className="text-base text-slate-100 font-normal leading-[1.5] whitespace-pre-wrap">
+                Nos alegra que hoy comiences a formar parte de nuestra comunidad. Bajo nuestro lema <strong className="text-[#CFB07A] font-serif-title font-bold">VERITA VINCI</strong> (La verdad triunfa), nos une una misma misión: educar con calidad, rigor y vanguardia tecnológica.
+              </p>
+              <p className="text-base text-slate-100 font-normal leading-[1.5] whitespace-pre-wrap">
+                Cada persona que se suma aporta algo único. Por eso, queremos invitarte a conocer nuestra historia, descubrir nuestra cultura, explorar nuestros proyectos y todo aquello que nos identifica.
+              </p>
+            </div>
 
-            {/* Presentación del Programa */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-[#CFB07A]/40 backdrop-blur-sm max-w-[65ch]">
-              <div className="text-xs font-bold uppercase tracking-[0.06em] text-[#CFB07A] mb-1 text-left">
-                Nombre Clave de la Misión
+            {/* Presentación del Programa: OPERACIÓN INFORMÁTICO */}
+            <div className="p-5 rounded-2xl bg-black/40 border border-[#CFB07A]/40 backdrop-blur-sm max-w-[65ch] space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-[0.08em] text-[#CFB07A] font-mono">
+                  OPERACIÓN INFORMÁTICO
+                </span>
+                <span className="text-[11px] bg-[#01913F] px-2 py-0.5 rounded text-white font-mono font-bold tracking-normal">
+                  2026
+                </span>
               </div>
-              <div className="text-lg sm:text-xl font-bold text-white flex items-center gap-2 text-left">
-                <span>Operación Informático</span>
-                <span className="text-xs bg-[#01913F] px-2 py-0.5 rounded text-white font-mono tracking-normal">2026</span>
+              <div className="text-lg sm:text-xl font-bold text-white text-left">
+                Una misión: descubrir todo lo que nos une.
               </div>
-              <p className="text-sm text-[#F7F3EA] mt-1 italic leading-[1.5] text-left">
-                "Una misión: descubrir todo lo que nos une."
+              <p className="text-sm text-[#F7F3EA] leading-[1.5] text-left whitespace-pre-wrap">
+                A través de este recorrido, vas a encontrar diferentes misiones que te permitirán acercarte a nuestra institución y conocer a las personas que hacen posible esta comunidad.
+              </p>
+              <p className="text-sm font-semibold text-[#CFB07A] pt-1 text-left whitespace-pre-wrap">
+                ¡Nos alegra compartir este comienzo con vos!
               </p>
             </div>
 
@@ -205,7 +217,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                   )}
                 </div>
                 <h4 className="font-bold text-slate-900 text-sm line-clamp-1">{n.title}</h4>
-                <p className="text-slate-600 line-clamp-2 leading-relaxed">{n.content}</p>
+                <p className="text-slate-600 line-clamp-2 leading-relaxed whitespace-pre-wrap">{n.content}</p>
                 <div className="pt-1 text-[11px] font-medium text-slate-500">
                   Por: <span className="text-slate-700 font-semibold">{n.author}</span>
                 </div>
@@ -283,7 +295,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                     </p>
                   </div>
 
-                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left">
+                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left whitespace-pre-wrap">
                     {m.desc}
                   </p>
                 </div>

@@ -201,7 +201,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left line-clamp-3">
+                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left line-clamp-3 whitespace-pre-wrap">
                     {item.queHacemos}
                   </p>
 
@@ -305,7 +305,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                     {evt.title}
                   </h4>
 
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">
                     {evt.description}
                   </p>
 
@@ -365,7 +365,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#008751] flex items-center gap-1.5">
                   <HelpCircle className="w-4 h-4" /> 1. ¿Qué Hacemos?
                 </h4>
-                <p className="text-sm text-slate-700 leading-relaxed">
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {selectedInitiative.queHacemos}
                 </p>
               </div>
@@ -375,7 +375,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#7A1C1C] flex items-center gap-1.5">
                   <HeartHandshake className="w-4 h-4" /> 2. ¿Por Qué Lo Hacemos?
                 </h4>
-                <p className="text-sm text-slate-700 leading-relaxed">
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {selectedInitiative.porqueLoHacemos}
                 </p>
               </div>
@@ -385,7 +385,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#B45309] flex items-center gap-1.5">
                   <Award className="w-4 h-4" /> 3. ¿Qué Valor Aporta?
                 </h4>
-                <p className="text-sm text-slate-700 leading-relaxed">
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {selectedInitiative.queValorAporta}
                 </p>
               </div>

@@ -18,7 +18,18 @@ export const INITIAL_CONFIG: AppConfig = {
   primaryColor: '#DE4034', // Rojo carmesí del escudo
   secondaryColor: '#01913F', // Verde institucional del escudo
   accentGold: '#CFB07A', // Dorado arena / ocre del escudo
-  welcomeMessage: '¡Bienvenido al Colegio Informático! Nos alegra que hoy comiences a ser parte de nuestra comunidad. Bajo el lema "Verita Vinci" (La verdad triunfa), cada paso que des aquí sumará a la misión colectiva de transformar vidas a través del aprendizaje, la calidez humana y la innovación.',
+  welcomeMessage: `¡Bienvenido al Colegio Informático!
+
+Nos alegra que hoy comiences a formar parte de nuestra comunidad. Bajo nuestro lema VERITA VINCI (La verdad triunfa), nos une una misma misión: educar con calidad, rigor y vanguardia tecnológica.
+
+Cada persona que se suma aporta algo único. Por eso, queremos invitarte a conocer nuestra historia, descubrir nuestra cultura, explorar nuestros proyectos y todo aquello que nos identifica.
+
+OPERACIÓN INFORMÁTICO
+Una misión: descubrir todo lo que nos une.
+
+A través de este recorrido, vas a encontrar diferentes misiones que te permitirán acercarte a nuestra institución y conocer a las personas que hacen posible esta comunidad.
+
+¡Nos alegra compartir este comienzo con vos!`,
   missionTeaserDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v'
 };
 
