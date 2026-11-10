@@ -14,7 +14,21 @@ import {
   Calendar,
   Layers,
   Sparkles,
-  Music
+  Music,
+  Scale,
+  HeartHandshake,
+  Users,
+  Shield,
+  Globe,
+  Share2,
+  Mountain,
+  Smile,
+  BadgeCheck,
+  Compass,
+  Shuffle,
+  Trees,
+  Rocket,
+  Quote
 } from 'lucide-react';
 import { HimnoPlayer } from './HimnoPlayer';
 import { MissionCheckpointFooter } from './MissionCheckpointFooter';
@@ -35,24 +49,94 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
 
   const valores = [
     {
-      title: 'Innovación con Propósito',
-      desc: 'La tecnología no es un fin en sí mismo, sino el medio para potenciar la curiosidad, el pensamiento crítico y el impacto humano positivo.',
-      icon: <Lightbulb className="w-5 h-5 text-[#008751]" />
+      title: 'Ética',
+      desc: 'Principio rector de todas nuestras acciones, decisiones y relaciones en la comunidad educativa.',
+      icon: <Scale className="w-5 h-5 text-[#DE4034]" />
     },
     {
-      title: 'Calidez & Empatía',
-      desc: 'Formamos una comunidad donde cada persona es escuchada por su nombre. La cercanía en el trato diario define nuestra convivencia.',
-      icon: <Heart className="w-5 h-5 text-[#8B0000]" />
+      title: 'Respeto',
+      desc: 'Reconocimiento de la dignidad, la diversidad y el valor inherente de cada persona.',
+      icon: <HeartHandshake className="w-5 h-5 text-[#00875A]" />
     },
     {
-      title: 'Excelencia y Rigor',
-      desc: 'Promovemos el gusto por el trabajo bien hecho, la superación continua y la pasión por enseñar y aprender.',
-      icon: <Target className="w-5 h-5 text-[#D4B26F]" />
+      title: 'Inclusión',
+      desc: 'Espacio abierto y acogedor donde cada estudiante y familia encuentra contención y oportunidades.',
+      icon: <Users className="w-5 h-5 text-[#1E3A8A]" />
     },
     {
-      title: 'Integridad y Ciudadanía',
-      desc: 'Educamos en la honestidad, la responsabilidad cívica y el compromiso ético ante la sociedad y el entorno.',
-      icon: <ShieldCheck className="w-5 h-5 text-[#1E3A8A]" />
+      title: 'Justicia',
+      desc: 'Equidad, rectitud y trato imparcial en cada proceso pedagógico y de convivencia escolar.',
+      icon: <Scale className="w-5 h-5 text-[#CFB07A]" />
+    },
+    {
+      title: 'Responsabilidad',
+      desc: 'Conciencia del deber cumplido, el compromiso colectivo y el cuidado atento de los demás.',
+      icon: <CheckCircle2 className="w-5 h-5 text-[#00875A]" />
+    },
+    {
+      title: 'Honestidad',
+      desc: 'Coherencia, sinceridad y transparencia entre lo que pensamos, decimos y realizamos.',
+      icon: <Shield className="w-5 h-5 text-[#DE4034]" />
+    },
+    {
+      title: 'Innovación',
+      desc: 'Vanguardia pedagógica y tecnológica con propósito humano para transformar el aprendizaje.',
+      icon: <Lightbulb className="w-5 h-5 text-[#EAB308]" />
+    },
+    {
+      title: 'Compromiso Social',
+      desc: 'Formación de líderes con vocación solidaria, capaces de generar un impacto positivo duradero.',
+      icon: <Globe className="w-5 h-5 text-[#1E3A8A]" />
+    },
+    {
+      title: 'Solidaridad',
+      desc: 'Sensibilidad activa y empatía para brindar apoyo mutuo, acompañar y construir juntos.',
+      icon: <Heart className="w-5 h-5 text-[#DE4034]" />
+    },
+    {
+      title: 'Cooperación',
+      desc: 'Trabajo en equipo, diálogo constructivo y sinergia para alcanzar metas compartidas.',
+      icon: <Share2 className="w-5 h-5 text-[#00875A]" />
+    },
+    {
+      title: 'Perseverancia',
+      desc: 'Constancia, esfuerzo y resiliencia para superar obstáculos y alcanzar el máximo potencial.',
+      icon: <Mountain className="w-5 h-5 text-[#B45309]" />
+    },
+    {
+      title: 'Humildad',
+      desc: 'Capacidad de escuchar, aprender de las experiencias y valorar sinceramente el aporte del otro.',
+      icon: <Smile className="w-5 h-5 text-[#00875A]" />
+    },
+    {
+      title: 'Identidad',
+      desc: 'Orgullo por nuestras raíces, la historia institucional y nuestro lema Verita Vinci.',
+      icon: <BadgeCheck className="w-5 h-5 text-[#CFB07A]" />
+    },
+    {
+      title: 'Pertenencia',
+      desc: 'Vínculo afectivo y orgullo de formar parte de la gran familia del Colegio Informático y Educar SRL.',
+      icon: <Sparkles className="w-5 h-5 text-[#00875A]" />
+    },
+    {
+      title: 'Autonomía',
+      desc: 'Estímulo al pensamiento crítico, la iniciativa propia y la toma de decisiones con libertad.',
+      icon: <Compass className="w-5 h-5 text-[#1E3A8A]" />
+    },
+    {
+      title: 'Flexibilidad',
+      desc: 'Capacidad de adaptación activa y constructiva frente a los desafíos dinámicos de un mundo global.',
+      icon: <Shuffle className="w-5 h-5 text-[#7C3AED]" />
+    },
+    {
+      title: 'Medio Ambiente',
+      desc: 'Conciencia ecológica, respeto por la naturaleza y cuidado sustentable de nuestra casa común.',
+      icon: <Trees className="w-5 h-5 text-[#00875A]" />
+    },
+    {
+      title: 'Trascendencia',
+      desc: 'Huella formativa y legado ético que perdura en el tiempo y mejora la sociedad del NEA.',
+      icon: <Rocket className="w-5 h-5 text-[#DE4034]" />
     }
   ];
 
@@ -192,8 +276,8 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               <h2 className="text-[1.5rem] font-bold text-slate-900 mt-1 mb-3 leading-[1.25] text-left">
                 Misión Institucional
               </h2>
-              <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left">
-                Brindar una formación integral de excelencia que conjugue una sólida base académica y humana con la vanguardia científica y tecnológica, preparando a niños y jóvenes con valores cívicos, pensamiento crítico y sensibilidad social para transformar su entorno con libertad y responsabilidad.
+              <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left whitespace-pre-wrap">
+                Desarrollar el máximo potencial de nuestros estudiantes, desde el nivel inicial hasta su graduación, a través de una educación integral, innovadora e inclusiva que combina la excelencia académica con la educación emocional y el desarrollo de valores, para formar líderes capaces de generar un impacto positivo y duradero en la sociedad. Siendo un espacio de encuentro, contención y crecimiento.
               </p>
             </div>
 
@@ -208,8 +292,8 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               <h2 className="text-[1.5rem] font-bold text-slate-900 mt-1 mb-3 leading-[1.25] text-left">
                 Visión Institucional
               </h2>
-              <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left">
-                Ser la comunidad educativa referente en el nordeste argentino en innovación pedagógica, liderazgo ético e inclusión real, reconocida por la calidad humana de sus egresados, la excelencia de sus educadores y su capacidad constante para anticipar el futuro.
+              <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left whitespace-pre-wrap">
+                Ser la empresa educativa líder y el principal referente en la innovación y calidad humana del Nordeste Argentino (NEA), reconocida por ofrecer una trayectoria formativa integral y de vanguardia que prepara a los estudiantes para un mundo global, generando un impacto positivo que mejora la calidad de vida de la sociedad y de la comunidad.
               </p>
             </div>
           </div>
@@ -303,34 +387,62 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
             </div>
           </div>
 
-          {/* VALORES INSTITUCIONALES */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
-            <div className="border-b border-slate-100 pb-3">
-              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#00602A] font-mono">
-                Pilares Formativos
+          {/* VALORES INSTITUCIONALES (18 VALORES) */}
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+            <div className="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#00875A] font-mono">
+                  Pilares Formativos
+                </span>
+                <h3 className="text-[1.125rem] font-bold text-slate-900 mt-0.5 leading-[1.3] text-left">
+                  18 Valores Institucionales de Nuestra Comunidad
+                </h3>
+                <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
+                  Principios rectores que guían nuestra labor diaria con los estudiantes, las familias y el equipo educador.
+                </p>
+              </div>
+              <span className="self-start sm:self-center px-3 py-1 rounded-full bg-emerald-50 text-[#00875A] border border-emerald-200 text-xs font-bold shrink-0">
+                18 Principios Rectores
               </span>
-              <h3 className="text-[1.125rem] font-bold text-slate-900 mt-0.5 leading-[1.3] text-left">
-                Valores Institucionales del Colegio Informático
-              </h3>
-              <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
-                Principios rectores que guían nuestra labor diaria con los estudiantes y las familias.
-              </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
               {valores.map((v, i) => (
-                <div key={i} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-[#CFB07A] transition space-y-2">
-                  <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-xs">
-                    {v.icon}
+                <div 
+                  key={i} 
+                  className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/90 hover:border-[#CFB07A] hover:bg-white hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-2 group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+                      {v.icon}
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 font-bold">
+                      #{String(i + 1).padStart(2, '0')}
+                    </span>
                   </div>
-                  <h4 className="font-bold text-slate-900 text-sm leading-[1.35] text-left">
-                    {v.title}
-                  </h4>
-                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left">
-                    {v.desc}
-                  </p>
+                  <div>
+                    <h4 className="font-extrabold text-slate-900 text-sm leading-[1.3] text-left">
+                      {v.title}
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed text-left mt-1">
+                      {v.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
+            </div>
+
+            {/* FRASE DESTACADA FINAL */}
+            <div className="rounded-2xl p-6 sm:p-8 bg-gradient-to-r from-[#1C1A17] via-[#2A1513] to-[#12231A] text-white border-2 border-[#CFB07A] shadow-xl relative overflow-hidden text-center space-y-3 mt-6">
+              <div className="w-10 h-10 rounded-full bg-[#CFB07A]/20 text-[#CFB07A] flex items-center justify-center mx-auto border border-[#CFB07A]/40">
+                <Quote className="w-5 h-5 fill-current" />
+              </div>
+              <blockquote className="text-base sm:text-xl font-serif-title font-bold text-white max-w-[55ch] mx-auto leading-relaxed">
+                "Somos más que una institución educativa. Somos el lugar donde el futuro del NEA comienza a escribirse."
+              </blockquote>
+              <p className="text-xs sm:text-sm font-bold text-[#CFB07A] uppercase tracking-wider font-mono">
+                — Socios Fundadores, EDUCAR SRL
+              </p>
             </div>
           </div>
 

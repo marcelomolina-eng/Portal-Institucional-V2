@@ -16,12 +16,22 @@ import {
   Sparkles,
   ChevronRight,
   ExternalLink,
+  Maximize2,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  GraduationCap,
+  X,
+  ImageIcon,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { MissionCheckpointFooter } from './MissionCheckpointFooter';
+import { getOrganigramaImageUrl } from '../lib/supabase';
 
 interface Mission3CommunityProps {
   authorities: Authority[];
-  organigramLevels: OrganigramLevel[];
+  organigramLevels?: OrganigramLevel[];
   onComplete: () => void;
   onNavigateNext: () => void;
   isCompleted: boolean;
@@ -29,13 +39,45 @@ interface Mission3CommunityProps {
 
 export const Mission3Community: React.FC<Mission3CommunityProps> = ({
   authorities,
-  organigramLevels,
+  organigramLevels = [],
   onComplete,
   onNavigateNext,
   isCompleted
 }) => {
   const [selectedAuthority, setSelectedAuthority] = React.useState<Authority | null>(null);
   const [activeTab, setActiveTab] = React.useState<'autoridades' | 'organigrama' | 'canales'>('autoridades');
+  
+  // Estado para la sección de Organigramas Institucionales (Supabase Storage)
+  const [organigramaTab, setOrganigramaTab] = React.useState<'colegio' | 'educar'>('colegio');
+  const [isLightboxOpen, setIsLightboxOpen] = React.useState(false);
+  const [lightboxZoom, setLightboxZoom] = React.useState<number>(1);
+  const [imagesLoading, setImagesLoading] = React.useState<Record<string, boolean>>({
+    colegio: true,
+    educar: true
+  });
+  const [imagesError, setImagesError] = React.useState<Record<string, boolean>>({
+    colegio: false,
+    educar: false
+  });
+  const [tryFallbackEducar, setTryFallbackEducar] = React.useState(false);
+
+  // Escuchar teclas en el Lightbox de pantalla completa
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isLightboxOpen) return;
+      if (e.key === 'Escape') {
+        setIsLightboxOpen(false);
+      } else if (e.key === '+' || e.key === '=') {
+        setLightboxZoom(z => Math.min(3.5, +(z + 0.25).toFixed(2)));
+      } else if (e.key === '-') {
+        setLightboxZoom(z => Math.max(0.5, +(z - 0.25).toFixed(2)));
+      } else if (e.key === '0') {
+        setLightboxZoom(1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLightboxOpen]);
 
   const communicationChannels = [
     {
@@ -217,150 +259,323 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
         </div>
       )}
 
-      {/* TAB 2: ORGANIGRAMA INSTITUCIONAL DINÁMICO */}
-      {activeTab === 'organigrama' && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-            <div>
-              <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
-                Estructura Organizacional Institucional
-              </h2>
-              <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
-                Visualiza los niveles jerárquicos de decisión, conducción y acompañamiento de la comunidad escolar.
-              </p>
+      {/* TAB 2: ORGANIGRAMA INSTITUCIONAL (SUPABASE STORAGE: organigrama-imagenes) */}
+      {activeTab === 'organigrama' && (() => {
+        const organigramasConfig = {
+          colegio: {
+            id: 'colegio' as const,
+            tabTitle: "Organigrama Colegio Informático 'San Juan de Vera'",
+            shortTitle: "Colegio Informático 'San Juan de Vera'",
+            badge: 'Nivel Educativo & Académico',
+            heading: "Organigrama Colegio Informático 'San Juan de Vera'",
+            subheading: 'Estructura interna, conducción directiva, coordinaciones pedagógicas y equipos docentes de la sede San Juan de Vera.',
+            fileName: 'Organigrama Colegio.png',
+            icon: GraduationCap,
+            accentBg: 'bg-emerald-50 text-[#00875A] border-emerald-200',
+            primaryColor: '#00875A'
+          },
+          educar: {
+            id: 'educar' as const,
+            tabTitle: 'Organigrama Estructural Educar SRL',
+            shortTitle: 'Organigrama Estructural Educar SRL',
+            badge: 'Estructura Corporativa & Conducción',
+            heading: 'Organigrama Estructural Educar SRL',
+            subheading: 'Estructura organizacional y áreas estratégicas de la entidad propietaria Educar SRL: Presidencia, Gerencia General, Administración, Finanzas, Sistemas y Recursos Humanos.',
+            fileName: tryFallbackEducar ? 'Organigrama Educar.png' : 'Organigrama Educar .png',
+            icon: Briefcase,
+            accentBg: 'bg-blue-50 text-[#1E3A8A] border-blue-200',
+            primaryColor: '#1E3A8A'
+          }
+        };
+
+        const currentOrg = organigramasConfig[organigramaTab];
+        const currentImageUrl = getOrganigramaImageUrl(currentOrg.fileName);
+        const isLoading = imagesLoading[organigramaTab];
+        const hasError = imagesError[organigramaTab];
+
+        return (
+          <div className="space-y-6 animate-fadeIn">
+            {/* 1. Selector de Pestañas Moderno (Dos Secciones) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-1.5 bg-[#F4F5F7] rounded-2xl border border-slate-200/90 shadow-inner">
+              <button
+                type="button"
+                onClick={() => {
+                  setOrganigramaTab('colegio');
+                  setLightboxZoom(1);
+                }}
+                className={`flex-1 flex items-center justify-center gap-2.5 px-4 sm:px-6 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  organigramaTab === 'colegio'
+                    ? 'bg-[#00875A] hover:bg-[#007031] text-white shadow-md shadow-emerald-950/20 border border-[#00602A] scale-[1.01]'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/90 shadow-2xs'
+                }`}
+              >
+                <GraduationCap className={`w-4 h-4 shrink-0 ${organigramaTab === 'colegio' ? 'text-white' : 'text-[#00875A]'}`} />
+                <span className="truncate">{organigramasConfig.colegio.tabTitle}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOrganigramaTab('educar');
+                  setLightboxZoom(1);
+                }}
+                className={`flex-1 flex items-center justify-center gap-2.5 px-4 sm:px-6 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  organigramaTab === 'educar'
+                    ? 'bg-[#00875A] hover:bg-[#007031] text-white shadow-md shadow-emerald-950/20 border border-[#00602A] scale-[1.01]'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/90 shadow-2xs'
+                }`}
+              >
+                <Briefcase className={`w-4 h-4 shrink-0 ${organigramaTab === 'educar' ? 'text-white' : 'text-[#00875A]'}`} />
+                <span className="truncate">{organigramasConfig.educar.tabTitle}</span>
+              </button>
             </div>
-            <span className="self-start sm:self-center px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.06em] bg-[#CFB07A]/15 text-[#634816] border border-[#CFB07A]/40">
-              {organigramLevels.length} Niveles Jerárquicos
-            </span>
-          </div>
 
-          {(!organigramLevels || organigramLevels.length === 0) ? (
-            <div className="text-center py-12 text-slate-400">
-              <Building className="w-12 h-12 mx-auto mb-3 opacity-40 text-[#DE4034]" />
-              <p className="text-sm font-semibold">No se han configurado niveles en el organigrama todavía.</p>
-              <p className="text-xs text-slate-400 mt-1">El Administrador puede definir la estructura desde el panel de control.</p>
+            {/* 2. Tarjeta Blanca Estilizada con Visualización y Accesibilidad */}
+            <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+              {/* Encabezado de la Tarjeta */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div className="space-y-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${currentOrg.accentBg}`}>
+                      {currentOrg.badge}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                      Bucket: organigrama-imagenes • {currentOrg.fileName}
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 text-left">
+                    {currentOrg.heading}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 max-w-[75ch] text-left leading-relaxed">
+                    {currentOrg.subheading}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2.5 shrink-0 self-start md:self-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLightboxZoom(1);
+                      setIsLightboxOpen(true);
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-[#00875A] hover:bg-[#007031] text-white text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm cursor-pointer hover:shadow-md"
+                    title="Ampliar a pantalla completa con zoom interactivo"
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                    <span>Ampliar / Pantalla Completa</span>
+                  </button>
+
+                  <a
+                    href={currentImageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center justify-center border border-slate-200 shadow-2xs"
+                    title="Abrir imagen original en nueva pestaña"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Contenedor del Organigrama */}
+              <div className="relative rounded-2xl bg-slate-50/90 border border-slate-200/90 p-3 sm:p-6 flex flex-col items-center justify-center min-h-[380px] overflow-hidden group">
+                {/* Skeleton de carga */}
+                {isLoading && !hasError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10 space-y-3">
+                    <div className="w-10 h-10 border-4 border-slate-200 border-t-[#00875A] rounded-full animate-spin" />
+                    <p className="text-xs font-semibold text-slate-500 animate-pulse">
+                      Cargando organigrama oficial desde Supabase Storage...
+                    </p>
+                  </div>
+                )}
+
+                {/* Vista si ocurre un error de carga */}
+                {hasError ? (
+                  <div className="p-8 text-center max-w-lg mx-auto space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
+                      <AlertCircle className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-base font-bold text-slate-900">
+                      Imagen del organigrama en proceso de sincronización
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      No se pudo cargar la imagen <code className="bg-slate-200 px-1 py-0.5 rounded font-mono font-bold">{currentOrg.fileName}</code> desde el bucket <code className="bg-slate-200 px-1 py-0.5 rounded font-mono font-bold">organigrama-imagenes</code>.
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImagesError(prev => ({ ...prev, [organigramaTab]: false }));
+                          setImagesLoading(prev => ({ ...prev, [organigramaTab]: true }));
+                          if (organigramaTab === 'educar' && !tryFallbackEducar) {
+                            setTryFallbackEducar(true);
+                          }
+                        }}
+                        className="px-4 py-2 bg-[#00875A] hover:bg-[#007031] text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Reintentar Carga</span>
+                      </button>
+                      <a
+                        href={currentImageUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition border border-slate-200"
+                      >
+                        Abrir URL directa
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <img
+                      src={currentImageUrl}
+                      alt={currentOrg.heading}
+                      onLoad={() => {
+                        setImagesLoading(prev => ({ ...prev, [organigramaTab]: false }));
+                        setImagesError(prev => ({ ...prev, [organigramaTab]: false }));
+                      }}
+                      onError={() => {
+                        if (organigramaTab === 'educar' && !tryFallbackEducar) {
+                          setTryFallbackEducar(true);
+                          return;
+                        }
+                        setImagesLoading(prev => ({ ...prev, [organigramaTab]: false }));
+                        setImagesError(prev => ({ ...prev, [organigramaTab]: true }));
+                      }}
+                      onClick={() => {
+                        setLightboxZoom(1);
+                        setIsLightboxOpen(true);
+                      }}
+                      className="w-full h-auto max-h-[75vh] object-contain mx-auto rounded-xl shadow-xs transition-transform duration-300 group-hover:scale-[1.01] cursor-zoom-in"
+                    />
+
+                    {/* Overlay botón flotante para sugerir la interacción de zoom */}
+                    <div className="absolute bottom-4 right-4 pointer-events-none opacity-90 group-hover:opacity-100 transition">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 text-white text-xs font-semibold backdrop-blur-xs shadow-md">
+                        <ZoomIn className="w-3.5 h-3.5 text-[#CFB07A]" />
+                        <span>Clic para ampliar</span>
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Pie informativo de la tarjeta */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+                <div className="flex items-center gap-2">
+                  <Building className="w-4 h-4 text-[#00875A]" />
+                  <span>Organigrama oficial y actualizado para el ciclo lectivo y operativo 2026.</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLightboxZoom(1);
+                    setIsLightboxOpen(true);
+                  }}
+                  className="font-bold text-[#00875A] hover:underline flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>Explorar en pantalla completa</span>
+                </button>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-8 max-w-5xl mx-auto">
-              {organigramLevels
-                .slice()
-                .sort((a, b) => a.levelNumber - b.levelNumber)
-                .map((level, levelIdx, arr) => (
-                  <div key={level.id} className="relative">
-                    {/* Tarjeta del Nivel */}
-                    <div className="bg-slate-50/70 rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4">
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 pb-3">
-                        <div className="flex items-center gap-2.5">
-                          <span 
-                            className="w-3 h-3 rounded-full shrink-0" 
-                            style={{ backgroundColor: level.color || '#DE4034' }}
-                          />
-                          <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md text-white font-mono"
-                            style={{ backgroundColor: level.color || '#DE4034' }}
-                          >
-                            {level.badge || `NIVEL ${level.levelNumber}`}
-                          </span>
-                          <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
-                            {level.levelName}
-                          </h3>
-                        </div>
-                        {level.description && (
-                          <span className="text-xs text-slate-500 italic hidden md:inline whitespace-pre-wrap">
-                            {level.description}
-                          </span>
-                        )}
-                      </div>
 
-                      {/* Nodos / Áreas del Nivel */}
-                      <div className={`grid gap-4 ${
-                        level.nodes.length === 1 
-                          ? 'grid-cols-1 max-w-xl mx-auto' 
-                          : level.nodes.length === 2 
-                            ? 'grid-cols-1 md:grid-cols-2' 
-                            : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-                      }`}>
-                        {level.nodes.map((node) => (
-                          <div
-                            key={node.id}
-                            className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200 shadow-xs hover:shadow-md transition space-y-3 flex flex-col justify-between"
-                            style={{ borderTop: `4px solid ${node.colorTheme || level.color || '#DE4034'}` }}
-                          >
-                            <div className="space-y-1.5">
-                              <span 
-                                className="text-[10px] font-bold uppercase tracking-wider block"
-                                style={{ color: node.colorTheme || level.color || '#DE4034' }}
-                              >
-                                {node.subtitle || 'Área Institucional'}
-                              </span>
-                              <h4 className="font-bold text-slate-900 text-sm sm:text-base leading-snug">
-                                {node.title}
-                              </h4>
-                              {node.description && (
-                                <p className="text-xs text-slate-500 leading-relaxed pt-1 whitespace-pre-wrap">
-                                  {node.description}
-                                </p>
-                              )}
-                            </div>
+            {/* 3. Modal / Lightbox de Pantalla Completa con Zoom Nitido */}
+            {isLightboxOpen && (
+              <div className="fixed inset-0 z-50 bg-black/92 backdrop-blur-md flex flex-col animate-fadeIn select-none">
+                {/* Header del Lightbox */}
+                <div className="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between text-white shrink-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-900/80 text-emerald-300 border border-emerald-700/60 font-mono hidden sm:inline">
+                      {currentOrg.badge}
+                    </span>
+                    <h3 className="font-bold text-sm sm:text-base text-white truncate">
+                      {currentOrg.heading}
+                    </h3>
+                  </div>
 
-                            {/* Personas / Responsables asignados */}
-                            {node.responsibles && node.responsibles.length > 0 && (
-                              <div className="pt-3 border-t border-slate-100 space-y-2">
-                                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
-                                  Responsable(s) a cargo:
-                                </span>
-                                <div className="space-y-2">
-                                  {node.responsibles.map((member) => (
-                                    <div 
-                                      key={member.id || member.name} 
-                                      className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 border border-slate-100"
-                                    >
-                                      {member.photoUrl ? (
-                                        <img 
-                                          src={member.photoUrl} 
-                                          alt={member.name}
-                                          className="w-10 h-10 rounded-full object-cover border border-[#CFB07A] shadow-xs shrink-0"
-                                        />
-                                      ) : (
-                                        <div className="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs shrink-0">
-                                          {member.name.charAt(0)}
-                                        </div>
-                                      )}
-                                      <div className="min-w-0 flex-1">
-                                        <p className="text-xs font-bold text-slate-900 truncate">
-                                          {member.name}
-                                        </p>
-                                        <p className="text-[11px] text-[#01913F] font-medium truncate">
-                                          {member.role}
-                                        </p>
-                                        {member.email && (
-                                          <p className="text-[10px] text-slate-400 font-mono truncate">
-                                            {member.email}
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                  {/* Controles de Zoom y Acciones */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center bg-slate-800/90 rounded-xl border border-slate-700/80 p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setLightboxZoom(z => Math.max(0.5, +(z - 0.25).toFixed(2)))}
+                        className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition cursor-pointer"
+                        title="Alejar (-)"
+                      >
+                        <ZoomOut className="w-4 h-4" />
+                      </button>
+                      <span className="px-2 text-xs font-mono font-bold text-slate-200 min-w-[52px] text-center">
+                        {Math.round(lightboxZoom * 100)}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setLightboxZoom(z => Math.min(3.5, +(z + 0.25).toFixed(2)))}
+                        className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition cursor-pointer"
+                        title="Acercar (+)"
+                      >
+                        <ZoomIn className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setLightboxZoom(1)}
+                        className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition border-l border-slate-700 ml-0.5 cursor-pointer"
+                        title="Restablecer tamaño original (100%)"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                      </button>
                     </div>
 
-                    {/* Conector vertical hacia el siguiente nivel */}
-                    {levelIdx < arr.length - 1 && (
-                      <div className="flex flex-col items-center justify-center my-2">
-                        <div className="w-0.5 h-6 bg-slate-300" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#CFB07A] border-2 border-white shadow-xs" />
-                      </div>
-                    )}
+                    <a
+                      href={currentImageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition"
+                      title="Abrir imagen original"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsLightboxOpen(false)}
+                      className="p-2 rounded-xl bg-red-900/60 hover:bg-red-800 text-rose-200 border border-red-700/60 transition cursor-pointer"
+                      title="Cerrar (Esc)"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
                   </div>
-                ))}
-            </div>
-          )}
-        </div>
-      )}
+                </div>
+
+                {/* Canvas de Visualización con Zoom */}
+                <div 
+                  className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center cursor-grab active:cursor-grabbing"
+                  onDoubleClick={() => setLightboxZoom(z => z > 1 ? 1 : 2)}
+                >
+                  <img
+                    src={currentImageUrl}
+                    alt={currentOrg.heading}
+                    style={{
+                      transform: `scale(${lightboxZoom})`,
+                      transformOrigin: 'center center',
+                      transition: 'transform 0.15s ease-out'
+                    }}
+                    className="max-w-none sm:max-w-full h-auto object-contain select-none shadow-2xl rounded-lg"
+                  />
+                </div>
+
+                {/* Barra Inferior con Ayuda de Navegación */}
+                <div className="bg-slate-900/80 border-t border-slate-800/80 py-2 px-4 text-center text-xs text-slate-400">
+                  <span>
+                    💡 <strong>Consejo de lectura:</strong> Haz doble clic sobre la imagen para alternar zoom o usa los controles superiores (+ / -). Pulsa <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[10px]">Esc</kbd> para salir.
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* TAB 3: CANALES DE COMUNICACIÓN INTERNA */}
       {activeTab === 'canales' && (

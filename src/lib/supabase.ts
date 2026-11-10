@@ -894,6 +894,24 @@ export async function uploadDirectivoPhoto(
   }
 }
 
+/**
+ * Obtiene la URL pública directa desde Supabase Storage para el bucket 'organigrama-imagenes'.
+ */
+export function getOrganigramaImageUrl(fileName: string): string {
+  if (isSupabaseConfigured()) {
+    const { data } = supabase.storage.from('organigrama-imagenes').getPublicUrl(fileName);
+    if (data?.publicUrl) return data.publicUrl;
+  }
+  
+  const baseUrl = cleanUrl || (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_url') || '' : '');
+  if (baseUrl) {
+    const cleanBase = cleanSupabaseUrl(baseUrl);
+    return `${cleanBase}/storage/v1/object/public/organigrama-imagenes/${encodeURIComponent(fileName)}`;
+  }
+
+  return `/assets/aistudio/${encodeURIComponent(fileName)}`;
+}
+
 // ============================================================================
 // 11. SUSCRIPCIONES EN TIEMPO REAL (Postgres CDC)
 // ============================================================================
@@ -1137,4 +1155,13 @@ CREATE POLICY "Lectura pública diplomas-pdf" ON storage.objects
     FOR SELECT USING (bucket_id = 'diplomas-pdf');
 CREATE POLICY "Subida pública diplomas-pdf" ON storage.objects
     FOR INSERT WITH CHECK (bucket_id = 'diplomas-pdf');
+
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('organigrama-imagenes', 'organigrama-imagenes', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+CREATE POLICY "Lectura pública organigrama-imagenes" ON storage.objects
+    FOR SELECT USING (bucket_id = 'organigrama-imagenes');
+CREATE POLICY "Subida pública organigrama-imagenes" ON storage.objects
+    FOR INSERT WITH CHECK (bucket_id = 'organigrama-imagenes');
 `;
