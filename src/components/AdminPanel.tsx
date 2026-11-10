@@ -31,7 +31,6 @@ import {
   ShieldAlert,
   Save,
   RefreshCw,
-  FileSpreadsheet,
   Upload,
   Layers,
   FileJson,
@@ -39,7 +38,11 @@ import {
   AlertTriangle,
   Database,
   Copy,
-  CheckCheck
+  CheckCheck,
+  Menu,
+  X,
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react';
 import { isSupabaseConfigured, SUPABASE_SETUP_SQL } from '../lib/supabase';
 
@@ -96,9 +99,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onImportBackup,
   onResetToDefaults
 }) => {
-  const [activeTab, setActiveTab] = React.useState<
-    'directivos' | 'organigrama' | 'diplomas' | 'calendario' | 'novedades' | 'feedback' | 'config' | 'usuarios'
-  >('directivos');
+  type AdminTab = 'directivos' | 'organigrama' | 'diplomas' | 'calendario' | 'novedades' | 'feedback' | 'config' | 'usuarios';
+
+  const [activeTab, setActiveTab] = React.useState<AdminTab>('directivos');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
+
+  const adminTabs: { id: AdminTab; label: string; icon: React.ReactNode; count?: number }[] = [
+    { id: 'directivos', label: 'Directivos y Autoridades', icon: <Users className="w-4 h-4 shrink-0" />, count: authorities.length },
+    { id: 'organigrama', label: 'Organigrama y Niveles', icon: <Layers className="w-4 h-4 shrink-0" />, count: organigramLevels.length },
+    { id: 'diplomas', label: 'Diplomas Emitidos', icon: <Award className="w-4 h-4 shrink-0" />, count: diplomas.length },
+    { id: 'calendario', label: 'Calendario de Eventos', icon: <Calendar className="w-4 h-4 shrink-0" />, count: calendarEvents.length },
+    { id: 'novedades', label: 'Novedades y Avisos', icon: <BellRing className="w-4 h-4 shrink-0" />, count: notices.length },
+    { id: 'feedback', label: 'Feedback y Satisfacción', icon: <Star className="w-4 h-4 shrink-0" />, count: feedbacks.length },
+    { id: 'usuarios', label: 'Usuarios Admin', icon: <Lock className="w-4 h-4 shrink-0" /> },
+    { id: 'config', label: 'Configuración & Respaldos', icon: <Settings className="w-4 h-4 shrink-0" /> },
+  ];
 
   // Search & Filter state
   const [searchDiploma, setSearchDiploma] = React.useState('');
@@ -308,22 +323,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             className="w-14 h-18 object-contain drop-shadow-md hidden sm:block"
           />
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#01913F] text-white text-[11px] font-mono font-bold tracking-wider">
-                PANEL RESTRINGIDO • SHA-256
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-[#CFB07A] font-serif-title font-bold uppercase tracking-[0.06em]">
+                Verita Vinci • Panel de Administración
               </span>
-              {isSupabaseConfigured() ? (
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-600/30 text-emerald-300 border border-emerald-500/50 text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-xs">
-                  <Database className="w-3 h-3 text-emerald-400" />
-                  <span>SUPABASE CLOUD ACTIVO</span>
-                </span>
-              ) : (
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-xs">
-                  <Database className="w-3 h-3 text-amber-400" />
-                  <span>MODO LOCAL (OFFLINE)</span>
-                </span>
-              )}
-              <span className="text-xs text-[#CFB07A] font-serif-title font-bold uppercase">Verita Vinci</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
               Gestión Centralizada del Onboarding 2026
@@ -334,27 +337,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 self-start md:self-center">
-          <button
-            onClick={() => setShowSupabaseSqlModal(true)}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 text-xs font-bold border border-emerald-500/40 transition flex items-center gap-1.5 shadow-xs"
-            title="Ver configuración y script SQL de Supabase"
-          >
-            <Database className="w-4 h-4 text-emerald-400" />
-            <span>Supabase Cloud</span>
-          </button>
-
-          <button
-            onClick={onOpenGasFiles}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-[#CFB07A] text-xs font-bold border border-[#CFB07A]/40 transition flex items-center gap-1.5"
-          >
-            <FileSpreadsheet className="w-4 h-4" />
-            <span>Código Apps Script</span>
-          </button>
-
+        <div className="flex items-center self-start md:self-center">
           <button
             onClick={onLogout}
-            className="px-4 py-2 rounded-xl bg-red-900/60 hover:bg-red-800 text-rose-200 text-xs font-bold border border-red-500/40 transition flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-xl bg-red-900/80 hover:bg-red-800 text-rose-100 text-xs sm:text-sm font-bold border border-red-500/50 transition-all flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Cerrar Sesión</span>
@@ -362,104 +348,97 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       </div>
 
-      {/* Admin Tabs */}
-      <div className="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1">
+      {/* Selector móvil (Drawer Toggle en pantallas < lg) */}
+      <div className="lg:hidden bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0">Módulo:</span>
+          <span className="text-sm font-bold text-[#00875A] flex items-center gap-1.5 truncate">
+            {adminTabs.find(t => t.id === activeTab)?.icon}
+            <span className="truncate">{adminTabs.find(t => t.id === activeTab)?.label}</span>
+          </span>
+        </div>
         <button
-          onClick={() => setActiveTab('directivos')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'directivos'
-              ? 'border-[#01913F] text-[#01913F] bg-emerald-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
+          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+          className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition shrink-0 cursor-pointer border border-slate-200 shadow-2xs"
         >
-          <Users className="w-4 h-4" />
-          <span>Directivos_Autoridades ({authorities.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('organigrama')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'organigrama'
-              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          <span>organigrama_niveles ({organigramLevels.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('diplomas')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'diplomas'
-              ? 'border-[#DE4034] text-[#DE4034] bg-red-50/50 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Award className="w-4 h-4" />
-          <span>diplomas_emitidos ({diplomas.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('calendario')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'calendario'
-              ? 'border-[#DE4034] text-[#DE4034] bg-red-50/50 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Calendar className="w-4 h-4" />
-          <span>calendario_eventos ({calendarEvents.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('novedades')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'novedades'
-              ? 'border-[#DE4034] text-[#DE4034] bg-red-50/50 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <BellRing className="w-4 h-4" />
-          <span>novedades_avisos ({notices.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('feedback')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'feedback'
-              ? 'border-[#DE4034] text-[#DE4034] bg-red-50/50 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Star className="w-4 h-4" />
-          <span>feedback_satisfaccion ({feedbacks.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('usuarios')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'usuarios'
-              ? 'border-[#DE4034] text-[#DE4034] bg-red-50/50 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Lock className="w-4 h-4" />
-          <span>usuarios_admin</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('config')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-            activeTab === 'config'
-              ? 'border-[#CFB07A] text-[#8F6A24] bg-amber-50/60 rounded-t-lg'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Settings className="w-4 h-4" />
-          <span>Configuración & Respaldos</span>
+          {mobileSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          <span>{mobileSidebarOpen ? 'Cerrar Menú' : 'Ver Módulos'}</span>
         </button>
       </div>
+
+      {/* Estructura Principal en 2 Columnas (Dashboard Grid) */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* Columna Izquierda: Sidebar Lateral Vertical (270px) */}
+        <aside
+          className={`w-full lg:w-[270px] shrink-0 bg-white rounded-3xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4 lg:sticky lg:top-24 transition-all duration-300 ${
+            mobileSidebarOpen ? 'block' : 'hidden lg:block'
+          }`}
+        >
+          <div className="px-1.5 pb-2 border-b border-slate-100 flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-[0.06em] text-slate-500 font-mono">
+              Módulos del Sistema
+            </span>
+            <span className="text-[11px] font-bold text-[#00875A] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              8 Secciones
+            </span>
+          </div>
+
+          <nav className="space-y-1.5">
+            {adminTabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
+                    isActive
+                      ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold border-[#00602A] shadow-md shadow-emerald-950/20 ring-2 ring-emerald-500/20'
+                      : 'bg-[#F4F5F7] hover:bg-slate-200/80 text-slate-700 hover:text-slate-900 border-slate-200/80 hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 truncate">
+                    <span className={isActive ? 'text-white' : 'text-[#00875A]'}>
+                      {tab.icon}
+                    </span>
+                    <span className="truncate">{tab.label}</span>
+                  </div>
+
+                  {tab.count !== undefined && (
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full font-mono font-bold shrink-0 ml-2 transition-colors ${
+                        isActive
+                          ? 'bg-white/25 text-white'
+                          : 'bg-white text-slate-700 border border-slate-200 shadow-2xs'
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="pt-3 border-t border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-900 to-[#12231A] text-white border border-[#CFB07A]/40 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#CFB07A]" />
+                <span className="text-xs font-serif-title font-bold text-[#CFB07A] uppercase tracking-wider">
+                  Educar SRL
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Panel de Administración y Control Centralizado • Onboarding 2026.
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        {/* Columna Derecha: Área de Contenido Dinámico (Flexible 1fr) */}
+        <main className="flex-1 min-w-0 w-full space-y-6">
 
       {/* TAB DIRECTIVOS & AUTORIDADES */}
       {activeTab === 'directivos' && (
@@ -1108,6 +1087,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           )}
         </div>
       )}
+        </main>
+      </div>
 
       {/* MODAL: NUEVO EVENTO CALENDARIO */}
       {showEventModal && (

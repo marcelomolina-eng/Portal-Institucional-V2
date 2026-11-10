@@ -115,41 +115,41 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-200 gap-2">
+      {/* Sub-menú de Navegación interna estilo Pills Institucionales */}
+      <div className="bg-[#F4F5F7] p-2 rounded-2xl border border-slate-200/90 shadow-inner flex items-center gap-2 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveTab('autoridades')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
+          className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeTab === 'autoridades'
-              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Users className="w-4 h-4" />
+          <Users className={`w-4 h-4 ${activeTab === 'autoridades' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>Autoridades y Referentes</span>
         </button>
 
         <button
           onClick={() => setActiveTab('organigrama')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
+          className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeTab === 'organigrama'
-              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Building className="w-4 h-4" />
+          <Building className={`w-4 h-4 ${activeTab === 'organigrama' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>Organigrama Institucional</span>
         </button>
 
         <button
           onClick={() => setActiveTab('canales')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
+          className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeTab === 'canales'
-              ? 'border-[#1E3A8A] text-[#1E3A8A] bg-blue-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <MessageSquare className="w-4 h-4" />
+          <MessageSquare className={`w-4 h-4 ${activeTab === 'canales' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>Canales de Comunicación Interna</span>
         </button>
       </div>

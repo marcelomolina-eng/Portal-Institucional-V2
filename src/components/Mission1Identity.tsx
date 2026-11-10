@@ -121,53 +121,53 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
         </div>
       </div>
 
-      {/* Tabs de Navegación interna */}
-      <div className="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1">
+      {/* Sub-menú de Navegación interna: Botones estilo Pills Institucionales */}
+      <div className="bg-[#F4F5F7] p-2 rounded-2xl border border-slate-200/90 shadow-inner flex items-center gap-2 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveTab('filosofia')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
+          className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeTab === 'filosofia'
-              ? 'border-[#DE4034] text-[#8F1F17] bg-red-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Layers className="w-4 h-4" />
+          <Layers className={`w-4 h-4 ${activeTab === 'filosofia' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>Misión, Visión y Escudo</span>
         </button>
 
         <button
           onClick={() => setActiveTab('himno')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
+          className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeTab === 'himno'
-              ? 'border-[#CFB07A] text-[#1C1A17] bg-[#CFB07A]/25 rounded-t-lg font-extrabold'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Music className="w-4 h-4 text-[#CFB07A]" />
+          <Music className={`w-4 h-4 ${activeTab === 'himno' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>Himno Institucional</span>
         </button>
 
         <button
           onClick={() => setActiveTab('videos')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
+          className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeTab === 'videos'
-              ? 'border-[#01913F] text-[#00602A] bg-emerald-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Video className="w-4 h-4" />
+          <Video className={`w-4 h-4 ${activeTab === 'videos' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>Videos Institucionales</span>
         </button>
 
         <button
           onClick={() => setActiveTab('historia')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
+          className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeTab === 'historia'
-              ? 'border-[#CFB07A] text-[#634816] bg-amber-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <History className="w-4 h-4" />
+          <History className={`w-4 h-4 ${activeTab === 'historia' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>Hitos & Línea de Tiempo</span>
         </button>
       </div>

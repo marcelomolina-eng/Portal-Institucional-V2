@@ -118,30 +118,39 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
         </div>
       </div>
 
-      {/* Switcher de Sección: Iniciativas vs Calendario */}
-      <div className="flex border-b border-slate-200 gap-2">
+      {/* Switcher de Sección estilo Pills Institucionales */}
+      <div className="bg-[#F4F5F7] p-2 rounded-2xl border border-slate-200/90 shadow-inner flex items-center gap-2 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveSection('iniciativas')}
-          className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
+          className={`flex items-center gap-2.5 px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeSection === 'iniciativas'
-              ? 'border-[#01913F] text-[#00602A] bg-emerald-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className={`w-4 h-4 ${activeSection === 'iniciativas' ? 'text-white' : 'text-[#00875A]'}`} />
           <span>8 Iniciativas & Referentes</span>
         </button>
 
         <button
           onClick={() => setActiveSection('calendario')}
-          className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition ${
+          className={`flex items-center gap-2.5 px-5 py-2.5 text-xs sm:text-sm whitespace-nowrap transition-all rounded-xl cursor-pointer ${
             activeSection === 'calendario'
-              ? 'border-[#01913F] text-[#00602A] bg-emerald-50/70 rounded-t-lg'
-              : 'border-transparent text-slate-700 hover:text-slate-900'
+              ? 'bg-[#00875A] hover:bg-[#007031] text-white font-bold shadow-md shadow-emerald-950/25 border border-emerald-600 scale-[1.02]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Calendar className="w-4 h-4" />
-          <span>Calendario Anual 2026 ({calendarEvents.length} Eventos)</span>
+          <Calendar className={`w-4 h-4 ${activeSection === 'calendario' ? 'text-white' : 'text-[#00875A]'}`} />
+          <span>Calendario Anual 2026</span>
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full font-bold font-mono transition-colors ${
+              activeSection === 'calendario'
+                ? 'bg-white/25 text-white'
+                : 'bg-slate-100 text-slate-700 border border-slate-200'
+            }`}
+          >
+            {calendarEvents.length} Eventos
+          </span>
         </button>
       </div>
 
