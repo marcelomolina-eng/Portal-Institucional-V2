@@ -132,7 +132,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
               <Users className="w-4 h-4" /> MISIÓN 03: OPERACIÓN INFORMÁTICO
             </div>
             <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
-              Conocer Nuestra Comunidad
+              Conocer nuestra comunidad
             </h1>
             <p className="text-base text-blue-50 max-w-[65ch] leading-[1.5] text-left">
               Te presentamos a las autoridades, el organigrama y los canales oficiales para estar siempre comunicado.
@@ -151,7 +151,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{isCompleted ? 'Misión Completada • Continuar' : 'Completar y Pasar a Misión 04'}</span>
+            <span>{isCompleted ? 'Misión completada • Continuar' : 'Completar y pasar a Misión 04'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -168,7 +168,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
           }`}
         >
           <Users className={`w-4 h-4 ${activeTab === 'autoridades' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Autoridades y Referentes</span>
+          <span>Autoridades y referentes</span>
         </button>
 
         <button
@@ -180,7 +180,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
           }`}
         >
           <Building className={`w-4 h-4 ${activeTab === 'organigrama' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Organigrama Institucional</span>
+          <span>Organigrama institucional</span>
         </button>
 
         <button
@@ -192,7 +192,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
           }`}
         >
           <MessageSquare className={`w-4 h-4 ${activeTab === 'canales' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Canales de Comunicación Interna</span>
+          <span>Canales de comunicación interna</span>
         </button>
       </div>
 
@@ -202,14 +202,14 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
-                Equipo de Conducción y Referentes
+                Equipo de conducción y referentes
               </h2>
               <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                 Ponte en contacto con cada uno para evacuar dudas o coordinar acciones.
               </p>
             </div>
             <span className="text-xs font-bold uppercase tracking-[0.06em] px-3 py-1 bg-blue-50 text-[#1E3A8A] rounded-full border border-blue-200">
-              {authorities.length} Referentes Clave
+              {authorities.length} referentes clave
             </span>
           </div>
 
@@ -250,7 +250,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                     {auth.email}
                   </span>
                   <span className="text-[#1E3A8A] font-bold group-hover:translate-x-1 transition flex items-center gap-1">
-                    Ver Perfil <ChevronRight className="w-3.5 h-3.5" />
+                    Ver perfil <ChevronRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
             id: 'colegio' as const,
             tabTitle: "Organigrama Colegio Informático 'San Juan de Vera'",
             shortTitle: "Colegio Informático 'San Juan de Vera'",
-            badge: 'Nivel Educativo & Académico',
+            badge: 'Nivel educativo y académico',
             heading: "Organigrama Colegio Informático 'San Juan de Vera'",
             subheading: 'Estructura interna, conducción directiva, coordinaciones pedagógicas y equipos docentes de la sede San Juan de Vera.',
             fileName: 'Organigrama Colegio.png',
@@ -278,7 +278,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
             id: 'educar' as const,
             tabTitle: 'Organigrama Estructural Educar SRL',
             shortTitle: 'Organigrama Estructural Educar SRL',
-            badge: 'Estructura Corporativa & Conducción',
+            badge: 'Estructura corporativa y conducción',
             heading: 'Organigrama Estructural Educar SRL',
             subheading: 'Estructura organizacional y áreas estratégicas de la entidad propietaria Educar SRL: Presidencia, Gerencia General, Administración, Finanzas, Sistemas y Recursos Humanos.',
             fileName: tryFallbackEducar ? 'Organigrama Educar.png' : 'Organigrama Educar .png',
@@ -339,9 +339,6 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                     <span className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${currentOrg.accentBg}`}>
                       {currentOrg.badge}
                     </span>
-                    <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
-                      Bucket: organigrama-imagenes • {currentOrg.fileName}
-                    </span>
                   </div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 text-left">
                     {currentOrg.heading}
@@ -362,7 +359,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                     title="Ampliar a pantalla completa con zoom interactivo"
                   >
                     <Maximize2 className="w-4 h-4" />
-                    <span>Ampliar / Pantalla Completa</span>
+                    <span>Ampliar / Pantalla completa</span>
                   </button>
 
                   <a
@@ -384,7 +381,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10 space-y-3">
                     <div className="w-10 h-10 border-4 border-slate-200 border-t-[#00875A] rounded-full animate-spin" />
                     <p className="text-xs font-semibold text-slate-500 animate-pulse">
-                      Cargando organigrama oficial desde Supabase Storage...
+                      Cargando organigrama oficial...
                     </p>
                   </div>
                 )}
@@ -399,7 +396,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                       Imagen del organigrama en proceso de sincronización
                     </h4>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      No se pudo cargar la imagen <code className="bg-slate-200 px-1 py-0.5 rounded font-mono font-bold">{currentOrg.fileName}</code> desde el bucket <code className="bg-slate-200 px-1 py-0.5 rounded font-mono font-bold">organigrama-imagenes</code>.
+                      No se pudo cargar la imagen institucional en este momento. Por favor verifica tu conexión o reintenta.
                     </p>
                     <div className="flex flex-wrap justify-center gap-2 pt-2">
                       <button
@@ -414,7 +411,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                         className="px-4 py-2 bg-[#00875A] hover:bg-[#007031] text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
-                        <span>Reintentar Carga</span>
+                        <span>Reintentar carga</span>
                       </button>
                       <a
                         href={currentImageUrl}
@@ -582,7 +579,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
         <div className="space-y-4">
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
             <h2 className="text-xl font-bold text-slate-900">
-              Protocolo de Canales de Comunicación Interna
+              Protocolo de canales de comunicación interna
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
               Conocer por dónde canalizar cada necesidad garantiza una convivencia eficiente y profesional.
@@ -669,7 +666,7 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                 href={`mailto:${selectedAuthority.email}`}
                 className="flex-1 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] text-white text-xs font-bold text-center transition flex items-center justify-center gap-2"
               >
-                <Mail className="w-4 h-4" /> Enviar Correo
+                <Mail className="w-4 h-4" /> Enviar correo
               </a>
               <button
                 onClick={() => setSelectedAuthority(null)}
@@ -685,8 +682,8 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
       {/* Footer Checkpoint de la Misión */}
       <MissionCheckpointFooter
         missionCode="Misión 03"
-        missionTitle="Comunidad Educativa"
-        nextMissionTitle="Misión 04: Mi Rol / Certificación"
+        missionTitle="Comunidad educativa"
+        nextMissionTitle="Misión 04: Mi rol y certificación"
         isCompleted={isCompleted}
         onComplete={onComplete}
         onNavigateNext={onNavigateNext}

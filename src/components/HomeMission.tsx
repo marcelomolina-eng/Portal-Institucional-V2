@@ -49,37 +49,37 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
       subtitle: 'El comienzo de nuestra historia',
       desc: 'Todo lo que somos tiene un origen. Descubrí cómo nació el Colegio Informático y los valores que nos unen. Hoy, vos también comenzás a ser parte de esta historia.',
       icon: <ShieldCheck className="w-6 h-6 text-[#7A1C1C]" />,
-      badge: 'Historia & Pilares',
+      badge: 'Historia y pilares',
       bgGrad: 'from-amber-50 to-orange-50 border-amber-200'
     },
     {
       id: 'mision2' as MissionId,
       code: 'MISIÓN 02',
       title: 'Explorar nuestra esencia',
-      subtitle: 'Nuestra Esencia en Acción',
+      subtitle: 'Nuestra esencia en acción',
       desc: 'Adéntrate en las iniciativas vivas: Wellness, Copa Informática, Expo Proyecto, Robótica, IA, Bilingüe y el Calendario Anual 2026.',
       icon: <Sparkles className="w-6 h-6 text-[#008751]" />,
-      badge: '8 Iniciativas & Calendario',
+      badge: '8 iniciativas y calendario',
       bgGrad: 'from-emerald-50 to-teal-50 border-emerald-200'
     },
     {
       id: 'mision3' as MissionId,
       code: 'MISIÓN 03',
       title: 'Conocer nuestra comunidad',
-      subtitle: 'Nuestra Comunidad Educativa',
+      subtitle: 'Nuestra comunidad educativa',
       desc: 'Descubre el organigrama estructural, conecta con los referentes institucionales y familiarízate con los canales oficiales de comunicación.',
       icon: <Users className="w-6 h-6 text-[#1E3A8A]" />,
-      badge: 'Organigrama & Contactos',
+      badge: 'Organigrama y contactos',
       bgGrad: 'from-blue-50 to-indigo-50 border-blue-200'
     },
     {
       id: 'mision4' as MissionId,
       code: 'MISIÓN 04',
       title: 'Ser parte y construir juntos',
-      subtitle: 'Mi Rol en Educar',
+      subtitle: 'Mi rol en Educar',
       desc: 'Pautas de convivencia, puntualidad, uniforme, cuidado de espacios, capacitaciones continuas y la cultura del trabajo colaborativo.',
       icon: <Compass className="w-6 h-6 text-[#EA580C]" />,
-      badge: 'Compromiso & Pautas',
+      badge: 'Compromiso y pautas',
       bgGrad: 'from-rose-50 to-orange-50 border-rose-200'
     }
   ];
@@ -137,7 +137,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                 onClick={() => onNavigate('mision1')}
                 className="inline-flex items-center gap-3 px-7 py-3.5 rounded-xl bg-gradient-to-r from-[#01913F] to-[#00602A] hover:from-[#00a848] hover:to-[#01913F] text-white font-bold text-base shadow-xl shadow-emerald-950/40 border border-emerald-400/50 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
               >
-                <span>INICIAR OPERACIÓN</span>
+                <span>Iniciar operación</span>
                 <ArrowRight className="w-5 h-5 text-[#CFB07A]" />
               </button>
 
@@ -146,7 +146,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                 className="inline-flex items-center gap-2.5 px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 backdrop-blur-sm transition"
               >
                 <Play className="w-4 h-4 text-[#CFB07A] fill-current" />
-                <span>Ver Video Institucional</span>
+                <span>Ver video institucional</span>
               </button>
 
               <button
@@ -182,7 +182,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                     Verita Vinci
                   </span>
                   <span className="text-[10px] text-slate-300 tracking-wider uppercase font-semibold">
-                    Escudo Institucional Oficial
+                    Escudo institucional oficial
                   </span>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
           <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
             <div className="flex items-center gap-2 text-slate-800 font-bold text-sm">
               <BellRing className="w-4 h-4 text-[#7A1C1C]" />
-              <span>Avisos de RRHH y Novedades del Ingreso</span>
+              <span>Avisos de RRHH y novedades del ingreso</span>
             </div>
             <span className="text-xs text-slate-500">{notices.length} avisos activos</span>
           </div>
@@ -232,9 +232,9 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-[1.5rem] font-bold leading-[1.25] text-slate-900 flex items-center gap-2 text-left">
-              <span>El Mapa de tu Misión</span>
+              <span>El mapa de tu misión</span>
               <span className="text-xs font-bold bg-[#DE4034] text-white px-2.5 py-0.5 rounded-md uppercase tracking-[0.06em]">
-                Paso a Paso
+                Paso a paso
               </span>
             </h2>
             <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
@@ -301,7 +301,7 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                 </div>
 
                 <div className="pt-4 border-t border-slate-200/60 mt-4 flex items-center justify-between text-xs font-bold text-[#8F1F17] uppercase tracking-[0.06em]">
-                  <span>Ingresar a la Misión</span>
+                  <span>Ingresar a la misión</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                 </div>
               </div>
@@ -331,10 +331,10 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
                   ? 'bg-emerald-200 text-emerald-950 font-extrabold'
                   : 'bg-amber-200/80 text-amber-900 font-extrabold'
               }`}>
-                {isDiplomaUnlocked ? '¡Meta Desbloqueada!' : 'Meta Final (Bloqueada)'}
+                {isDiplomaUnlocked ? '¡Meta desbloqueada!' : 'Meta final (bloqueada)'}
               </span>
               <h3 className="text-[1.125rem] font-bold text-slate-900 leading-[1.3] text-left">
-                Certificación y Diploma Oficial 2026
+                Certificación y diploma oficial 2026
               </h3>
             </div>
             <p className="text-sm text-slate-700 mt-1 max-w-[65ch] leading-[1.5] text-left">
@@ -355,13 +355,13 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
         >
           {isDiplomaUnlocked ? (
             <>
-              <span>Obtener mi Diploma</span>
+              <span>Obtener mi diploma</span>
               <Award className="w-4 h-4 text-[#CFB07A]" />
             </>
           ) : (
             <>
               <Lock className="w-4 h-4 text-amber-400" />
-              <span>Ver Estado de Certificación</span>
+              <span>Ver estado de certificación</span>
             </>
           )}
         </button>
@@ -373,8 +373,8 @@ export const HomeMission: React.FC<HomeMissionProps> = ({
           <div className="bg-slate-900 border border-[#D4B26F] rounded-2xl max-w-3xl w-full p-4 sm:p-6 text-white space-y-4">
             <div className="flex items-center justify-between border-b border-slate-700 pb-3">
               <div>
-                <h3 className="text-lg font-bold text-[#D4B26F]">Video Institucional • Colegio Informático</h3>
-                <p className="text-xs text-slate-400">Enlace Drive Oficial: 1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v</p>
+                <h3 className="text-lg font-bold text-[#D4B26F]">Video institucional • Colegio Informático</h3>
+                <p className="text-xs text-slate-400">Enlace de Drive oficial: 1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v</p>
               </div>
               <button
                 onClick={() => setVideoModalOpen(false)}

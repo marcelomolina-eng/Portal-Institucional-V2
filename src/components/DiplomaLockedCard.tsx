@@ -59,7 +59,7 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
           {/* Header Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-[#CFB07A]/60 text-[#CFB07A] text-xs font-bold tracking-wider uppercase">
             <Lock className="w-3.5 h-3.5 text-amber-400" />
-            <span>Misiones en Curso • Certificación Bloqueada</span>
+            <span>Misiones en curso • Certificación bloqueada</span>
           </div>
 
           {/* Main Required Headline - H1: 32px (2rem), line-height 1.25 */}
@@ -106,7 +106,7 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
               onClick={onBackToHome}
               className="inline-flex items-center gap-2 px-4 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs uppercase tracking-[0.06em] border border-white/20 transition"
             >
-              <span>Volver al Inicio</span>
+              <span>Volver al inicio</span>
             </button>
           </div>
         </div>
@@ -117,7 +117,7 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
-              Requisitos de Certificación Operación 2026
+              Requisitos de certificación Operación 2026
             </h2>
             <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
               Haz clic en cualquier misión para ingresar y completarla.
@@ -178,7 +178,7 @@ export const DiplomaLockedCard: React.FC<DiplomaLockedCardProps> = ({
                 </div>
 
                 <div className="pt-4 border-t border-slate-200/80 mt-4 flex items-center justify-between text-xs font-bold text-[#DE4034]">
-                  <span>{m.isCompleted ? 'Repasar Misión' : 'Completar Misión'}</span>
+                  <span>{m.isCompleted ? 'Repasar misión' : 'Completar misión'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>

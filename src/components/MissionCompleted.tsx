@@ -168,7 +168,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
           </div>
 
           <h1 className="text-[2rem] font-bold text-white tracking-tight leading-[1.25] text-left">
-            ¡OPERACIÓN CUMPLIDA!
+            ¡Operación cumplida!
           </h1>
 
           <p className="text-base text-[#F7F3EA] font-normal leading-[1.5] max-w-[65ch] text-left">
@@ -191,7 +191,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
             </div>
             <div>
               <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
-                Formulario de Certificación
+                Formulario de certificación
               </h2>
               <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                 Datos que figurarán en tu constancia oficial
@@ -283,7 +283,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
               ) : (
                 <>
                   <Award className="w-5 h-5 text-[#CFB07A]" />
-                  <span>OBTENER MI DIPLOMA</span>
+                  <span>Obtener mi diploma</span>
                 </>
               )}
             </button>
@@ -293,7 +293,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
             <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-2">
               <div className="flex items-center gap-2 font-bold text-emerald-800">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Diploma Registrado Exitosamente</span>
+                <span>Diploma registrado exitosamente</span>
               </div>
               <p className="text-[11px] text-emerald-700 leading-snug">
                 Folio Oficial: <span className="font-mono font-bold">{generatedDiploma.certificateFolio}</span>. Guardado en la base de datos de RRHH.
@@ -306,7 +306,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#DE4034] flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-[#CFB07A]" /> Vista Oficial del Certificado
+              <Sparkles className="w-4 h-4 text-[#CFB07A]" /> Vista oficial del certificado
             </span>
             {generatedDiploma && (
               <button
@@ -314,7 +314,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
                 className="px-4 py-2 rounded-xl bg-[#DE4034] hover:bg-[#8F1F17] text-white text-xs font-bold transition flex items-center gap-2 shadow-sm"
               >
                 <Printer className="w-4 h-4 text-[#CFB07A]" />
-                <span>Imprimir / Guardar como PDF</span>
+                <span>Imprimir / Guardar en PDF</span>
               </button>
             )}
           </div>
@@ -424,7 +424,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
           </div>
           <div>
             <h2 className="text-xl font-bold text-slate-900">
-              Encuesta de Satisfacción del Proceso de Inducción
+              Encuesta de satisfacción del proceso de inducción
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
               Tu opinión es vital para que RRHH continúe mejorando la experiencia de cada nuevo integrante.
@@ -441,7 +441,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
               ¡Muchas gracias por tu retroalimentación!
             </h3>
             <p className="text-xs sm:text-sm text-emerald-700 max-w-md mx-auto">
-              Tu respuesta ha quedado registrada en la hoja <span className="font-mono font-bold">Feedback_Satisfaccion</span> de RRHH. ¡Te deseamos el mayor de los éxitos en Educar!
+              Tu respuesta ha quedado registrada en nuestro sistema de bienvenida de RRHH. ¡Te deseamos el mayor de los éxitos en Educar!
             </p>
           </div>
         ) : (
@@ -514,10 +514,10 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
                 onChange={(e) => setMostUseful(e.target.value)}
                 className="w-full p-3 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#008751]"
               >
-                <option value="Misión 01: Identidad, Misión y Videos Drive">Misión 01: Identidad, Misión y Videos Drive</option>
-                <option value="Misión 02: 8 Iniciativas & Calendario">Misión 02: 8 Iniciativas & Calendario</option>
-                <option value="Misión 03: Organigrama y Canales de Comunicación">Misión 03: Organigrama y Canales de Comunicación</option>
-                <option value="Misión 04: Pautas de Convivencia y Kit de Ingreso">Misión 04: Pautas de Convivencia y Kit de Ingreso</option>
+                <option value="Misión 01: Identidad, misión y videos institucionales">Misión 01: Identidad, misión y videos institucionales</option>
+                <option value="Misión 02: 8 iniciativas y calendario">Misión 02: 8 iniciativas y calendario</option>
+                <option value="Misión 03: Organigrama y canales de comunicación">Misión 03: Organigrama y canales de comunicación</option>
+                <option value="Misión 04: Pautas de convivencia y kit de ingreso">Misión 04: Pautas de convivencia y kit de ingreso</option>
               </select>
             </div>
 
@@ -540,7 +540,7 @@ export const MissionCompleted: React.FC<MissionCompletedProps> = ({
               className="px-6 py-3 rounded-xl bg-[#7A1C1C] hover:bg-[#5A1212] text-white font-bold text-xs uppercase tracking-wider shadow-md transition flex items-center gap-2 cursor-pointer"
             >
               <Send className="w-4 h-4 text-[#D4B26F]" />
-              <span>Enviar Encuesta de Satisfacción</span>
+              <span>Enviar encuesta de satisfacción</span>
             </button>
           </form>
         )}

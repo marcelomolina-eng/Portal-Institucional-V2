@@ -179,7 +179,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                 <ShieldCheck className="w-4 h-4 text-[#01913F]" /> MISIÓN 01: OPERACIÓN INFORMÁTICO
               </div>
               <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
-                Descubrir Quiénes Somos
+                Descubrir quiénes somos
               </h1>
               <div className="space-y-1 max-w-[65ch] text-left">
                 <p className="text-base font-bold text-[#CFB07A]">
@@ -204,7 +204,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{isCompleted ? 'Misión Completada • Continuar' : 'Completar y Pasar a Misión 02'}</span>
+            <span>{isCompleted ? 'Misión completada • Continuar' : 'Completar y pasar a Misión 02'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -221,7 +221,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           }`}
         >
           <Layers className={`w-4 h-4 ${activeTab === 'filosofia' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Misión, Visión y Escudo</span>
+          <span>Misión, visión y escudo</span>
         </button>
 
         <button
@@ -233,7 +233,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           }`}
         >
           <Music className={`w-4 h-4 ${activeTab === 'himno' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Himno Institucional</span>
+          <span>Himno institucional</span>
         </button>
 
         <button
@@ -245,7 +245,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           }`}
         >
           <Video className={`w-4 h-4 ${activeTab === 'videos' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Videos Institucionales</span>
+          <span>Videos institucionales</span>
         </button>
 
         <button
@@ -257,7 +257,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
           }`}
         >
           <History className={`w-4 h-4 ${activeTab === 'historia' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Hitos & Línea de Tiempo</span>
+          <span>Hitos y línea de tiempo</span>
         </button>
       </div>
 
@@ -271,10 +271,10 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                 <Target className="w-6 h-6" />
               </div>
               <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#8F1F17]">
-                Nuestra Razón de Ser
+                Nuestra razón de ser
               </span>
               <h2 className="text-[1.5rem] font-bold text-slate-900 mt-1 mb-3 leading-[1.25] text-left">
-                Misión Institucional
+                Misión institucional
               </h2>
               <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left whitespace-pre-wrap">
                 Desarrollar el máximo potencial de nuestros estudiantes, desde el nivel inicial hasta su graduación, a través de una educación integral, innovadora e inclusiva que combina la excelencia académica con la educación emocional y el desarrollo de valores, para formar líderes capaces de generar un impacto positivo y duradero en la sociedad. Siendo un espacio de encuentro, contención y crecimiento.
@@ -287,10 +287,10 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                 <Eye className="w-6 h-6" />
               </div>
               <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#00602A]">
-                Hacia Dónde Vamos
+                Hacia dónde vamos
               </span>
               <h2 className="text-[1.5rem] font-bold text-slate-900 mt-1 mb-3 leading-[1.25] text-left">
-                Visión Institucional
+                Visión institucional
               </h2>
               <p className="text-base text-slate-700 leading-[1.5] max-w-[65ch] text-left whitespace-pre-wrap">
                 Ser la empresa educativa líder y el principal referente en la innovación y calidad humana del Nordeste Argentino (NEA), reconocida por ofrecer una trayectoria formativa integral y de vanguardia que prepara a los estudiantes para un mundo global, generando un impacto positivo que mejora la calidad de vida de la sociedad y de la comunidad.
@@ -303,10 +303,10 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#8F1F17] font-mono">
-                  Identidad Visual y Blasón
+                  Identidad visual y blasón
                 </span>
                 <h3 className="text-[1.125rem] font-bold text-slate-900 mt-0.5 leading-[1.3] text-left">
-                  El Escudo Oficial y el Lema "Verita Vinci"
+                  El escudo oficial y el lema "Verita Vinci"
                 </h3>
                 <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                   Conoce la historia y el significado de los colores y figuras que presiden nuestra institución.
@@ -314,7 +314,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               </div>
 
               <div className="px-3.5 py-1.5 rounded-full bg-[#CFB07A]/20 border border-[#CFB07A] text-[#634816] font-serif-title text-xs font-bold uppercase tracking-[0.06em]">
-                Verita Vinci • La Verdad Triunfa
+                Verita Vinci • La verdad triunfa
               </div>
             </div>
 
@@ -327,10 +327,10 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                   className="w-48 h-auto object-contain drop-shadow-xl"
                 />
                 <span className="mt-3 text-xs font-serif-title font-bold text-slate-700 tracking-wider">
-                  Blasón Colegio Informático
+                  Blasón del Colegio Informático
                 </span>
                 <span className="text-[11px] text-[#01913F] font-semibold">
-                  Comunidad Educativa Educar
+                  Comunidad educativa Educar
                 </span>
               </div>
 
@@ -376,7 +376,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-[#22201B]" />
                     <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">
-                      Águila, Blasón Central & Saetas
+                      Águila, blasón central y saetas
                     </h4>
                   </div>
                   <p className="text-xs text-slate-700 leading-relaxed">
@@ -392,17 +392,17 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
             <div className="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#00875A] font-mono">
-                  Pilares Formativos
+                  Pilares formativos
                 </span>
                 <h3 className="text-[1.125rem] font-bold text-slate-900 mt-0.5 leading-[1.3] text-left">
-                  18 Valores Institucionales de Nuestra Comunidad
+                  18 valores institucionales de nuestra comunidad
                 </h3>
                 <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                   Principios rectores que guían nuestra labor diaria con los estudiantes, las familias y el equipo educador.
                 </p>
               </div>
               <span className="self-start sm:self-center px-3 py-1 rounded-full bg-emerald-50 text-[#00875A] border border-emerald-200 text-xs font-bold shrink-0">
-                18 Principios Rectores
+                18 principios rectores
               </span>
             </div>
 
@@ -441,7 +441,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                 "Somos más que una institución educativa. Somos el lugar donde el futuro del NEA comienza a escribirse."
               </blockquote>
               <p className="text-xs sm:text-sm font-bold text-[#CFB07A] uppercase tracking-wider font-mono">
-                — Socios Fundadores, EDUCAR SRL
+                — Socios fundadores, Educar SRL
               </p>
             </div>
           </div>
@@ -471,7 +471,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               }`}
             >
               <Video className="w-4 h-4" />
-              <span>Video 01: Identidad y Trayectoria</span>
+              <span>Video 01: Identidad y trayectoria</span>
             </button>
 
             <button
@@ -483,7 +483,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               }`}
             >
               <Video className="w-4 h-4" />
-              <span>Video 02: Cultura y Espíritu Educar</span>
+              <span>Video 02: Cultura y espíritu Educar</span>
             </button>
           </div>
 
@@ -492,11 +492,11 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">
                   {activeVideo === 'video1' 
-                    ? 'Video 01: Orígenes y Filosofía Educativa' 
-                    : 'Video 02: Nuestra Esencia y Trabajo Colaborativo'}
+                    ? 'Video 01: Orígenes y filosofía educativa' 
+                    : 'Video 02: Nuestra esencia y trabajo colaborativo'}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Enlace Drive oficial embebido directamente en la aplicación.
+                  Enlace oficial embebido directamente en la aplicación.
                 </p>
               </div>
 
@@ -510,7 +510,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
                 rel="noreferrer"
                 className="text-xs font-semibold text-[#7A1C1C] hover:text-[#5A1212] flex items-center gap-1.5 px-3 py-1.5 bg-red-50 rounded-lg border border-red-100 transition"
               >
-                <span>Ver directo en Drive</span>
+                <span>Ver directo en Google Drive</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -545,7 +545,7 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
         <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
           <div>
             <h3 className="text-xl font-bold text-slate-900">
-              Trayectoria y Fechas Importantes del Colegio Informático
+              Trayectoria y fechas importantes del Colegio Informático
             </h3>
             <p className="text-xs sm:text-sm text-slate-500">
               Más de dos décadas formando generaciones de correntinos con visión tecnológica y humana.
@@ -580,8 +580,8 @@ export const Mission1Identity: React.FC<Mission1IdentityProps> = ({
       {/* Footer Checkpoint de la Misión */}
       <MissionCheckpointFooter
         missionCode="Misión 01"
-        missionTitle="Identidad Institucional"
-        nextMissionTitle="Misión 02: Esencia en Acción"
+        missionTitle="Identidad institucional"
+        nextMissionTitle="Misión 02: Esencia en acción"
         isCompleted={isCompleted}
         onComplete={onComplete}
         onNavigateNext={onNavigateNext}

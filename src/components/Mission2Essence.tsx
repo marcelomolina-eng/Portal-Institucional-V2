@@ -93,7 +93,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               <Sparkles className="w-4 h-4" /> MISIÓN 02: OPERACIÓN INFORMÁTICO
             </div>
             <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
-              Explorar Nuestra Esencia en Acción
+              Explorar nuestra esencia en acción
             </h1>
             <p className="text-base text-emerald-50 max-w-[65ch] leading-[1.5] text-left">
               Las 8 iniciativas pilares que marcan el ritmo del año y el Calendario Anual Integrado 2026. Conoce a los referentes y el valor pedagógico de cada proyecto.
@@ -112,7 +112,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{isCompleted ? 'Misión Completada • Continuar' : 'Completar y Pasar a Misión 03'}</span>
+            <span>{isCompleted ? 'Misión completada • Continuar' : 'Completar y pasar a Misión 03'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -129,7 +129,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
           }`}
         >
           <Sparkles className={`w-4 h-4 ${activeSection === 'iniciativas' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>8 Iniciativas & Referentes</span>
+          <span>8 iniciativas y referentes</span>
         </button>
 
         <button
@@ -141,7 +141,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
           }`}
         >
           <Calendar className={`w-4 h-4 ${activeSection === 'calendario' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>Calendario Anual 2026</span>
+          <span>Calendario anual 2026</span>
           <span
             className={`text-xs px-2 py-0.5 rounded-full font-bold font-mono transition-colors ${
               activeSection === 'calendario'
@@ -149,7 +149,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                 : 'bg-slate-100 text-slate-700 border border-slate-200'
             }`}
           >
-            {calendarEvents.length} Eventos
+            {calendarEvents.length} eventos
           </span>
         </button>
       </div>
@@ -160,14 +160,14 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
-                Iniciativas que nos Definen
+                Iniciativas que nos definen
               </h2>
               <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
                 Haz clic en cualquier iniciativa para ver el detalle de "¿Qué hacemos?", "¿Por qué lo hacemos?" y "¿Qué valor aporta?".
               </p>
             </div>
             <span className="text-xs font-bold uppercase tracking-[0.06em] px-3 py-1 bg-slate-100 border border-slate-300 rounded-full text-slate-800 self-start">
-              8 Ejes Estratégicos
+              8 ejes estratégicos
             </span>
           </div>
 
@@ -215,7 +215,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between text-xs font-bold text-[#00602A] uppercase tracking-[0.06em]">
-                  <span>Ver Ficha Completa</span>
+                  <span>Ver ficha completa</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                 </div>
               </div>
@@ -231,10 +231,10 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
             <div>
               <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-[#008751]" />
-                <span>Calendario Anual de Eventos e Hitos 2026</span>
+                <span>Calendario anual de eventos e hitos 2026</span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-500">
-                Sincronizado con la hoja <span className="font-mono text-slate-700 font-semibold">Calendario_Eventos</span> de RRHH.
+                Cronograma oficial de actividades, celebraciones y encuentros de la comunidad educativa.
               </p>
             </div>
 
@@ -261,7 +261,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              Todos los Meses
+              Todos los meses
             </button>
             {months.map((m) => (
               <button
@@ -363,7 +363,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               {/* 1. ¿Qué hacemos? */}
               <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#008751] space-y-1">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#008751] flex items-center gap-1.5">
-                  <HelpCircle className="w-4 h-4" /> 1. ¿Qué Hacemos?
+                  <HelpCircle className="w-4 h-4" /> 1. ¿Qué hacemos?
                 </h4>
                 <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {selectedInitiative.queHacemos}
@@ -373,7 +373,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               {/* 2. ¿Por qué lo hacemos? */}
               <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#7A1C1C] space-y-1">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#7A1C1C] flex items-center gap-1.5">
-                  <HeartHandshake className="w-4 h-4" /> 2. ¿Por Qué Lo Hacemos?
+                  <HeartHandshake className="w-4 h-4" /> 2. ¿Por qué lo hacemos?
                 </h4>
                 <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {selectedInitiative.porqueLoHacemos}
@@ -383,7 +383,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               {/* 3. ¿Qué valor aporta? */}
               <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#D4B26F] space-y-1">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#B45309] flex items-center gap-1.5">
-                  <Award className="w-4 h-4" /> 3. ¿Qué Valor Aporta?
+                  <Award className="w-4 h-4" /> 3. ¿Qué valor aporta?
                 </h4>
                 <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {selectedInitiative.queValorAporta}
@@ -413,7 +413,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               onClick={() => setSelectedInitiative(null)}
               className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition"
             >
-              Cerrar Ficha
+              Cerrar ficha
             </button>
           </div>
         </div>
@@ -422,8 +422,8 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
       {/* Footer Checkpoint de la Misión */}
       <MissionCheckpointFooter
         missionCode="Misión 02"
-        missionTitle="Esencia en Acción"
-        nextMissionTitle="Misión 03: Comunidad Educativa"
+        missionTitle="Esencia en acción"
+        nextMissionTitle="Misión 03: Comunidad educativa"
         isCompleted={isCompleted}
         onComplete={onComplete}
         onNavigateNext={onNavigateNext}

@@ -85,7 +85,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
               <Compass className="w-4 h-4" /> MISIÓN 04: OPERACIÓN INFORMÁTICO
             </div>
             <h1 className="text-[2rem] font-bold text-white leading-[1.25] text-left">
-              Ser Parte y Construir Juntos: Mi Rol en Educar
+              Ser parte y construir juntos: mi rol en Educar
             </h1>
             <p className="text-base text-orange-50 max-w-[65ch] leading-[1.5] text-left">
               Las 6 pautas de compromiso que dan sentido a nuestro trabajo cotidiano y consolidan el prestigio del Colegio Informático.
@@ -104,7 +104,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{isCompleted ? 'Misión Completada • Certificación' : 'Completar e Ir al Diploma'}</span>
+            <span>{isCompleted ? 'Misión completada • Certificación' : 'Completar e ir al diploma'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -177,7 +177,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
 
             <div className="space-y-2 pt-2">
               <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                Pautas Prácticas para el Día a Día:
+                Pautas prácticas para el día a día:
               </h4>
               <div className="space-y-2">
                 {rule.tips.map((tip, idx) => (
@@ -211,7 +211,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
         <div>
           <h3 className="text-[1.125rem] font-bold text-slate-900 flex items-center gap-2 leading-[1.3] text-left">
             <Shield className="w-5 h-5 text-[#00602A]" />
-            <span>Autocomprobación: Tu Kit de Bienvenida</span>
+            <span>Autocomprobación: tu kit de bienvenida</span>
           </h3>
           <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
             Marca los puntos a medida que los vayas completando en tu primera semana.
@@ -274,8 +274,8 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       {/* Footer Checkpoint de la Misión */}
       <MissionCheckpointFooter
         missionCode="Misión 04"
-        missionTitle="Mi Rol en Educar"
-        nextMissionTitle="Certificación Final"
+        missionTitle="Mi rol en Educar"
+        nextMissionTitle="Certificación final"
         isCompleted={isCompleted}
         onComplete={onComplete}
         onNavigateNext={onNavigateNext}

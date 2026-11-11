@@ -77,7 +77,7 @@ export const MissionCheckpointFooter: React.FC<MissionCheckpointFooterProps> = (
           }`}
         >
           <Check className={`w-4 h-4 ${isCompleted ? 'text-emerald-700 stroke-[3]' : 'text-slate-400'}`} />
-          <span>{isCompleted ? 'Misión Completada' : 'Marcar Misión como Completada'}</span>
+          <span>{isCompleted ? 'Misión completada' : 'Marcar misión como completada'}</span>
         </button>
 
         {/* Botón: Continuar a la Siguiente Misión */}
@@ -89,7 +89,7 @@ export const MissionCheckpointFooter: React.FC<MissionCheckpointFooterProps> = (
           }}
           className="px-5 py-2.5 rounded-xl bg-[#01913F] hover:bg-[#007031] text-white font-bold text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center gap-2 border border-emerald-400/40"
         >
-          <span>{isFinalMission ? 'Ir a Certificación' : 'Continuar a la Siguiente Misión'}</span>
+          <span>{isFinalMission ? 'Ir a certificación' : 'Continuar a la siguiente misión'}</span>
           {isFinalMission ? (
             <Award className="w-4 h-4 text-[#CFB07A]" />
           ) : (

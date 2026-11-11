@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'mision1', label: 'Misión 01: Identidad', icon: <ShieldCheck className="w-4 h-4" /> },
     { id: 'mision2', label: 'Misión 02: Esencia', icon: <Sparkles className="w-4 h-4" /> },
     { id: 'mision3', label: 'Misión 03: Comunidad', icon: <Users className="w-4 h-4" /> },
-    { id: 'mision4', label: 'Misión 04: Mi Rol', icon: <Compass className="w-4 h-4" /> },
+    { id: 'mision4', label: 'Misión 04: Mi rol', icon: <Compass className="w-4 h-4" /> },
     { 
       id: 'misionCumplida', 
       label: 'Certificación', 
