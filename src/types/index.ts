@@ -82,6 +82,8 @@ export interface CommitmentRule {
   tips: string[];
   iconName: string;
   badge: string;
+  image?: string;
+  closingQuote?: string;
 }
 
 export interface DiplomaRecord {

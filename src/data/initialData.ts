@@ -221,80 +221,87 @@ export const COMMITMENT_RULES: CommitmentRule[] = [
   {
     number: 1,
     title: 'Cada día comienza con nosotros',
-    highlight: 'Ingreso, puntualidad y preparación',
-    description: 'La puntualidad es la primera muestra de respeto hacia nuestros colegas y hacia los estudiantes que esperan nuestro ejemplo. Llegar 10 minutos antes nos permite predisponernos con serenidad para la jornada.',
+    highlight: 'Respetar los horarios y registrar nuestro ingreso y egreso es parte de nuestro compromiso.',
+    description: 'La puntualidad es la primera muestra de respeto hacia nuestros colegas y hacia los estudiantes que esperan nuestro ejemplo. Llegar con tiempo nos permite predisponernos con serenidad para la jornada.',
     tips: [
-      'Registrá tu ingreso en el sistema biométrico o planilla de firma.',
-      'Anticipá imprevistos avisando oportunamente a tu coordinación.',
+      'Registrá tu ingreso en el sistema biométrico o terminal de entrada.',
+      'Anticipá cualquier imprevisto avisando con antelación a tu coordinación.',
       'Comenzá cada clase o tarea con puntualidad y una sonrisa de bienvenida.'
     ],
     iconName: 'Clock',
-    badge: 'Compromiso Diario'
+    badge: 'Puntualidad y Registro',
+    image: '/src/assets/images/docente_ingreso_colegio_1794425649449.jpg'
   },
   {
     number: 2,
-    title: 'Nos representamos en cómo nos presentamos',
-    highlight: 'Uniforme institucional y código de vestimenta',
-    description: 'Nuestra vestimenta comunica profesionalismo, pertenencia y cuidado. El uso de la chomba o indumentaria institucional del Colegio Informático transmite unidad y cercanía a las familias.',
+    title: 'También nos representamos en cómo nos presentamos',
+    highlight: 'Nuestra presentación personal acompaña la identidad del Colegio.',
+    description: 'Nuestra vestimenta comunica profesionalismo, pertenencia y cuidado. El uso de la indumentaria oficial del Colegio Informático transmite unidad, seriedad y calidez a las familias.',
     tips: [
-      'Utilizá la indumentaria oficial según tu sector (Docente, Maestranza, Administrativo).',
+      'Utilizá la indumentaria oficial según tu sector (docente, maestranza, administrativo).',
       'Mantené una presentación prolija y adecuada para un entorno formativo infantil y juvenil.',
-      'Portá tu credencial institucional visible para seguridad de la comunidad.'
+      'Portá tu credencial institucional visible para seguridad de toda la comunidad.'
     ],
     iconName: 'UserCheck',
-    badge: 'Identidad Visual'
+    badge: 'Identidad y Presentación',
+    image: '/src/assets/images/colaboradores_uniforme_pasillo_1794425651684.jpg'
   },
   {
     number: 3,
     title: 'La convivencia la construimos entre todos',
-    highlight: 'Respeto, cordialidad y escucha activa',
+    highlight: 'El respeto, la cordialidad y la buena comunicación hacen la diferencia.',
     description: 'El clima de trabajo lo creamos con el saludo sincero, la paciencia ante las dificultades y el buen trato en cada conversación. Fomentamos una cultura libre de rumores y abierta al diálogo constructivo.',
     tips: [
-      'Saludá a todos al ingresar: maestranza, directivos, familias y alumnos.',
-      'Canalizá dudas o discrepancias por las vías formales y en privado.',
-      'Practicá la retroalimentación positiva y el reconocimiento entre pares.'
+      'Saludá cordialmente a todos: personal de maestranza, directivos, familias y alumnos.',
+      'Canalizá dudas o discrepancias por las vías institucionales y con espíritu constructivo.',
+      'Practicá la escucha activa y el reconocimiento sincero entre pares.'
     ],
     iconName: 'Smile',
-    badge: 'Clima Escolar'
+    badge: 'Convivencia y Diálogo',
+    image: '/src/assets/images/colaboradores_sala_docentes_1794425650084.jpg'
   },
   {
     number: 4,
     title: 'Cuidar nuestros espacios también es tarea de todos',
-    highlight: 'Instalaciones, aulas y equipamiento tecnológico',
-    description: 'Nuestros laboratorios de informática, aulas climatizadas y patios son el hábitat de aprendizaje de cientos de chicos. Dejar cada espacio mejor de lo que lo encontramos refleja cultura institucional.',
+    highlight: 'Cuidamos las instalaciones, los materiales y las herramientas que compartimos.',
+    description: 'Nuestras aulas, laboratorios y áreas comunes son el hábitat de aprendizaje de toda la comunidad. Mantener cada espacio limpio, seguro y ordenado es una responsabilidad compartida.',
     tips: [
-      'Apagá proyectores, luces y aires acondicionados al finalizar tu clase.',
-      'Reportá desperfectos edilicios o de computación a Sistemas y Maestranza.',
-      'Fomentá en los alumnos el cuidado del mobiliario y el orden de los materiales.'
+      'Apagá proyectores, luces y aires acondicionados al finalizar tus actividades.',
+      'Reportá oportunamente desperfectos edilicios o de equipamiento a Mantenimiento y Sistemas.',
+      'Fomentá activamente en los alumnos el cuidado del mobiliario y el orden de los materiales.'
     ],
     iconName: 'Building2',
-    badge: 'Sustentabilidad'
+    badge: 'Cuidado de Espacios',
+    image: '/src/assets/images/cuidado_espacios_aula_1794425672892.jpg'
   },
   {
     number: 5,
     title: 'Siempre hay algo nuevo para compartir',
-    highlight: 'Capacitación continua y vocación de aprendizaje',
-    description: 'En el Colegio Informático creemos que el mejor educador y profesional es el que nunca deja de ser aprendiz. Compartimos buenas prácticas, participamos en ateneos y abrazamos nuevas herramientas.',
+    highlight: 'Participamos de las instancias de formación y de las actividades institucionales según las convocatorias.',
+    description: 'En el Colegio Informático creemos en el aprendizaje continuo y en la actualización constante. Compartimos saberes, participamos de jornadas pedagógicas y sumamos nuevas herramientas.',
     tips: [
-      'Aprovechá los talleres de formación continua y las jornadas institucionales.',
-      'Compartí recursos, dinámicas de clase y descubrimientos con tu departamento.',
-      'Mantenete actualizado en las herramientas digitales institucionales.'
+      'Aprovechá los talleres de formación continua y las capacitaciones institucionales.',
+      'Compartí recursos, dinámicas de clase y descubrimientos con tu equipo de trabajo.',
+      'Mantenete actualizado en las herramientas pedagógicas y tecnológicas del colegio.'
     ],
     iconName: 'GraduationCap',
-    badge: 'Desarrollo Profesional'
+    badge: 'Formación Continua',
+    image: '/src/assets/images/capacitacion_docente_jornada_1794425675905.jpg'
   },
   {
     number: 6,
     title: 'Somos parte de algo más grande',
-    highlight: 'Sentido de comunidad y orgullo Educar',
-    description: 'Más allá de nuestras tareas individuales, formamos una familia educativa con más de dos décadas de historia. Tu aporte diario trasciende en el futuro y los recuerdos de cada estudiante.',
+    highlight: 'Cada persona, desde su lugar, contribuye a construir nuestra comunidad.',
+    description: 'Más allá de nuestras tareas individuales, formamos una familia educativa con más de dos décadas de historia. Tu aporte diario trasciende en el futuro y la formación de nuestros estudiantes.',
     tips: [
-      'Sumate a los eventos institucionales (Copa Informática, Expo, Actos).',
-      'Sentite libre de proponer mejoras e iniciativas para sumar al proyecto.',
-      'Sé un embajador de los valores del Colegio ante la sociedad.'
+      'Sumate a los proyectos y celebraciones institucionales (Copa Informática, Expo, Actos).',
+      'Sentite libre de proponer mejoras e iniciativas para sumar al proyecto educativo.',
+      'Sé un embajador de los valores de Verita Vinci ante la sociedad.'
     ],
     iconName: 'Sparkles',
-    badge: 'Legado y Futuro'
+    badge: 'Comunidad Unida',
+    image: '/src/assets/images/comunidad_grupal_colegio_1794425675606.jpg',
+    closingQuote: 'No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad.'
   }
 ];
 

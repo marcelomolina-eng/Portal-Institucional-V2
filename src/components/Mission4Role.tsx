@@ -53,12 +53,12 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
   };
 
   const slidePhotos = [
-    'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80', // Puntualidad
-    'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=80', // Uniforme
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80', // Convivencia
-    'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80', // Instalaciones
-    'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80', // Capacitaciones
-    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80'  // Comunidad
+    '/src/assets/images/docente_ingreso_colegio_1794425649449.jpg', // Compromiso 1
+    '/src/assets/images/colaboradores_uniforme_pasillo_1794425651684.jpg', // Compromiso 2
+    '/src/assets/images/colaboradores_sala_docentes_1794425650084.jpg', // Compromiso 3
+    '/src/assets/images/cuidado_espacios_aula_1794425672892.jpg', // Compromiso 4
+    '/src/assets/images/capacitacion_docente_jornada_1794425675905.jpg', // Compromiso 5
+    '/src/assets/images/comunidad_grupal_colegio_1794425675606.jpg'  // Compromiso 6
   ];
 
   const checklistItems = [
@@ -74,6 +74,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
   };
 
   const rule = commitmentRules[currentSlide];
+  const currentPhoto = rule?.image || slidePhotos[currentSlide] || slidePhotos[0];
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -131,7 +132,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={prevSlide}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
               aria-label="Anterior"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -141,7 +142,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
             </span>
             <button
               onClick={nextSlide}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
               aria-label="Siguiente"
             >
               <ChevronRight className="w-5 h-5" />
@@ -153,11 +154,12 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Photo */}
           <div className="lg:col-span-5 relative">
-            <div className="relative rounded-2xl overflow-hidden aspect-4/3 shadow-md border-2 border-slate-100">
+            <div className="relative rounded-2xl overflow-hidden aspect-4/3 shadow-md border-2 border-slate-100 group">
               <img
-                src={slidePhotos[currentSlide]}
+                src={currentPhoto}
                 alt={rule.title}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 text-white text-xs font-semibold backdrop-blur-xs">
                 {rule.badge}
@@ -167,15 +169,21 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
 
           {/* Details */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="p-3.5 rounded-xl bg-orange-50 border border-orange-200/60 text-[#9a3412] font-semibold text-sm">
-              {rule.highlight}
+            {/* Frase / Mensaje destacado del compromiso */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border border-orange-200/80 shadow-xs">
+              <div className="text-xs font-bold uppercase tracking-wider text-[#9a3412] mb-1 font-mono">
+                Mensaje de compromiso:
+              </div>
+              <p className="text-sm sm:text-base text-[#9a3412] font-bold leading-snug">
+                "{rule.highlight}"
+              </p>
             </div>
 
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-wrap">
               {rule.description}
             </p>
 
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2 pt-1">
               <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
                 Pautas prácticas para el día a día:
               </h4>
@@ -188,6 +196,19 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
                 ))}
               </div>
             </div>
+
+            {/* Frase Destacada de Cierre al final del compromiso 6 */}
+            {rule.number === 6 && (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-[#1C1A17] via-[#2A1513] to-[#12231A] text-white border-2 border-[#CFB07A] shadow-md space-y-1.5 animate-fadeIn mt-2">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#CFB07A] font-mono">
+                  <Sparkles className="w-4 h-4 text-[#CFB07A]" />
+                  <span>Frase destacada de cierre</span>
+                </div>
+                <blockquote className="text-sm sm:text-base font-serif-title font-bold text-slate-100 leading-snug">
+                  "No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad."
+                </blockquote>
+              </div>
+            )}
           </div>
         </div>
 
@@ -197,7 +218,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
             <button
               key={i}
               onClick={() => setCurrentSlide(i)}
-              className={`h-2 rounded-full transition-all ${
+              className={`h-2 rounded-full transition-all cursor-pointer ${
                 currentSlide === i ? 'w-8 bg-[#7A1C1C]' : 'w-2 bg-slate-200 hover:bg-slate-300'
               }`}
               aria-label={`Ir a pauta ${i + 1}`}
@@ -246,8 +267,8 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       {/* FOTO DE CIERRE DEL EQUIPO CON FRASE INSTITUCIONAL INSPIRADORA */}
       <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-[#CFB07A] bg-slate-900 text-white p-8 sm:p-12 text-center space-y-6">
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-25 filter blur-xs"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80")' }}
+          className="absolute inset-0 bg-cover bg-center opacity-30 filter blur-xs"
+          style={{ backgroundImage: 'url("/src/assets/images/comunidad_grupal_colegio_1794425675606.jpg")' }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#5A1212] via-black/60 to-transparent" />
 
