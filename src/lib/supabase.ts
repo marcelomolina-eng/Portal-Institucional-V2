@@ -912,6 +912,30 @@ export function getOrganigramaImageUrl(fileName: string): string {
   return `/assets/aistudio/${encodeURIComponent(fileName)}`;
 }
 
+/**
+ * Obtiene la URL pública directa desde Supabase Storage para el bucket 'mision4-imagenes'.
+ * Utiliza VITE_SUPABASE_URL + '/storage/v1/object/public/mision4-imagenes/...'
+ */
+export function getMision4ImageUrl(fileName: string): string {
+  const cleanFileName = fileName.trim();
+  if (isSupabaseConfigured()) {
+    const { data } = supabase.storage.from('mision4-imagenes').getPublicUrl(cleanFileName);
+    if (data?.publicUrl) return data.publicUrl;
+  }
+
+  const baseUrl = 
+    import.meta.env.VITE_SUPABASE_URL || 
+    cleanUrl || 
+    (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_url') || '' : '');
+
+  if (baseUrl) {
+    const cleanBase = cleanSupabaseUrl(baseUrl);
+    return `${cleanBase}/storage/v1/object/public/mision4-imagenes/${encodeURIComponent(cleanFileName)}`;
+  }
+
+  return `/storage/v1/object/public/mision4-imagenes/${encodeURIComponent(cleanFileName)}`;
+}
+
 // ============================================================================
 // 11. SUSCRIPCIONES EN TIEMPO REAL (Postgres CDC)
 // ============================================================================

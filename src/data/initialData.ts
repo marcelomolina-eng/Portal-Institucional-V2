@@ -217,6 +217,12 @@ export const AUTHORITIES: Authority[] = [
   }
 ];
 
+const supabaseStorageBaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/+$/, '');
+const getMision4StoragePath = (fileName: string) =>
+  supabaseStorageBaseUrl
+    ? `${supabaseStorageBaseUrl}/storage/v1/object/public/mision4-imagenes/${fileName}`
+    : `/storage/v1/object/public/mision4-imagenes/${fileName}`;
+
 export const COMMITMENT_RULES: CommitmentRule[] = [
   {
     number: 1,
@@ -230,7 +236,7 @@ export const COMMITMENT_RULES: CommitmentRule[] = [
     ],
     iconName: 'Clock',
     badge: 'Puntualidad y Registro',
-    image: '/src/assets/images/docente_ingreso_colegio_1794425649449.jpg'
+    image: getMision4StoragePath('mision4-1.jpg')
   },
   {
     number: 2,
@@ -244,7 +250,7 @@ export const COMMITMENT_RULES: CommitmentRule[] = [
     ],
     iconName: 'UserCheck',
     badge: 'Identidad y Presentación',
-    image: '/src/assets/images/colaboradores_uniforme_pasillo_1794425651684.jpg'
+    image: getMision4StoragePath('mision4-2.jpg')
   },
   {
     number: 3,
@@ -258,7 +264,7 @@ export const COMMITMENT_RULES: CommitmentRule[] = [
     ],
     iconName: 'Smile',
     badge: 'Convivencia y Diálogo',
-    image: '/src/assets/images/colaboradores_sala_docentes_1794425650084.jpg'
+    image: getMision4StoragePath('mision4-3.jpg')
   },
   {
     number: 4,
@@ -272,7 +278,7 @@ export const COMMITMENT_RULES: CommitmentRule[] = [
     ],
     iconName: 'Building2',
     badge: 'Cuidado de Espacios',
-    image: '/src/assets/images/cuidado_espacios_aula_1794425672892.jpg'
+    image: getMision4StoragePath('mision4-4.jpg')
   },
   {
     number: 5,
@@ -286,7 +292,7 @@ export const COMMITMENT_RULES: CommitmentRule[] = [
     ],
     iconName: 'GraduationCap',
     badge: 'Formación Continua',
-    image: '/src/assets/images/capacitacion_docente_jornada_1794425675905.jpg'
+    image: getMision4StoragePath('mision4-5.jpg')
   },
   {
     number: 6,
@@ -300,7 +306,7 @@ export const COMMITMENT_RULES: CommitmentRule[] = [
     ],
     iconName: 'Sparkles',
     badge: 'Comunidad Unida',
-    image: '/src/assets/images/comunidad_grupal_colegio_1794425675606.jpg',
+    image: getMision4StoragePath('mision4-6.jpg'),
     closingQuote: 'No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad.'
   }
 ];

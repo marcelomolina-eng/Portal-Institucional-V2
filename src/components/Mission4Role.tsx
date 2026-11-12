@@ -16,6 +16,7 @@ import {
   Heart,
 } from 'lucide-react';
 import { MissionCheckpointFooter } from './MissionCheckpointFooter';
+import { getMision4ImageUrl } from '../lib/supabase';
 
 interface Mission4RoleProps {
   commitmentRules: CommitmentRule[];
@@ -52,7 +53,17 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
     }
   };
 
-  const slidePhotos = [
+  // Rutas directas desde Supabase Storage (bucket 'mision4-imagenes')
+  const supabaseStoragePhotos = [
+    getMision4ImageUrl('mision4-1.jpg'), // Compromiso 1
+    getMision4ImageUrl('mision4-2.jpg'), // Compromiso 2
+    getMision4ImageUrl('mision4-3.jpg'), // Compromiso 3
+    getMision4ImageUrl('mision4-4.jpg'), // Compromiso 4
+    getMision4ImageUrl('mision4-5.jpg'), // Compromiso 5
+    getMision4ImageUrl('mision4-6.jpg')  // Compromiso 6
+  ];
+
+  const fallbackPhotos = [
     '/src/assets/images/docente_ingreso_colegio_1794425649449.jpg', // Compromiso 1
     '/src/assets/images/colaboradores_uniforme_pasillo_1794425651684.jpg', // Compromiso 2
     '/src/assets/images/colaboradores_sala_docentes_1794425650084.jpg', // Compromiso 3
@@ -74,7 +85,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
   };
 
   const rule = commitmentRules[currentSlide];
-  const currentPhoto = rule?.image || slidePhotos[currentSlide] || slidePhotos[0];
+  const currentPhoto = rule?.image || supabaseStoragePhotos[currentSlide] || fallbackPhotos[currentSlide];
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -113,23 +124,18 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
 
       {/* CARRUSEL INTERACTIVO DE LAS 6 PAUTAS */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-10 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200/60 shadow-2xs">
               {getRuleIcon(rule.iconName)}
             </div>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[#8F1F17] block">
-                Compromiso #{rule.number} de {commitmentRules.length}
-              </span>
-              <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
-                {rule.title}
-              </h2>
-            </div>
+            <h2 className="text-[1.35rem] sm:text-[1.5rem] font-bold text-slate-900 leading-tight text-left">
+              {rule.title}
+            </h2>
           </div>
 
           {/* Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={prevSlide}
               className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
@@ -137,7 +143,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <span className="text-xs font-mono font-bold text-slate-500">
+            <span className="text-xs font-mono font-bold text-slate-500 min-w-[3rem] text-center">
               {currentSlide + 1} / {commitmentRules.length}
             </span>
             <button
@@ -154,11 +160,17 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Photo */}
           <div className="lg:col-span-5 relative">
-            <div className="relative rounded-2xl overflow-hidden aspect-4/3 shadow-md border-2 border-slate-100 group">
+            <div className="relative rounded-2xl overflow-hidden aspect-4/3 shadow-md border-2 border-slate-100 group bg-slate-100">
               <img
                 src={currentPhoto}
                 alt={rule.title}
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('assets/images') && fallbackPhotos[currentSlide]) {
+                    target.src = fallbackPhotos[currentSlide];
+                  }
+                }}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 text-white text-xs font-semibold backdrop-blur-xs">
@@ -169,12 +181,9 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
 
           {/* Details */}
           <div className="lg:col-span-7 space-y-4">
-            {/* Frase / Mensaje destacado del compromiso */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border border-orange-200/80 shadow-xs">
-              <div className="text-xs font-bold uppercase tracking-wider text-[#9a3412] mb-1 font-mono">
-                Mensaje de compromiso:
-              </div>
-              <p className="text-sm sm:text-base text-[#9a3412] font-bold leading-snug">
+            {/* Frase destacada del compromiso */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-orange-50/90 via-amber-50/80 to-orange-50/90 border border-orange-200/80 shadow-xs flex items-center">
+              <p className="text-sm sm:text-base text-[#9a3412] font-bold leading-relaxed text-left">
                 "{rule.highlight}"
               </p>
             </div>
@@ -268,7 +277,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-[#CFB07A] bg-slate-900 text-white p-8 sm:p-12 text-center space-y-6">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-30 filter blur-xs"
-          style={{ backgroundImage: 'url("/src/assets/images/comunidad_grupal_colegio_1794425675606.jpg")' }}
+          style={{ backgroundImage: `url("${getMision4ImageUrl('mision4-6.jpg')}")` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#5A1212] via-black/60 to-transparent" />
 
