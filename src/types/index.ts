@@ -47,6 +47,14 @@ export interface Authority {
   driveId?: string;
 }
 
+export interface Coordinador {
+  id: number;
+  nombre: string;
+  cargo: string;
+  foto_url?: string | null;
+  orden?: number;
+}
+
 export interface OrganigramMember {
   id: string;
   name: string;

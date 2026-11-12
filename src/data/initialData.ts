@@ -7,7 +7,8 @@ import {
   NoticeItem, 
   DiplomaRecord, 
   FeedbackRecord,
-  OrganigramLevel
+  OrganigramLevel,
+  Coordinador
 } from '../types';
 
 export const INITIAL_CONFIG: AppConfig = {
@@ -754,4 +755,50 @@ export const INITIAL_ORGANIGRAM: OrganigramLevel[] = [
     ]
   }
 ];
+
+export const INITIAL_COORDINADORES: Coordinador[] = [
+  {
+    id: 1,
+    nombre: 'Lic. Lucas Maidana',
+    cargo: 'Coordinador del Departamento de Lenguas Extranjeras & Bilingüe',
+    foto_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    orden: 1
+  },
+  {
+    id: 2,
+    nombre: 'Lic. Pilar Blanco',
+    cargo: 'Coordinadora de Orientación y EAI (Espacio de Apoyo e Integración)',
+    foto_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
+    orden: 2
+  },
+  {
+    id: 3,
+    nombre: 'Prof. Coti Basualdo',
+    cargo: 'Coordinadora de Vida Estudiantil y Deportes',
+    foto_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    orden: 3
+  },
+  {
+    id: 4,
+    nombre: 'Prof. Solange Romero',
+    cargo: 'Líder de Transformación Digital & IA Educativa',
+    foto_url: null,
+    orden: 4
+  },
+  {
+    id: 5,
+    nombre: 'Prof. Cecilia Panozzo',
+    cargo: 'Responsable de Robótica STEAM & Maker Lab',
+    foto_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+    orden: 5
+  },
+  {
+    id: 6,
+    nombre: 'Lic. Mabel Sánchez',
+    cargo: 'Coordinación Pastoral, Valores y Formación Ética',
+    foto_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
+    orden: 6
+  }
+];
+
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Authority, OrganigramLevel } from '../types';
+import { Authority, OrganigramLevel, Coordinador } from '../types';
 import { 
   Users, 
   Mail, 
@@ -27,10 +27,11 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { MissionCheckpointFooter } from './MissionCheckpointFooter';
-import { getOrganigramaImageUrl } from '../lib/supabase';
+import { getOrganigramaImageUrl, resolveDirectivoFotoUrl } from '../lib/supabase';
 
 interface Mission3CommunityProps {
   authorities: Authority[];
+  coordinadores?: Coordinador[];
   organigramLevels?: OrganigramLevel[];
   onComplete: () => void;
   onNavigateNext: () => void;
@@ -39,6 +40,7 @@ interface Mission3CommunityProps {
 
 export const Mission3Community: React.FC<Mission3CommunityProps> = ({
   authorities,
+  coordinadores = [],
   organigramLevels = [],
   onComplete,
   onNavigateNext,
@@ -46,6 +48,15 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
 }) => {
   const [selectedAuthority, setSelectedAuthority] = React.useState<Authority | null>(null);
   const [activeTab, setActiveTab] = React.useState<'autoridades' | 'organigrama' | 'canales'>('autoridades');
+
+  const getInitials = (nombre: string): string => {
+    if (!nombre) return 'CI';
+    const cleaned = nombre.replace(/^(Lic\.|Prof\.|Dr\.|Dra\.|Ing\.|Sr\.|Sra\.)\s+/i, '').trim();
+    const parts = cleaned.split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return 'CI';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
   
   // Estado para la sección de Organigramas Institucionales (Supabase Storage)
   const [organigramaTab, setOrganigramaTab] = React.useState<'colegio' | 'educar'>('colegio');
@@ -255,6 +266,101 @@ export const Mission3Community: React.FC<Mission3CommunityProps> = ({
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* SEPARADOR VISUAL LIMPIO */}
+          <div className="pt-8 pb-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <div className="w-full border-t border-slate-200" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-[#F8F9FA] px-4 text-xs font-serif-title font-semibold uppercase tracking-[0.06em] text-slate-500">
+                  Departamentos & Áreas Institucionales
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* SECCIÓN COORDINADORES DE ÁREA */}
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-[1.5rem] font-bold text-slate-900 leading-[1.25] text-left">
+                  Coordinadores de área
+                </h2>
+                <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
+                  Referentes pedagógicos y operativos de cada departamento institucional.
+                </p>
+              </div>
+              <span className="self-start sm:self-center text-xs font-bold uppercase tracking-[0.06em] px-3 py-1 bg-emerald-50 text-[#00602A] rounded-full border border-emerald-200">
+                {coordinadores?.length || 0} coordinadores
+              </span>
+            </div>
+
+            {/* Grilla de Tarjetas de Coordinadores */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[...(coordinadores || [])]
+                .sort((a, b) => (a.orden ?? 1) - (b.orden ?? 1))
+                .map((coord) => {
+                  const hasPhoto = Boolean(coord.foto_url && coord.foto_url.trim().length > 0);
+                  const photoSrc = hasPhoto ? resolveDirectivoFotoUrl(coord.foto_url) : '';
+
+                  return (
+                    <div
+                      key={coord.id}
+                      className="group bg-white rounded-2xl p-5 border border-slate-200 hover:border-[#1E3A8A] hover:shadow-lg transition flex flex-col justify-between"
+                    >
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4">
+                          {hasPhoto ? (
+                            <img
+                              src={photoSrc}
+                              alt={coord.nombre}
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+                              }}
+                              className="w-16 h-16 rounded-2xl object-cover border-2 border-[#CFB07A] shadow-sm group-hover:scale-105 transition shrink-0"
+                            />
+                          ) : (
+                            <div
+                              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#01913F] via-[#00602A] to-[#003D1B] text-white flex items-center justify-center font-bold text-lg border-2 border-[#CFB07A] shadow-sm tracking-wider group-hover:scale-105 transition shrink-0 font-serif-title"
+                              title={coord.nombre}
+                            >
+                              {getInitials(coord.nombre)}
+                            </div>
+                          )}
+
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-bold text-slate-900 text-[1.125rem] leading-[1.3] text-left group-hover:text-[#1E3A8A] transition truncate">
+                              {coord.nombre}
+                            </h3>
+                            <p className="text-xs text-[#00602A] font-bold mt-0.5 text-left line-clamp-2">
+                              {coord.cargo}
+                            </p>
+                            <span className="text-xs text-slate-700 font-mono text-left block mt-0.5">
+                              Coordinación de Área
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left line-clamp-3">
+                          Referente pedagógico y operativo del área, coordinando proyectos, equipos docentes y el acompañamiento formativo de los estudiantes.
+                        </p>
+                      </div>
+
+                      <div className="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
+                        <span className="inline-flex items-center gap-1 font-mono text-slate-600 text-xs bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
+                          <span className="text-[#DE4034] font-bold">Orden #{coord.orden ?? 1}</span>
+                        </span>
+                        <span className="text-[#1E3A8A] font-bold flex items-center gap-1">
+                          Equipo Educar 2026
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         </div>
       )}

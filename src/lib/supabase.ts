@@ -8,7 +8,8 @@ import {
   FeedbackRecord, 
   InitiativeItem, 
   CommitmentRule, 
-  AppConfig 
+  AppConfig,
+  Coordinador
 } from '../types';
 import { 
   AUTHORITIES, 
@@ -19,7 +20,8 @@ import {
   INITIAL_FEEDBACK, 
   INITIATIVES, 
   COMMITMENT_RULES, 
-  INITIAL_CONFIG 
+  INITIAL_CONFIG,
+  INITIAL_COORDINADORES
 } from '../data/initialData';
 
 /**
@@ -237,6 +239,101 @@ export async function deleteDirectivo(id: string): Promise<boolean> {
 
   console.log("Eliminado de Supabase (directivo):", id);
   return true;
+}
+
+// ============================================================================
+// 1.1 COORDINADORES DE ÁREA (public.coordinadores)
+// ============================================================================
+
+export async function fetchCoordinadores(): Promise<Coordinador[]> {
+  if (!isSupabaseConfigured()) return INITIAL_COORDINADORES;
+
+  try {
+    const { data, error } = await supabase
+      .from('coordinadores')
+      .select('*')
+      .order('orden', { ascending: true });
+
+    if (error) {
+      console.warn("[Supabase] Error al cargar coordinadores:", error.message);
+      return INITIAL_COORDINADORES;
+    }
+
+    if (!data || data.length === 0) {
+      console.log("Tabla 'coordinadores' vacía en Supabase. Usando fallback institucional.");
+      return INITIAL_COORDINADORES;
+    }
+
+    console.log("Cargando coordinadores desde Supabase:", data);
+    return data.map((row: any) => ({
+      id: Number(row.id),
+      nombre: row.nombre || '',
+      cargo: row.cargo || '',
+      foto_url: row.foto_url ?? null,
+      orden: row.orden !== undefined && row.orden !== null ? Number(row.orden) : 1
+    }));
+  } catch (err) {
+    console.error("Excepción al cargar coordinadores desde Supabase:", err);
+    return INITIAL_COORDINADORES;
+  }
+}
+
+export async function upsertCoordinador(coordinador: Coordinador): Promise<Coordinador> {
+  const payload: any = {
+    nombre: coordinador.nombre.trim(),
+    cargo: coordinador.cargo.trim(),
+    foto_url: coordinador.foto_url || null,
+    orden: Number(coordinador.orden || 1)
+  };
+
+  if (coordinador.id && coordinador.id > 0) {
+    payload.id = coordinador.id;
+  }
+
+  const { data, error } = await supabase
+    .from('coordinadores')
+    .upsert(payload, { onConflict: 'id' })
+    .select();
+
+  if (error) {
+    console.error("Error Supabase al guardar coordinador:", error);
+    throw error;
+  }
+
+  console.log("Guardado en Supabase (coordinador):", data);
+  if (data && data.length > 0) {
+    const r = data[0];
+    return {
+      id: Number(r.id),
+      nombre: r.nombre || '',
+      cargo: r.cargo || '',
+      foto_url: r.foto_url ?? null,
+      orden: Number(r.orden || 1)
+    };
+  }
+  return coordinador;
+}
+
+export async function deleteCoordinador(id: number): Promise<boolean> {
+  const { error } = await supabase
+    .from('coordinadores')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error("Error Supabase al eliminar coordinador:", error);
+    throw error;
+  }
+
+  console.log("Eliminado de Supabase (coordinador):", id);
+  return true;
+}
+
+export function subscribeToCoordinadores(callback: (coordinadores: Coordinador[]) => void): () => void {
+  return subscribeToTable('coordinadores', async () => {
+    const fresh = await fetchCoordinadores();
+    callback(fresh);
+  });
 }
 
 // ============================================================================
@@ -995,6 +1092,26 @@ export async function uploadDirectivoPhoto(
   }
 }
 
+export const DIRECTIVOS_BUCKET_PUBLIC_URL = "https://hpxjlfscxvivadeutjdq.supabase.co/storage/v1/object/public/directivos-fotos/";
+
+/**
+ * Resuelve la URL pública para una foto desde el bucket 'directivos-fotos':
+ * Si la foto no empieza con 'http', la concatena con:
+ * "https://hpxjlfscxvivadeutjdq.supabase.co/storage/v1/object/public/directivos-fotos/" + foto_url
+ */
+export function resolveDirectivoFotoUrl(fotoUrl?: string | null): string {
+  if (!fotoUrl) return '';
+  const trimmed = fotoUrl.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:image/')) {
+    return trimmed;
+  }
+  if (trimmed.startsWith('/storage/v1/object/public/directivos-fotos/')) {
+    return `https://hpxjlfscxvivadeutjdq.supabase.co${trimmed}`;
+  }
+  const cleanPath = trimmed.replace(/^\/+/, '');
+  return `${DIRECTIVOS_BUCKET_PUBLIC_URL}${cleanPath}`;
+}
+
 /**
  * Obtiene la URL pública directa desde Supabase Storage para el bucket 'organigrama-imagenes'.
  */
@@ -1371,4 +1488,28 @@ CREATE POLICY "Subida pública mision4-imagenes" ON storage.objects
     FOR INSERT WITH CHECK (bucket_id = 'mision4-imagenes');
 CREATE POLICY "Actualización mision4-imagenes" ON storage.objects
     FOR UPDATE USING (bucket_id = 'mision4-imagenes');
+
+-- 12. TABLA: coordinadores (Coordinadores de Área Institucionales)
+CREATE TABLE IF NOT EXISTS public.coordinadores (
+    id SERIAL PRIMARY KEY,
+    nombre TEXT NOT NULL,
+    cargo TEXT NOT NULL,
+    foto_url TEXT,
+    orden INT4 DEFAULT 1,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.coordinadores ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Lectura pública de coordinadores" ON public.coordinadores FOR SELECT USING (true);
+CREATE POLICY "Escritura de coordinadores" ON public.coordinadores FOR ALL USING (true);
+
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('directivos-fotos', 'directivos-fotos', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+CREATE POLICY "Lectura pública directivos-fotos" ON storage.objects
+    FOR SELECT USING (bucket_id = 'directivos-fotos');
+CREATE POLICY "Subida pública directivos-fotos" ON storage.objects
+    FOR INSERT WITH CHECK (bucket_id = 'directivos-fotos');
+CREATE POLICY "Actualización directivos-fotos" ON storage.objects
+    FOR UPDATE USING (bucket_id = 'directivos-fotos');
 `;

@@ -7,12 +7,14 @@ import {
   AppConfig,
   Authority,
   OrganigramLevel,
-  CommitmentRule
+  CommitmentRule,
+  Coordinador
 } from '../types';
 import { 
   AUTHORIZED_ADMIN_EMAILS 
 } from '../utils/crypto';
 import { AdminDirectivos } from './AdminDirectivos';
+import { AdminCoordinadores } from './AdminCoordinadores';
 import { AdminOrganigram } from './AdminOrganigram';
 import { AdminMision4 } from './AdminMision4';
 import { 
@@ -45,7 +47,8 @@ import {
   X,
   ChevronRight,
   ShieldCheck,
-  Compass
+  Compass,
+  Briefcase
 } from 'lucide-react';
 import { isSupabaseConfigured, SUPABASE_SETUP_SQL } from '../lib/supabase';
 
@@ -69,6 +72,11 @@ interface AdminPanelProps {
   onAddAuthority: (authority: Authority) => void;
   onUpdateAuthority: (authority: Authority) => void;
   onDeleteAuthority: (id: string) => void;
+  // Coordinadores de Área
+  coordinadores?: Coordinador[];
+  onAddCoordinador?: (coordinador: Coordinador) => void;
+  onUpdateCoordinador?: (coordinador: Coordinador) => void;
+  onDeleteCoordinador?: (id: number) => void;
   organigramLevels: OrganigramLevel[];
   onUpdateOrganigramLevels: (newLevels: OrganigramLevel[]) => void;
   // Misión 04: Mi Rol
@@ -99,6 +107,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onAddAuthority,
   onUpdateAuthority,
   onDeleteAuthority,
+  coordinadores = [],
+  onAddCoordinador = () => {},
+  onUpdateCoordinador = () => {},
+  onDeleteCoordinador = () => {},
   organigramLevels,
   onUpdateOrganigramLevels,
   commitmentRules,
@@ -107,19 +119,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onImportBackup,
   onResetToDefaults
 }) => {
-  type AdminTab = 'directivos' | 'organigrama' | 'mision4' | 'diplomas' | 'calendario' | 'novedades' | 'feedback' | 'config' | 'usuarios';
+  type AdminTab = 'directivos' | 'coordinadores' | 'organigrama' | 'mision4' | 'diplomas' | 'calendario' | 'novedades' | 'feedback' | 'config' | 'usuarios';
 
   const [activeTab, setActiveTab] = React.useState<AdminTab>('directivos');
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
 
   const adminTabs: { id: AdminTab; label: string; icon: React.ReactNode; count?: number }[] = [
-    { id: 'directivos', label: 'Directivos y Autoridades', icon: <Users className="w-4 h-4 shrink-0" />, count: authorities.length },
-    { id: 'organigrama', label: 'Organigrama y Niveles', icon: <Layers className="w-4 h-4 shrink-0" />, count: organigramLevels.length },
-    { id: 'mision4', label: 'Misión 04: Mi Rol', icon: <Compass className="w-4 h-4 shrink-0" />, count: commitmentRules.length || 6 },
-    { id: 'diplomas', label: 'Diplomas Emitidos', icon: <Award className="w-4 h-4 shrink-0" />, count: diplomas.length },
-    { id: 'calendario', label: 'Calendario de Eventos', icon: <Calendar className="w-4 h-4 shrink-0" />, count: calendarEvents.length },
-    { id: 'novedades', label: 'Novedades y Avisos', icon: <BellRing className="w-4 h-4 shrink-0" />, count: notices.length },
-    { id: 'feedback', label: 'Feedback y Satisfacción', icon: <Star className="w-4 h-4 shrink-0" />, count: feedbacks.length },
+    { id: 'directivos', label: 'Directivos y Autoridades', icon: <Users className="w-4 h-4 shrink-0" />, count: authorities?.length || 0 },
+    { id: 'coordinadores', label: 'Coordinadores', icon: <Briefcase className="w-4 h-4 shrink-0" />, count: coordinadores?.length || 0 },
+    { id: 'organigrama', label: 'Organigrama y Niveles', icon: <Layers className="w-4 h-4 shrink-0" />, count: organigramLevels?.length || 0 },
+    { id: 'mision4', label: 'Misión 04: Mi Rol', icon: <Compass className="w-4 h-4 shrink-0" />, count: commitmentRules?.length || 6 },
+    { id: 'diplomas', label: 'Diplomas Emitidos', icon: <Award className="w-4 h-4 shrink-0" />, count: diplomas?.length || 0 },
+    { id: 'calendario', label: 'Calendario de Eventos', icon: <Calendar className="w-4 h-4 shrink-0" />, count: calendarEvents?.length || 0 },
+    { id: 'novedades', label: 'Novedades y Avisos', icon: <BellRing className="w-4 h-4 shrink-0" />, count: notices?.length || 0 },
+    { id: 'feedback', label: 'Feedback y Satisfacción', icon: <Star className="w-4 h-4 shrink-0" />, count: feedbacks?.length || 0 },
     { id: 'usuarios', label: 'Usuarios Admin', icon: <Lock className="w-4 h-4 shrink-0" /> },
     { id: 'config', label: 'Configuración & Respaldos', icon: <Settings className="w-4 h-4 shrink-0" /> },
   ];
@@ -388,7 +401,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               Módulos del Sistema
             </span>
             <span className="text-[11px] font-bold text-[#00875A] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              9 Secciones
+              {adminTabs.length} Secciones
             </span>
           </div>
 
@@ -456,6 +469,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           onAddAuthority={onAddAuthority}
           onUpdateAuthority={onUpdateAuthority}
           onDeleteAuthority={onDeleteAuthority}
+        />
+      )}
+
+      {/* TAB COORDINADORES DE ÁREA */}
+      {activeTab === 'coordinadores' && (
+        <AdminCoordinadores
+          coordinadores={coordinadores || []}
+          onAddCoordinador={onAddCoordinador}
+          onUpdateCoordinador={onUpdateCoordinador}
+          onDeleteCoordinador={onDeleteCoordinador}
         />
       )}
 

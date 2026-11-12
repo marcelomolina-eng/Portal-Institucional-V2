@@ -14,7 +14,8 @@ import {
   Authority,
   OrganigramLevel,
   InitiativeItem,
-  CommitmentRule
+  CommitmentRule,
+  Coordinador
 } from './types';
 import { 
   INITIAL_CONFIG, 
@@ -25,7 +26,8 @@ import {
   INITIAL_NOTICES, 
   INITIAL_DIPLOMAS, 
   INITIAL_FEEDBACK,
-  INITIAL_ORGANIGRAM
+  INITIAL_ORGANIGRAM,
+  INITIAL_COORDINADORES
 } from './data/initialData';
 import { safeLocalStorageSet, safeLocalStorageGet } from './utils/storage';
 import { 
@@ -33,6 +35,9 @@ import {
   insertDirectivo, 
   updateDirectivo, 
   deleteDirectivo, 
+  fetchCoordinadores,
+  upsertCoordinador,
+  deleteCoordinador,
   fetchOrganigram, 
   saveOrganigram,
   fetchCalendarEvents,
@@ -92,6 +97,7 @@ export default function App() {
   const [feedbacks, setFeedbacks] = useState<FeedbackRecord[]>(INITIAL_FEEDBACK);
   const [initiatives, setInitiatives] = useState<InitiativeItem[]>(INITIATIVES);
   const [commitmentRules, setCommitmentRules] = useState<CommitmentRule[]>(COMMITMENT_RULES);
+  const [coordinadores, setCoordinadores] = useState<Coordinador[]>(INITIAL_COORDINADORES || []);
 
   // Admin authentication state
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
@@ -117,6 +123,10 @@ export default function App() {
     fetchDirectivos()
       .then(auths => { if (isMounted && auths && auths.length > 0) setAuthorities(auths); })
       .catch(err => console.error('[Supabase] Error al cargar directivos:', err));
+
+    fetchCoordinadores()
+      .then(coords => { if (isMounted && coords && coords.length > 0) setCoordinadores(coords); })
+      .catch(err => console.error('[Supabase] Error al cargar coordinadores:', err));
 
     fetchOrganigram()
       .then(levels => { if (isMounted && levels && levels.length > 0) setOrganigramLevels(levels); })
@@ -150,6 +160,11 @@ export default function App() {
     const unsubDirectivos = subscribeToTable('directivos', async () => {
       const data = await fetchDirectivos();
       if (isMounted && data && data.length > 0) setAuthorities(data);
+    });
+
+    const unsubCoordinadores = subscribeToTable('coordinadores', async () => {
+      const data = await fetchCoordinadores();
+      if (isMounted && data && data.length > 0) setCoordinadores(data);
     });
 
     const unsubOrganigram = subscribeToTable('organigrama_niveles', async () => {
@@ -192,6 +207,7 @@ export default function App() {
     return () => {
       isMounted = false;
       unsubDirectivos();
+      unsubCoordinadores();
       unsubOrganigram();
       unsubCalendar();
       unsubNotices();
@@ -359,6 +375,34 @@ export default function App() {
     }
   };
 
+  // Coordinadores de Área handlers - with Supabase persistence
+  const handleAddCoordinador = async (newCoord: Coordinador) => {
+    try {
+      setCoordinadores(prev => [...prev, newCoord]);
+      await upsertCoordinador(newCoord);
+    } catch (err) {
+      console.error('Error adding coordinador to state / Supabase:', err);
+    }
+  };
+
+  const handleUpdateCoordinador = async (updatedCoord: Coordinador) => {
+    try {
+      setCoordinadores(prev => prev.map(c => c.id === updatedCoord.id ? updatedCoord : c));
+      await upsertCoordinador(updatedCoord);
+    } catch (err) {
+      console.error('Error updating coordinador in Supabase:', err);
+    }
+  };
+
+  const handleDeleteCoordinador = async (id: number) => {
+    try {
+      setCoordinadores(prev => prev.filter(c => c.id !== id));
+      await deleteCoordinador(id);
+    } catch (err) {
+      console.error('Error deleting coordinador in Supabase:', err);
+    }
+  };
+
   // Organigram handlers - with Supabase persistence
   const handleUpdateOrganigramLevels = async (newLevels: OrganigramLevel[]) => {
     setOrganigramLevels(newLevels);
@@ -383,6 +427,7 @@ export default function App() {
       fechaExportacion: new Date().toISOString(),
       config,
       authorities,
+      coordinadores,
       organigramLevels,
       calendarEvents,
       notices
@@ -409,6 +454,10 @@ export default function App() {
         setAuthorities(data.authorities);
         data.authorities.forEach((a: Authority) => insertDirectivo(a).catch(() => {}));
       }
+      if (Array.isArray(data.coordinadores)) {
+        setCoordinadores(data.coordinadores);
+        data.coordinadores.forEach((c: Coordinador) => upsertCoordinador(c).catch(() => {}));
+      }
       if (Array.isArray(data.organigramLevels)) {
         setOrganigramLevels(data.organigramLevels);
         saveOrganigram(data.organigramLevels).catch(() => {});
@@ -432,11 +481,13 @@ export default function App() {
   const handleResetToDefaults = () => {
     setConfig(INITIAL_CONFIG);
     setAuthorities(AUTHORITIES);
+    setCoordinadores(INITIAL_COORDINADORES);
     setOrganigramLevels(INITIAL_ORGANIGRAM);
     setCalendarEvents(INITIAL_CALENDAR);
     setNotices(INITIAL_NOTICES);
     localStorage.removeItem('ci_app_config_2026');
     localStorage.removeItem('ci_authorities_2026');
+    localStorage.removeItem('ci_coordinadores_2026');
     localStorage.removeItem('ci_organigram_2026');
     localStorage.removeItem('ci_calendar_2026');
     localStorage.removeItem('ci_notices_2026');
@@ -520,6 +571,7 @@ export default function App() {
         {currentMission === 'mision3' && (
           <Mission3Community
             authorities={authorities}
+            coordinadores={coordinadores}
             organigramLevels={organigramLevels}
             onComplete={() => handleCompleteMission('mision3')}
             onNavigateNext={() => {
@@ -584,6 +636,10 @@ export default function App() {
             onAddAuthority={handleAddAuthority}
             onUpdateAuthority={handleUpdateAuthority}
             onDeleteAuthority={handleDeleteAuthority}
+            coordinadores={coordinadores}
+            onAddCoordinador={handleAddCoordinador}
+            onUpdateCoordinador={handleUpdateCoordinador}
+            onDeleteCoordinador={handleDeleteCoordinador}
             organigramLevels={organigramLevels}
             onUpdateOrganigramLevels={handleUpdateOrganigramLevels}
             commitmentRules={commitmentRules}
