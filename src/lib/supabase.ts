@@ -566,40 +566,141 @@ export async function fetchInitiatives(): Promise<InitiativeItem[]> {
 }
 
 // ============================================================================
-// 6. COMPROMISOS / CULTURA (public.compromisos_cultura)
+// 6. COMPROMISOS / MISIÓN 04 (public.mision4_compromisos)
 // ============================================================================
 
 export function mapRowToCommitment(row: any): CommitmentRule {
+  const numero = Number(row.numero || 1);
+  const defaultCommitment = COMMITMENT_RULES.find(c => c.number === numero) || COMMITMENT_RULES[0];
+
+  const rawImage = row.imagen_url || row.image_url || row.image || defaultCommitment.image || `mision4-${numero}.jpg`;
+  const resolvedImage = resolveMision4ImageUrl(rawImage);
+
+  let tips: string[] = [];
+  if (Array.isArray(row.consejos)) {
+    tips = row.consejos;
+  } else if (Array.isArray(row.tips)) {
+    tips = row.tips;
+  } else if (typeof row.consejos === 'string') {
+    try {
+      const parsed = JSON.parse(row.consejos);
+      if (Array.isArray(parsed)) tips = parsed;
+      else tips = row.consejos.split('\n').filter(Boolean);
+    } catch {
+      tips = row.consejos.split('\n').filter(Boolean);
+    }
+  } else {
+    tips = defaultCommitment.tips;
+  }
+
   return {
-    number: Number(row.numero),
-    title: row.titulo || '',
-    highlight: row.destaque || '',
-    description: row.descripcion || '',
-    tips: Array.isArray(row.consejos) ? row.consejos : [],
-    iconName: row.icono || 'Check',
-    badge: row.badge || ''
+    number: numero,
+    title: row.titulo || row.title || defaultCommitment.title,
+    highlight: row.mensaje_destacado || row.destaque || row.highlight || defaultCommitment.highlight,
+    description: row.descripcion || row.description || defaultCommitment.description,
+    tips: tips.length > 0 ? tips : defaultCommitment.tips,
+    iconName: row.icono || row.iconName || defaultCommitment.iconName,
+    badge: row.badge || defaultCommitment.badge,
+    image: resolvedImage,
+    closingQuote: row.frase_cierre || row.closingQuote || defaultCommitment.closingQuote
   };
 }
 
 export async function fetchCommitmentRules(): Promise<CommitmentRule[]> {
-  if (!isSupabaseConfigured()) return COMMITMENT_RULES;
+  if (!isSupabaseConfigured()) {
+    return COMMITMENT_RULES.map(c => ({
+      ...c,
+      image: resolveMision4ImageUrl(c.image || `mision4-${c.number}.jpg`)
+    }));
+  }
 
   try {
+    // 1. Cargar desde la tabla 'mision4_compromisos' ordenada por 'numero' (1 al 6)
     const { data, error } = await supabase
-      .from('compromisos_cultura')
+      .from('mision4_compromisos')
       .select('*')
       .order('numero', { ascending: true });
 
-    if (error || !data || data.length === 0) {
-      return COMMITMENT_RULES;
+    if (error) {
+      console.warn("[Supabase] Tabla 'mision4_compromisos' no accesible:", error.message);
+      // Fallback a 'compromisos_cultura' si existe
+      const { data: cultData } = await supabase
+        .from('compromisos_cultura')
+        .select('*')
+        .order('numero', { ascending: true });
+      if (cultData && cultData.length > 0) {
+        return cultData.map(mapRowToCommitment);
+      }
+      return COMMITMENT_RULES.map(c => ({
+        ...c,
+        image: resolveMision4ImageUrl(c.image || `mision4-${c.number}.jpg`)
+      }));
     }
 
-    console.log("Cargando compromisos desde Supabase:", data);
+    if (!data || data.length === 0) {
+      console.log("Tabla 'mision4_compromisos' vacía. Retornando compromisos iniciales.");
+      return COMMITMENT_RULES.map(c => ({
+        ...c,
+        image: resolveMision4ImageUrl(c.image || `mision4-${c.number}.jpg`)
+      }));
+    }
+
+    console.log("Cargando compromisos desde Supabase ('mision4_compromisos'):", data);
     return data.map(mapRowToCommitment);
   } catch (err) {
     console.error("Error al cargar compromisos desde Supabase:", err);
-    return COMMITMENT_RULES;
+    return COMMITMENT_RULES.map(c => ({
+      ...c,
+      image: resolveMision4ImageUrl(c.image || `mision4-${c.number}.jpg`)
+    }));
   }
+}
+
+export async function upsertMision4Compromiso(commitment: CommitmentRule): Promise<CommitmentRule> {
+  const rowData: Record<string, any> = {
+    id: `mision4-${commitment.number}`,
+    numero: commitment.number,
+    titulo: commitment.title,
+    mensaje_destacado: commitment.highlight,
+    destaque: commitment.highlight,
+    descripcion: commitment.description,
+    consejos: commitment.tips,
+    icono: commitment.iconName,
+    badge: commitment.badge,
+    imagen_url: commitment.image || `mision4-${commitment.number}.jpg`,
+    frase_cierre: commitment.closingQuote || '',
+    updated_at: new Date().toISOString()
+  };
+
+  if (!isSupabaseConfigured()) {
+    console.warn('[Supabase] Variables no configuradas. Guardado en memoria.');
+    return {
+      ...commitment,
+      image: resolveMision4ImageUrl(commitment.image)
+    };
+  }
+
+  // Intentar upsert con onConflict numero
+  let { data, error } = await supabase
+    .from('mision4_compromisos')
+    .upsert(rowData, { onConflict: 'numero' })
+    .select();
+
+  if (error) {
+    console.warn('[Supabase] Reintentando upsert en mision4_compromisos con onConflict id:', error.message);
+    const retry = await supabase
+      .from('mision4_compromisos')
+      .upsert(rowData, { onConflict: 'id' })
+      .select();
+    if (retry.error) {
+      console.error('[Supabase] Error al guardar en mision4_compromisos:', retry.error);
+      throw retry.error;
+    }
+    data = retry.data;
+  }
+
+  console.log('Compromiso Misión 04 guardado exitosamente en Supabase:', data);
+  return data && data.length > 0 ? mapRowToCommitment(data[0]) : commitment;
 }
 
 // ============================================================================
@@ -912,28 +1013,80 @@ export function getOrganigramaImageUrl(fileName: string): string {
   return `/assets/aistudio/${encodeURIComponent(fileName)}`;
 }
 
+export const MISION4_BUCKET_PUBLIC_URL = "https://hpxjlfscxvivadeutjdq.supabase.co/storage/v1/object/public/mision4-imagenes/";
+
+/**
+ * Resuelve la URL pública para una imagen de la Misión 04:
+ * Si el campo 'imagen_url' no empieza con 'http', lo concatena con:
+ * "https://hpxjlfscxvivadeutjdq.supabase.co/storage/v1/object/public/mision4-imagenes/" + imagen_url
+ */
+export function resolveMision4ImageUrl(imagenUrl?: string): string {
+  if (!imagenUrl) return '';
+  const trimmed = imagenUrl.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  if (trimmed.startsWith('/storage/v1/object/public/mision4-imagenes/')) {
+    return `https://hpxjlfscxvivadeutjdq.supabase.co${trimmed}`;
+  }
+  const cleanPath = trimmed.replace(/^\/+/, '');
+  return `${MISION4_BUCKET_PUBLIC_URL}${cleanPath}`;
+}
+
 /**
  * Obtiene la URL pública directa desde Supabase Storage para el bucket 'mision4-imagenes'.
- * Utiliza VITE_SUPABASE_URL + '/storage/v1/object/public/mision4-imagenes/...'
  */
 export function getMision4ImageUrl(fileName: string): string {
-  const cleanFileName = fileName.trim();
-  if (isSupabaseConfigured()) {
-    const { data } = supabase.storage.from('mision4-imagenes').getPublicUrl(cleanFileName);
-    if (data?.publicUrl) return data.publicUrl;
+  return resolveMision4ImageUrl(fileName);
+}
+
+/**
+ * Sube una imagen al bucket público 'mision4-imagenes' de Supabase Storage.
+ * Retorna el nombre de archivo y la URL pública directa.
+ */
+export async function uploadMision4Image(
+  file: File,
+  numero: number
+): Promise<{ fileName: string; publicUrl: string }> {
+  const ext = file.type.includes('png')
+    ? 'png'
+    : file.type.includes('webp')
+    ? 'webp'
+    : 'jpg';
+
+  const fileName = `mision4-${numero}-${Date.now()}.${ext}`;
+
+  if (!isSupabaseConfigured()) {
+    console.warn('[Supabase Storage] Supabase no configurado. Utilizando preview temporal.');
+    return {
+      fileName,
+      publicUrl: URL.createObjectURL(file)
+    };
   }
 
-  const baseUrl = 
-    import.meta.env.VITE_SUPABASE_URL || 
-    cleanUrl || 
-    (typeof window !== 'undefined' ? localStorage.getItem('ci_supabase_url') || '' : '');
+  try {
+    const { data, error } = await supabase.storage
+      .from('mision4-imagenes')
+      .upload(fileName, file, {
+        contentType: file.type || 'image/jpeg',
+        upsert: true
+      });
 
-  if (baseUrl) {
-    const cleanBase = cleanSupabaseUrl(baseUrl);
-    return `${cleanBase}/storage/v1/object/public/mision4-imagenes/${encodeURIComponent(cleanFileName)}`;
+    if (error) {
+      console.error('[Supabase Storage] Error subiendo imagen a mision4-imagenes:', error);
+      throw error;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('mision4-imagenes')
+      .getPublicUrl(data.path);
+
+    const publicUrl = publicUrlData?.publicUrl || `${MISION4_BUCKET_PUBLIC_URL}${fileName}`;
+    return { fileName, publicUrl };
+  } catch (err) {
+    console.error('[Supabase Storage] Excepción al subir imagen:', err);
+    throw err;
   }
-
-  return `/storage/v1/object/public/mision4-imagenes/${encodeURIComponent(cleanFileName)}`;
 }
 
 // ============================================================================
@@ -1188,4 +1341,34 @@ CREATE POLICY "Lectura pública organigrama-imagenes" ON storage.objects
     FOR SELECT USING (bucket_id = 'organigrama-imagenes');
 CREATE POLICY "Subida pública organigrama-imagenes" ON storage.objects
     FOR INSERT WITH CHECK (bucket_id = 'organigrama-imagenes');
+
+-- 11. TABLA: mision4_compromisos (Misión 04: Mi Rol en Educar - 6 Compromisos)
+CREATE TABLE IF NOT EXISTS public.mision4_compromisos (
+    id TEXT PRIMARY KEY,
+    numero INT2 NOT NULL UNIQUE,
+    titulo TEXT NOT NULL,
+    mensaje_destacado TEXT,
+    destaque TEXT,
+    descripcion TEXT NOT NULL,
+    consejos JSONB DEFAULT '[]'::jsonb,
+    icono TEXT DEFAULT 'Sparkles',
+    badge TEXT DEFAULT '',
+    imagen_url TEXT NOT NULL,
+    frase_cierre TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.mision4_compromisos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Lectura pública de mision4_compromisos" ON public.mision4_compromisos FOR SELECT USING (true);
+CREATE POLICY "Escritura de mision4_compromisos" ON public.mision4_compromisos FOR ALL USING (true);
+
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('mision4-imagenes', 'mision4-imagenes', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+CREATE POLICY "Lectura pública mision4-imagenes" ON storage.objects
+    FOR SELECT USING (bucket_id = 'mision4-imagenes');
+CREATE POLICY "Subida pública mision4-imagenes" ON storage.objects
+    FOR INSERT WITH CHECK (bucket_id = 'mision4-imagenes');
+CREATE POLICY "Actualización mision4-imagenes" ON storage.objects
+    FOR UPDATE USING (bucket_id = 'mision4-imagenes');
 `;

@@ -50,6 +50,7 @@ import {
   savePortalConfig,
   fetchInitiatives,
   fetchCommitmentRules,
+  upsertMision4Compromiso,
   subscribeToTable
 } from './lib/supabase';
 import { Header } from './components/Header';
@@ -183,6 +184,11 @@ export default function App() {
       if (isMounted && levels && levels.length > 0) setOrganigramLevels(levels);
     });
 
+    const unsubMision4 = subscribeToTable('mision4_compromisos', async () => {
+      const rules = await fetchCommitmentRules();
+      if (isMounted && rules && rules.length > 0) setCommitmentRules(rules);
+    });
+
     return () => {
       isMounted = false;
       unsubDirectivos();
@@ -192,6 +198,7 @@ export default function App() {
       unsubDiplomas();
       unsubFeedback();
       unsubConfig();
+      unsubMision4();
     };
   }, []);
 
@@ -356,6 +363,16 @@ export default function App() {
   const handleUpdateOrganigramLevels = async (newLevels: OrganigramLevel[]) => {
     setOrganigramLevels(newLevels);
     await saveOrganigram(newLevels);
+  };
+
+  // Misión 04 (Compromisos) handler - with Supabase persistence
+  const handleUpdateCommitmentRule = async (updatedRule: CommitmentRule) => {
+    try {
+      setCommitmentRules(prev => prev.map(r => r.number === updatedRule.number ? updatedRule : r));
+      await upsertMision4Compromiso(updatedRule);
+    } catch (err) {
+      console.error('Error al persistir compromiso de Misión 04 en Supabase:', err);
+    }
   };
 
   // Export complete site configuration & content to JSON
@@ -569,6 +586,8 @@ export default function App() {
             onDeleteAuthority={handleDeleteAuthority}
             organigramLevels={organigramLevels}
             onUpdateOrganigramLevels={handleUpdateOrganigramLevels}
+            commitmentRules={commitmentRules}
+            onUpdateCommitmentRule={handleUpdateCommitmentRule}
             onExportBackup={handleExportBackup}
             onImportBackup={handleImportBackup}
             onResetToDefaults={handleResetToDefaults}

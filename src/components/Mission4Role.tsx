@@ -16,7 +16,7 @@ import {
   Heart,
 } from 'lucide-react';
 import { MissionCheckpointFooter } from './MissionCheckpointFooter';
-import { getMision4ImageUrl } from '../lib/supabase';
+import { resolveMision4ImageUrl } from '../lib/supabase';
 
 interface Mission4RoleProps {
   commitmentRules: CommitmentRule[];
@@ -34,12 +34,19 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [checkedChecklist, setCheckedChecklist] = React.useState<Record<string, boolean>>({});
 
+  // Garantizar orden ascendente por 'numero' (1 al 6)
+  const sortedRules = React.useMemo(() => {
+    return [...commitmentRules].sort((a, b) => a.number - b.number);
+  }, [commitmentRules]);
+
+  const totalRules = sortedRules.length || 6;
+
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % commitmentRules.length);
+    setCurrentSlide((prev) => (prev + 1) % totalRules);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + commitmentRules.length) % commitmentRules.length);
+    setCurrentSlide((prev) => (prev - 1 + totalRules) % totalRules);
   };
 
   const getRuleIcon = (iconName: string) => {
@@ -52,16 +59,6 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       default: return <Sparkles className="w-6 h-6 text-[#EA580C]" />;
     }
   };
-
-  // Rutas directas desde Supabase Storage (bucket 'mision4-imagenes')
-  const supabaseStoragePhotos = [
-    getMision4ImageUrl('mision4-1.jpg'), // Compromiso 1
-    getMision4ImageUrl('mision4-2.jpg'), // Compromiso 2
-    getMision4ImageUrl('mision4-3.jpg'), // Compromiso 3
-    getMision4ImageUrl('mision4-4.jpg'), // Compromiso 4
-    getMision4ImageUrl('mision4-5.jpg'), // Compromiso 5
-    getMision4ImageUrl('mision4-6.jpg')  // Compromiso 6
-  ];
 
   const fallbackPhotos = [
     '/src/assets/images/docente_ingreso_colegio_1794425649449.jpg', // Compromiso 1
@@ -84,8 +81,8 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
     setCheckedChecklist(prev => ({ ...prev, [item]: !prev[item] }));
   };
 
-  const rule = commitmentRules[currentSlide];
-  const currentPhoto = rule?.image || supabaseStoragePhotos[currentSlide] || fallbackPhotos[currentSlide];
+  const rule = sortedRules[currentSlide] || sortedRules[0];
+  const currentPhoto = rule?.image ? resolveMision4ImageUrl(rule.image) : fallbackPhotos[currentSlide];
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -214,7 +211,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
                   <span>Frase destacada de cierre</span>
                 </div>
                 <blockquote className="text-sm sm:text-base font-serif-title font-bold text-slate-100 leading-snug">
-                  "No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad."
+                  "{rule.closingQuote || 'No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad.'}"
                 </blockquote>
               </div>
             )}
@@ -223,7 +220,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
 
         {/* Indicators */}
         <div className="flex items-center justify-center gap-2 pt-4 border-t border-slate-100">
-          {commitmentRules.map((_, i) => (
+          {sortedRules.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentSlide(i)}
@@ -277,7 +274,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
       <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-[#CFB07A] bg-slate-900 text-white p-8 sm:p-12 text-center space-y-6">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-30 filter blur-xs"
-          style={{ backgroundImage: `url("${getMision4ImageUrl('mision4-6.jpg')}")` }}
+          style={{ backgroundImage: `url("${resolveMision4ImageUrl(sortedRules[5]?.image || 'mision4-6.jpg')}")` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#5A1212] via-black/60 to-transparent" />
 
@@ -287,7 +284,7 @@ export const Mission4Role: React.FC<Mission4RoleProps> = ({
           </div>
 
           <p className="text-base sm:text-lg font-serif-title text-slate-100 font-semibold leading-[1.5] max-w-[65ch] mx-auto">
-            "No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad."
+            "{sortedRules[5]?.closingQuote || 'No importa cuál sea tu función: tu manera de hacer las cosas también forma parte de nuestra identidad.'}"
           </p>
 
           <div className="pt-2">

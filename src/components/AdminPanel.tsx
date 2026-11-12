@@ -6,13 +6,15 @@ import {
   FeedbackRecord, 
   AppConfig,
   Authority,
-  OrganigramLevel
+  OrganigramLevel,
+  CommitmentRule
 } from '../types';
 import { 
   AUTHORIZED_ADMIN_EMAILS 
 } from '../utils/crypto';
 import { AdminDirectivos } from './AdminDirectivos';
 import { AdminOrganigram } from './AdminOrganigram';
+import { AdminMision4 } from './AdminMision4';
 import { 
   Lock, 
   LogOut, 
@@ -42,7 +44,8 @@ import {
   Menu,
   X,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Compass
 } from 'lucide-react';
 import { isSupabaseConfigured, SUPABASE_SETUP_SQL } from '../lib/supabase';
 
@@ -68,6 +71,9 @@ interface AdminPanelProps {
   onDeleteAuthority: (id: string) => void;
   organigramLevels: OrganigramLevel[];
   onUpdateOrganigramLevels: (newLevels: OrganigramLevel[]) => void;
+  // Misión 04: Mi Rol
+  commitmentRules: CommitmentRule[];
+  onUpdateCommitmentRule: (rule: CommitmentRule) => void;
   // Respaldo global y reset
   onExportBackup: () => void;
   onImportBackup: (backupJson: string) => boolean;
@@ -95,11 +101,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onDeleteAuthority,
   organigramLevels,
   onUpdateOrganigramLevels,
+  commitmentRules,
+  onUpdateCommitmentRule,
   onExportBackup,
   onImportBackup,
   onResetToDefaults
 }) => {
-  type AdminTab = 'directivos' | 'organigrama' | 'diplomas' | 'calendario' | 'novedades' | 'feedback' | 'config' | 'usuarios';
+  type AdminTab = 'directivos' | 'organigrama' | 'mision4' | 'diplomas' | 'calendario' | 'novedades' | 'feedback' | 'config' | 'usuarios';
 
   const [activeTab, setActiveTab] = React.useState<AdminTab>('directivos');
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
@@ -107,6 +115,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const adminTabs: { id: AdminTab; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: 'directivos', label: 'Directivos y Autoridades', icon: <Users className="w-4 h-4 shrink-0" />, count: authorities.length },
     { id: 'organigrama', label: 'Organigrama y Niveles', icon: <Layers className="w-4 h-4 shrink-0" />, count: organigramLevels.length },
+    { id: 'mision4', label: 'Misión 04: Mi Rol', icon: <Compass className="w-4 h-4 shrink-0" />, count: commitmentRules.length || 6 },
     { id: 'diplomas', label: 'Diplomas Emitidos', icon: <Award className="w-4 h-4 shrink-0" />, count: diplomas.length },
     { id: 'calendario', label: 'Calendario de Eventos', icon: <Calendar className="w-4 h-4 shrink-0" />, count: calendarEvents.length },
     { id: 'novedades', label: 'Novedades y Avisos', icon: <BellRing className="w-4 h-4 shrink-0" />, count: notices.length },
@@ -379,7 +388,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               Módulos del Sistema
             </span>
             <span className="text-[11px] font-bold text-[#00875A] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              8 Secciones
+              9 Secciones
             </span>
           </div>
 
@@ -456,6 +465,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           levels={organigramLevels}
           onUpdateLevels={onUpdateOrganigramLevels}
           availableAuthorities={authorities}
+        />
+      )}
+
+      {/* TAB MISIÓN 04: MI ROL EN EDUCAR (6 COMPROMISOS) */}
+      {activeTab === 'mision4' && (
+        <AdminMision4
+          commitmentRules={commitmentRules}
+          onUpdateCommitmentRule={onUpdateCommitmentRule}
         />
       )}
 
