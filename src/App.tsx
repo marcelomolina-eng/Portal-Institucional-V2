@@ -54,6 +54,7 @@ import {
   fetchPortalConfig,
   savePortalConfig,
   fetchInitiatives,
+  upsertMision2Iniciativa,
   fetchCommitmentRules,
   upsertMision4Compromiso,
   subscribeToTable
@@ -199,6 +200,11 @@ export default function App() {
       if (isMounted && levels && levels.length > 0) setOrganigramLevels(levels);
     });
 
+    const unsubMision2 = subscribeToTable('mision2_iniciativas', async () => {
+      const inits = await fetchInitiatives();
+      if (isMounted && inits && inits.length > 0) setInitiatives(inits);
+    });
+
     const unsubMision4 = subscribeToTable('mision4_compromisos', async () => {
       const rules = await fetchCommitmentRules();
       if (isMounted && rules && rules.length > 0) setCommitmentRules(rules);
@@ -214,6 +220,7 @@ export default function App() {
       unsubDiplomas();
       unsubFeedback();
       unsubConfig();
+      unsubMision2();
       unsubMision4();
     };
   }, []);
@@ -407,6 +414,20 @@ export default function App() {
   const handleUpdateOrganigramLevels = async (newLevels: OrganigramLevel[]) => {
     setOrganigramLevels(newLevels);
     await saveOrganigram(newLevels);
+  };
+
+  // Misión 02 (Iniciativas y videos) handler - with Supabase persistence
+  const handleUpdateInitiative = async (updatedInit: InitiativeItem) => {
+    try {
+      setInitiatives(prev =>
+        prev
+          .map(i => (i.id === updatedInit.id ? updatedInit : i))
+          .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+      );
+      await upsertMision2Iniciativa(updatedInit);
+    } catch (err) {
+      console.error('Error al persistir iniciativa de Misión 02 en Supabase:', err);
+    }
   };
 
   // Misión 04 (Compromisos) handler - with Supabase persistence
@@ -642,6 +663,8 @@ export default function App() {
             onDeleteCoordinador={handleDeleteCoordinador}
             organigramLevels={organigramLevels}
             onUpdateOrganigramLevels={handleUpdateOrganigramLevels}
+            initiatives={initiatives}
+            onUpdateInitiative={handleUpdateInitiative}
             commitmentRules={commitmentRules}
             onUpdateCommitmentRule={handleUpdateCommitmentRule}
             onExportBackup={handleExportBackup}

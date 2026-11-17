@@ -621,45 +621,129 @@ export async function saveOrganigram(levels: OrganigramLevel[]): Promise<boolean
 }
 
 // ============================================================================
-// 5. INICIATIVAS (public.iniciativas)
+// 5. INICIATIVAS - MISIÓN 02 (public.mision2_iniciativas)
 // ============================================================================
 
-export function mapRowToInitiative(row: any): InitiativeItem {
+export const MISION2_BUCKET_PUBLIC_URL = "https://hpxjlfscxvivadeutjdq.supabase.co/storage/v1/object/public/mision2-videos/";
+
+export function resolveMision2VideoUrl(videoUrl?: string | null): string {
+  if (!videoUrl) return '';
+  const trimmed = videoUrl.trim();
+  if (!trimmed) return '';
+  if (
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('blob:') ||
+    trimmed.startsWith('data:')
+  ) {
+    return trimmed;
+  }
+  const baseOrigin = cleanUrl || 'https://hpxjlfscxvivadeutjdq.supabase.co';
+  if (trimmed.startsWith('/storage/v1/object/public/mision2-videos/')) {
+    return `${baseOrigin}${trimmed}`;
+  }
+  const cleanPath = trimmed.replace(/^\/+/, '');
+  if (cleanUrl) {
+    return `${cleanUrl}/storage/v1/object/public/mision2-videos/${cleanPath}`;
+  }
+  return `${MISION2_BUCKET_PUBLIC_URL}${cleanPath}`;
+}
+
+export function mapRowToInitiative(row: any, index = 0): InitiativeItem {
+  const id = String(row.id);
+  const fallback = INITIATIVES.find(i => i.id === id);
+  const rawVideoUrl = row.video_url ?? row.videoUrl ?? '';
+
   return {
-    id: String(row.id),
-    title: row.titulo || '',
-    referent: row.referente || '',
-    referentRole: row.cargo_referente || '',
-    category: row.categoria || '',
-    iconName: row.icono || 'Sparkles',
-    accentColor: row.color_acento || '#DE4034',
-    queHacemos: row.que_hacemos || '',
-    porqueLoHacemos: row.porque_lo_hacemos || '',
-    queValorAporta: row.que_valor_aporta || '',
-    videoDriveId: row.video_drive_id || '',
-    tags: Array.isArray(row.etiquetas) ? row.etiquetas : []
+    id,
+    order: Number(row.orden ?? row.order ?? fallback?.order ?? index + 1),
+    title: row.titulo || row.title || fallback?.title || '',
+    referent: row.referente || row.referent || fallback?.referent || '',
+    referentRole: row.cargo_referente || fallback?.referentRole || '',
+    category: row.categoria || row.category || fallback?.category || '',
+    iconName: row.icono || row.iconName || fallback?.iconName || 'Sparkles',
+    accentColor: row.color_acento || row.accentColor || fallback?.accentColor || '#008751',
+    queHacemos: row.que_hacemos || fallback?.queHacemos || '',
+    porqueLoHacemos: row.porque_lo_hacemos || fallback?.porqueLoHacemos || '',
+    queValorAporta: row.que_valor_aporta || fallback?.queValorAporta || '',
+    videoDriveId: row.video_drive_id || fallback?.videoDriveId || '',
+    videoUrl: resolveMision2VideoUrl(rawVideoUrl),
+    tags: Array.isArray(row.etiquetas) ? row.etiquetas : (fallback?.tags || [])
   };
 }
 
 export async function fetchInitiatives(): Promise<InitiativeItem[]> {
-  if (!isSupabaseConfigured()) return INITIATIVES;
+  if (!isSupabaseConfigured()) {
+    return [...INITIATIVES].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+  }
 
   try {
     const { data, error } = await supabase
+      .from('mision2_iniciativas')
+      .select('*')
+      .order('orden', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      console.log("Cargando iniciativas desde Supabase ('mision2_iniciativas'):", data);
+      return data.map((row, idx) => mapRowToInitiative(row, idx));
+    }
+
+    if (error) {
+      console.warn("[Supabase] Tabla 'mision2_iniciativas' no accesible, intentando fallback a 'iniciativas':", error.message);
+    }
+
+    const { data: legacyData, error: legacyError } = await supabase
       .from('iniciativas')
       .select('*')
       .order('id', { ascending: true });
 
-    if (error || !data || data.length === 0) {
-      return INITIATIVES;
+    if (!legacyError && legacyData && legacyData.length > 0) {
+      return legacyData.map((row, idx) => mapRowToInitiative(row, idx));
     }
 
-    console.log("Cargando iniciativas desde Supabase:", data);
-    return data.map(mapRowToInitiative);
+    return [...INITIATIVES].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
   } catch (err) {
     console.error("Error al cargar iniciativas desde Supabase:", err);
-    return INITIATIVES;
+    return [...INITIATIVES].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
   }
+}
+
+export async function upsertMision2Iniciativa(item: InitiativeItem): Promise<InitiativeItem> {
+  const cleanVideoUrl = (item.videoUrl || '').trim();
+  const rowData: Record<string, any> = {
+    id: item.id,
+    categoria: item.category,
+    titulo: item.title,
+    referente: item.referent,
+    orden: Number(item.order ?? 1),
+    video_url: cleanVideoUrl,
+    icono: item.iconName || 'Sparkles',
+    color_acento: item.accentColor || '#008751',
+    updated_at: new Date().toISOString()
+  };
+
+  if (!isSupabaseConfigured()) {
+    console.warn('[Supabase] Variables no configuradas. Guardado en memoria.');
+    return {
+      ...item,
+      videoUrl: resolveMision2VideoUrl(cleanVideoUrl)
+    };
+  }
+
+  const { data, error } = await supabase
+    .from('mision2_iniciativas')
+    .upsert(rowData, { onConflict: 'id' })
+    .select();
+
+  if (error) {
+    console.error('[Supabase] Error al guardar en mision2_iniciativas:', error);
+    throw error;
+  }
+
+  console.log('Iniciativa Misión 02 guardada exitosamente en Supabase:', data);
+  return data && data.length > 0
+    ? mapRowToInitiative(data[0])
+    : { ...item, videoUrl: resolveMision2VideoUrl(cleanVideoUrl) };
 }
 
 // ============================================================================
@@ -1206,6 +1290,75 @@ export async function uploadMision4Image(
   }
 }
 
+/**
+ * Sube un video (.mp4 / .webm) al bucket público 'mision2-videos' de Supabase Storage
+ * reportando el progreso real de carga (0 a 100%).
+ */
+export async function uploadMision2Video(
+  file: File,
+  initiativeId: string,
+  onProgress?: (percent: number) => void
+): Promise<{ fileName: string; publicUrl: string }> {
+  const isWebm = file.type.includes('webm') || file.name.toLowerCase().endsWith('.webm');
+  const ext = isWebm ? 'webm' : 'mp4';
+  const cleanId = (initiativeId || 'iniciativa').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const fileName = `${cleanId}-${Date.now()}.${ext}`;
+
+  if (!isSupabaseConfigured() || !cleanUrl || !cleanKey) {
+    console.warn('[Supabase Storage] Supabase no configurado. Utilizando preview temporal.');
+    onProgress?.(100);
+    return {
+      fileName,
+      publicUrl: URL.createObjectURL(file)
+    };
+  }
+
+  return new Promise((resolve, reject) => {
+    const uploadEndpoint = `${cleanUrl}/storage/v1/object/mision2-videos/${encodeURIComponent(fileName)}`;
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', uploadEndpoint, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${cleanKey}`);
+    xhr.setRequestHeader('apikey', cleanKey);
+    xhr.setRequestHeader('x-upsert', 'true');
+    xhr.setRequestHeader('Content-Type', file.type || (isWebm ? 'video/webm' : 'video/mp4'));
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && onProgress) {
+        const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
+        onProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100);
+        const { data: publicUrlData } = supabase.storage
+          .from('mision2-videos')
+          .getPublicUrl(fileName);
+        const publicUrl = publicUrlData?.publicUrl || `${cleanUrl}/storage/v1/object/public/mision2-videos/${fileName}`;
+        resolve({ fileName, publicUrl });
+      } else {
+        let message = `Error al subir video (${xhr.status})`;
+        try {
+          const parsed = JSON.parse(xhr.responseText);
+          if (parsed?.message || parsed?.error) {
+            message = parsed.message || parsed.error;
+          }
+        } catch {
+          // ignore parse error
+        }
+        reject(new Error(message));
+      }
+    };
+
+    xhr.onerror = () => {
+      reject(new Error('Error de red al subir el video a Supabase Storage.'));
+    };
+
+    xhr.send(file);
+  });
+}
+
 // ============================================================================
 // 11. SUSCRIPCIONES EN TIEMPO REAL (Postgres CDC)
 // ============================================================================
@@ -1512,4 +1665,33 @@ CREATE POLICY "Subida pública directivos-fotos" ON storage.objects
     FOR INSERT WITH CHECK (bucket_id = 'directivos-fotos');
 CREATE POLICY "Actualización directivos-fotos" ON storage.objects
     FOR UPDATE USING (bucket_id = 'directivos-fotos');
+
+-- 13. TABLA: mision2_iniciativas (Misión 02: Iniciativas que nos definen con video explicativo)
+CREATE TABLE IF NOT EXISTS public.mision2_iniciativas (
+    id TEXT PRIMARY KEY,
+    categoria TEXT NOT NULL,
+    titulo TEXT NOT NULL,
+    referente TEXT NOT NULL,
+    orden INT4 NOT NULL DEFAULT 1,
+    video_url TEXT DEFAULT '',
+    icono TEXT DEFAULT 'Sparkles',
+    color_acento TEXT DEFAULT '#008751',
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.mision2_iniciativas ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Lectura pública de mision2_iniciativas" ON public.mision2_iniciativas FOR SELECT USING (true);
+CREATE POLICY "Escritura de mision2_iniciativas" ON public.mision2_iniciativas FOR ALL USING (true);
+
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('mision2-videos', 'mision2-videos', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+CREATE POLICY "Lectura pública mision2-videos" ON storage.objects
+    FOR SELECT USING (bucket_id = 'mision2-videos');
+CREATE POLICY "Subida pública mision2-videos" ON storage.objects
+    FOR INSERT WITH CHECK (bucket_id = 'mision2-videos');
+CREATE POLICY "Actualización mision2-videos" ON storage.objects
+    FOR UPDATE USING (bucket_id = 'mision2-videos');
+CREATE POLICY "Eliminación mision2-videos" ON storage.objects
+    FOR DELETE USING (bucket_id = 'mision2-videos');
 `;

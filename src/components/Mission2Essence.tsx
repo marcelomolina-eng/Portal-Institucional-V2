@@ -1,29 +1,25 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { InitiativeItem, CalendarEvent } from '../types';
-import { 
-  Sparkles, 
-  Calendar, 
-  UserCheck, 
-  Video, 
-  HelpCircle, 
-  Compass, 
-  Award, 
-  HeartHandshake, 
-  Trophy, 
-  Lightbulb, 
-  Globe, 
-  Cpu, 
-  Bot, 
-  Gift, 
-  ExternalLink, 
-  Search, 
-  Filter, 
-  CheckCircle2, 
+import {
+  Sparkles,
+  Calendar,
+  UserCheck,
+  Video,
+  Compass,
+  HeartHandshake,
+  Trophy,
+  Lightbulb,
+  Globe,
+  Cpu,
+  Bot,
+  Gift,
+  Search,
+  CheckCircle2,
   ArrowRight,
-  Clock,
-  Layers
+  Clock
 } from 'lucide-react';
 import { MissionCheckpointFooter } from './MissionCheckpointFooter';
+import { parseVideoSource } from '../utils/video';
 
 interface Mission2EssenceProps {
   initiatives: InitiativeItem[];
@@ -40,12 +36,69 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
   onNavigateNext,
   isCompleted
 }) => {
-  const [selectedInitiative, setSelectedInitiative] = React.useState<InitiativeItem | null>(null);
-  const [selectedMonth, setSelectedMonth] = React.useState<number | 'all'>('all');
-  const [searchCalendar, setSearchCalendar] = React.useState('');
-  const [activeSection, setActiveSection] = React.useState<'iniciativas' | 'calendario'>('iniciativas');
+  const [selectedMonth, setSelectedMonth] = useState<number | 'all'>('all');
+  const [searchCalendar, setSearchCalendar] = useState('');
+  const [activeSection, setActiveSection] = useState<'iniciativas' | 'calendario'>('iniciativas');
 
-  // Helper for dynamic icons
+  // Referencias compartidas para garantizar una única pista de audio activa en simultáneo
+  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  const iframeRefs = useRef<Record<string, HTMLIFrameElement | null>>({});
+
+  const pauseAllOtherVideos = (activeId: string) => {
+    // Pausar todos los reproductores HTML5 (<video>) excepto el activo
+    Object.entries(videoRefs.current).forEach(([id, videoEl]) => {
+      if (id !== activeId && videoEl && !videoEl.paused) {
+        try {
+          videoEl.pause();
+        } catch {
+          // Ignorar errores de pausa en navegadores restrictivos
+        }
+      }
+    });
+
+    // Pausar otros iframes embebidos (YouTube / Vimeo) vía postMessage
+    Object.entries(iframeRefs.current).forEach(([id, iframeEl]) => {
+      if (id !== activeId && iframeEl?.contentWindow) {
+        try {
+          iframeEl.contentWindow.postMessage(
+            JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+            '*'
+          );
+          iframeEl.contentWindow.postMessage(
+            JSON.stringify({ method: 'pause' }),
+            '*'
+          );
+        } catch {
+          // Ignorar si el iframe aún no cargó
+        }
+      }
+    });
+  };
+
+  // Detectar clic/reproducción dentro de un iframe embebido (YouTube/Vimeo) para pausar los demás videos
+  useEffect(() => {
+    const handleWindowBlur = () => {
+      const activeEl = document.activeElement;
+      if (!activeEl || activeEl.tagName !== 'IFRAME') return;
+
+      const matchedEntry = Object.entries(iframeRefs.current).find(
+        ([, el]) => el === activeEl
+      );
+      if (matchedEntry) {
+        pauseAllOtherVideos(matchedEntry[0]);
+      }
+    };
+
+    window.addEventListener('blur', handleWindowBlur);
+    return () => window.removeEventListener('blur', handleWindowBlur);
+  }, []);
+
+  // Ordenar iniciativas por 'orden' ascendente
+  const sortedInitiatives = useMemo(() => {
+    return [...initiatives].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+  }, [initiatives]);
+
+  // Icono dinámico por iniciativa
   const getInitiativeIcon = (iconName: string) => {
     switch (iconName) {
       case 'HeartHandshake': return <HeartHandshake className="w-5 h-5" />;
@@ -76,7 +129,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
 
   const filteredEvents = calendarEvents.filter((evt) => {
     const matchesMonth = selectedMonth === 'all' || evt.month === selectedMonth;
-    const matchesSearch = 
+    const matchesSearch =
       evt.title.toLowerCase().includes(searchCalendar.toLowerCase()) ||
       evt.category.toLowerCase().includes(searchCalendar.toLowerCase()) ||
       evt.responsible.toLowerCase().includes(searchCalendar.toLowerCase());
@@ -96,7 +149,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               Explorar nuestra esencia en acción
             </h1>
             <p className="text-base text-emerald-50 max-w-[65ch] leading-[1.5] text-left">
-              Las 8 iniciativas pilares que marcan el ritmo del año y el Calendario Anual Integrado 2026. Conoce a los referentes y el valor pedagógico de cada proyecto.
+              Las iniciativas pilares que marcan el ritmo del año y el calendario anual integrado 2026. Escucha a cada referente presentar su proyecto institucional.
             </p>
           </div>
 
@@ -105,7 +158,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               onComplete();
               onNavigateNext();
             }}
-            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-[0.06em] transition-all flex items-center gap-2 shadow-lg ${
+            className={`self-start md:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-[0.06em] transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
               isCompleted
                 ? 'bg-white text-[#00602A] border border-white'
                 : 'bg-[#CFB07A] text-[#1C1A17] hover:bg-[#e4c485]'
@@ -118,7 +171,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
         </div>
       </div>
 
-      {/* Switcher de Sección estilo Pills Institucionales */}
+      {/* Switcher de Sección */}
       <div className="bg-[#F4F5F7] p-2 rounded-2xl border border-slate-200/90 shadow-inner flex items-center gap-2 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveSection('iniciativas')}
@@ -128,8 +181,17 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold border border-slate-200/90 shadow-xs hover:-translate-y-0.5'
           }`}
         >
-          <Sparkles className={`w-4 h-4 ${activeSection === 'iniciativas' ? 'text-white' : 'text-[#00875A]'}`} />
-          <span>8 iniciativas y referentes</span>
+          <Video className={`w-4 h-4 ${activeSection === 'iniciativas' ? 'text-white' : 'text-[#00875A]'}`} />
+          <span>Iniciativas y referentes</span>
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full font-bold font-mono transition-colors ${
+              activeSection === 'iniciativas'
+                ? 'bg-white/25 text-white'
+                : 'bg-slate-100 text-slate-700 border border-slate-200'
+            }`}
+          >
+            {sortedInitiatives.length}
+          </span>
         </button>
 
         <button
@@ -154,7 +216,7 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
         </button>
       </div>
 
-      {/* SECCIÓN 1: CUADRÍCULA DE INICIATIVAS */}
+      {/* SECCIÓN 1: CUADRÍCULA DE INICIATIVAS CON VIDEO */}
       {activeSection === 'iniciativas' && (
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -163,63 +225,102 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
                 Iniciativas que nos definen
               </h2>
               <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left mt-0.5">
-                Haz clic en cualquier iniciativa para ver el detalle de "¿Qué hacemos?", "¿Por qué lo hacemos?" y "¿Qué valor aporta?".
+                Conoce el propósito y el impacto de cada área a través del video explicativo de su referente institucional.
               </p>
             </div>
             <span className="text-xs font-bold uppercase tracking-[0.06em] px-3 py-1 bg-slate-100 border border-slate-300 rounded-full text-slate-800 self-start">
-              8 ejes estratégicos
+              {sortedInitiatives.length} ejes estratégicos
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {initiatives.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setSelectedInitiative(item)}
-                className="cursor-pointer group bg-white rounded-2xl p-5 border border-slate-200 hover:border-[#01913F] hover:shadow-lg transition-all duration-200 flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div 
-                      className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm"
-                      style={{ backgroundColor: item.accentColor }}
-                    >
-                      {getInitiativeIcon(item.iconName)}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {sortedInitiatives.map((item) => {
+              const videoSource = parseVideoSource(item.videoUrl);
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 hover:border-[#01913F]/70 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-4"
+                >
+                  {/* Encabezado limpio de la tarjeta */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm shrink-0"
+                          style={{ backgroundColor: item.accentColor || '#008751' }}
+                        >
+                          {getInitiativeIcon(item.iconName)}
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-[0.06em] px-2.5 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
+                          {item.category}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-xs font-bold uppercase tracking-[0.06em] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
-                      {item.category}
-                    </span>
+
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-[1.2rem] leading-[1.3] text-left">
+                        {item.title}
+                      </h3>
+                      <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-700 mt-1.5">
+                        <UserCheck className="w-4 h-4 text-[#00602A] shrink-0" />
+                        <span>
+                          Referente: <strong className="font-semibold text-slate-900">{item.referent}</strong>
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-[1.125rem] leading-[1.3] text-left group-hover:text-[#00602A] transition">
-                      {item.title}
-                    </h3>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-700 mt-1">
-                      <UserCheck className="w-3.5 h-3.5 text-[#00602A]" />
-                      <span className="font-semibold text-slate-800">{item.referent}</span>
-                    </div>
-                  </div>
+                  {/* Reproductor de video limpio en formato 16:9 */}
+                  <div className="aspect-video w-full rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-slate-950 relative">
+                    {videoSource.type === 'direct' && (
+                      <video
+                        ref={(el) => {
+                          videoRefs.current[item.id] = el;
+                        }}
+                        src={videoSource.src}
+                        controls
+                        preload="metadata"
+                        playsInline
+                        autoPlay={false}
+                        onPlay={() => pauseAllOtherVideos(item.id)}
+                        className="w-full h-full object-cover bg-slate-950"
+                      />
+                    )}
 
-                  <p className="text-sm text-slate-700 leading-[1.5] max-w-[65ch] text-left line-clamp-3 whitespace-pre-wrap">
-                    {item.queHacemos}
-                  </p>
+                    {(videoSource.type === 'youtube' || videoSource.type === 'vimeo') && (
+                      <iframe
+                        ref={(el) => {
+                          iframeRefs.current[item.id] = el;
+                        }}
+                        src={videoSource.embedUrl}
+                        title={`Video de presentación: ${item.title}`}
+                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        loading="lazy"
+                        className="w-full h-full border-0"
+                      />
+                    )}
 
-                  <div className="flex flex-wrap gap-1 pt-1">
-                    {item.tags.map((t, idx) => (
-                      <span key={idx} className="text-xs bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded">
-                        #{t}
-                      </span>
-                    ))}
+                    {videoSource.type === 'none' && (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-[#12231A] to-slate-900 flex flex-col items-center justify-center p-6 text-center space-y-3">
+                        <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-[#CFB07A]">
+                          <Video className="w-6 h-6" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-white">
+                            Video de presentación próximamente
+                          </p>
+                          <p className="text-xs text-slate-300 max-w-xs mx-auto">
+                            {item.referent} compartirá aquí el video explicativo de esta iniciativa.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-
-                <div className="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between text-xs font-bold text-[#00602A] uppercase tracking-[0.06em]">
-                  <span>Ver ficha completa</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -321,101 +422,6 @@ export const Mission2Essence: React.FC<Mission2EssenceProps> = ({
               ))}
             </div>
           )}
-        </div>
-      )}
-
-      {/* MODAL DETALLADO DE INICIATIVA ("¿Qué hacemos?", "¿Por qué lo hacemos?", "¿Qué valor aporta?") */}
-      {selectedInitiative && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border-2 border-[#D4B26F] max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md"
-                  style={{ backgroundColor: selectedInitiative.accentColor }}
-                >
-                  {getInitiativeIcon(selectedInitiative.iconName)}
-                </div>
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#008751]">
-                    {selectedInitiative.category}
-                  </span>
-                  <h3 className="text-xl font-extrabold text-slate-900">
-                    {selectedInitiative.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Referente: <span className="text-slate-800 font-bold">{selectedInitiative.referent}</span> ({selectedInitiative.referentRole})
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setSelectedInitiative(null)}
-                className="text-slate-400 hover:text-slate-800 p-1.5 rounded-lg hover:bg-slate-100 text-lg font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Los 3 interrogantes obligatorios */}
-            <div className="space-y-4">
-              {/* 1. ¿Qué hacemos? */}
-              <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#008751] space-y-1">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#008751] flex items-center gap-1.5">
-                  <HelpCircle className="w-4 h-4" /> 1. ¿Qué hacemos?
-                </h4>
-                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedInitiative.queHacemos}
-                </p>
-              </div>
-
-              {/* 2. ¿Por qué lo hacemos? */}
-              <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#7A1C1C] space-y-1">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#7A1C1C] flex items-center gap-1.5">
-                  <HeartHandshake className="w-4 h-4" /> 2. ¿Por qué lo hacemos?
-                </h4>
-                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedInitiative.porqueLoHacemos}
-                </p>
-              </div>
-
-              {/* 3. ¿Qué valor aporta? */}
-              <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#D4B26F] space-y-1">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#B45309] flex items-center gap-1.5">
-                  <Award className="w-4 h-4" /> 3. ¿Qué valor aporta?
-                </h4>
-                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedInitiative.queValorAporta}
-                </p>
-              </div>
-            </div>
-
-            {/* Video preview / Drive link si existe */}
-            {selectedInitiative.videoDriveId && (
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                <div className="flex items-center gap-2">
-                  <Video className="w-4 h-4 text-[#008751]" />
-                  <span>Cápsula de video institucional asignada</span>
-                </div>
-                <a
-                  href={`https://drive.google.com/file/d/${selectedInitiative.videoDriveId}/view`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-bold text-[#008751] hover:underline flex items-center gap-1"
-                >
-                  Abrir video <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            )}
-
-            <button
-              onClick={() => setSelectedInitiative(null)}
-              className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition"
-            >
-              Cerrar ficha
-            </button>
-          </div>
         </div>
       )}
 

@@ -19,6 +19,8 @@ export interface InitiativeItem {
   porqueLoHacemos: string;
   queValorAporta: string;
   videoDriveId?: string;
+  videoUrl?: string;
+  order?: number;
   accentColor: string;
   tags: string[];
 }

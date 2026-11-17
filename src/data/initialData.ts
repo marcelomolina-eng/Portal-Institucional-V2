@@ -37,6 +37,7 @@ A través de este recorrido, vas a encontrar diferentes misiones que te permitir
 export const INITIATIVES: InitiativeItem[] = [
   {
     id: 'wellness',
+    order: 1,
     title: 'Wellness & Bienestar',
     referent: 'Natali Miño',
     referentRole: 'Gestión de Personas y Bienestar Integral',
@@ -47,10 +48,12 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Impulsamos un entorno de trabajo saludable y armónico a través de pausas activas, talleres de manejo del estrés, asesoramiento ergonómico y actividades de integración para docentes y personal administrativo.',
     porqueLoHacemos: 'Porque estamos convencidos de que educar y gestionar con excelencia solo es posible cuando las personas se sienten cuidadas, escuchadas y valoradas física y emocionalmente.',
     queValorAporta: 'Genera mayor satisfacción laboral, reduce el agotamiento, potencia la empatía en los pasillos y fortalece los vínculos de confianza entre todos los equipos.',
-    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v'
+    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v',
+    videoUrl: ''
   },
   {
     id: 'copa-informatica',
+    order: 2,
     title: 'Copa Informática',
     referent: 'Coti Basualdo',
     referentRole: 'Coordinación de Vida Estudiantil y Deportes',
@@ -61,10 +64,12 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Organizamos el certamen intercolegial e intercasas más esperado del año, que combina disciplinas deportivas, destrezas recreativas, desafíos culturales y jornadas de camaradería.',
     porqueLoHacemos: 'Fomenta el sentido de pertenencia, la sana competencia y el compañerismo más allá de las aulas académicas tradicionales.',
     queValorAporta: 'Une a docentes, preceptores, directivos y estudiantes bajo los mismos colores, transmitiendo valores de respeto, perseverancia y superación colectiva.',
-    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom'
+    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom',
+    videoUrl: ''
   },
   {
     id: 'expo-proyecto',
+    order: 3,
     title: 'Expo Proyecto',
     referent: 'Sofi Lorenzo',
     referentRole: 'Directora Académica & Vínculo Pedagógico',
@@ -75,10 +80,12 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Es la muestra anual abierta donde los estudiantes de todos los niveles exponen proyectos de investigación, desarrollos tecnológicos y soluciones de impacto comunitario desarrolladas con Aprendizaje Basado en Proyectos (ABP).',
     porqueLoHacemos: 'Brindamos a los alumnos un escenario real para comunicar sus ideas con rigor científico, pensamiento crítico y oratoria frente a familias y especialistas.',
     queValorAporta: 'Visibiliza la excelencia pedagógica del Colegio y consolida el orgullo institucional ante la comunidad de la provincia y la región.',
-    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v'
+    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v',
+    videoUrl: ''
   },
   {
     id: 'bilingue',
+    order: 4,
     title: 'Programa Bilingüe',
     referent: 'Lucas Maidana',
     referentRole: 'Coordinador del Departamento de Lenguas Extranjeras',
@@ -89,10 +96,12 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Ofrecemos un trayecto de inmersión en idioma inglés con enfoque comunicativo, preparación para exámenes internacionales reconocidos (Cambridge) y proyectos interculturales.',
     porqueLoHacemos: 'El dominio bilingüe abre puertas globales irreemplazables y estimula el pensamiento flexible y la comprensión multicultural en un mundo interconectado.',
     queValorAporta: 'Permite a nuestros egresados y al equipo docente acceder a bibliografía de vanguardia, becas internacionales y una proyección sin fronteras.',
-    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom'
+    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom',
+    videoUrl: ''
   },
   {
     id: 'eai',
+    order: 5,
     title: 'EAI (Espacio de Apoyo e Integración)',
     referent: 'Pilar Blanco',
     referentRole: 'Coordinadora de Orientación y Psicopedagogía',
@@ -103,10 +112,12 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Un equipo interdisciplinario que brinda acompañamiento psicopedagógico, diseña configuraciones de apoyo personalizadas y asesora a los docentes en diversificación curricular.',
     porqueLoHacemos: 'Creemos firmemente en el derecho a una educación equitativa donde cada estudiante alcance su máximo potencial con el andamiaje necesario.',
     queValorAporta: 'Garantiza un colegio verdaderamente inclusivo, empático y profesional, reduciendo barreras de aprendizaje y fortaleciendo a las familias.',
-    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v'
+    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v',
+    videoUrl: ''
   },
   {
     id: 'ia-identidad',
+    order: 6,
     title: 'IA e Identidad Tecnológica',
     referent: 'Solange Romero',
     referentRole: 'Líder de Transformación Digital & IA Educativa',
@@ -117,10 +128,12 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Integramos metodologías de Inteligencia Artificial Generativa ética, pensamiento algorítmico y herramientas digitales en la planificación docente y en los trayectos formativos de los estudiantes.',
     porqueLoHacemos: 'La tecnología es el ADN del Colegio Informático; preparamos a la comunidad para liderar la era digital con criterio ético y creatividad.',
     queValorAporta: 'Mantiene a nuestro colegio a la vanguardia educativa en Argentina, dotando a colaboradores y alumnos de competencias del siglo XXI.',
-    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom'
+    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom',
+    videoUrl: ''
   },
   {
     id: 'robotica',
+    order: 7,
     title: 'Robótica & Laboratorio Maker',
     referent: 'Cecilia Panozzo',
     referentRole: 'Responsable de Robótica STEAM & Maker Lab',
@@ -131,10 +144,12 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Gestionamos el espacio maker donde alumnos y docentes construyen prototipos robóticos, programan microcontroladores, diseñan en 3D y resuelven desafíos de ingeniería práctica.',
     porqueLoHacemos: 'Aprender haciendo (Hands-on learning) despierta la curiosidad vocacional, la resolución creativa de problemas y la perseverancia ante el error.',
     queValorAporta: 'Genera proyectos tangibles de alto impacto, participación en olimpíadas nacionales e inspira vocaciones tecnológicas tempranas.',
-    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v'
+    videoDriveId: '1prC6Yt93uob8epZnwXI_6DUzyeYEBh-v',
+    videoUrl: ''
   },
   {
     id: 'beneficios',
+    order: 8,
     title: 'Empresas Amigas & Beneficios',
     referent: 'Equipo RRHH Educar',
     referentRole: 'Gestión de Alianzas Corporativas y Talento',
@@ -145,7 +160,8 @@ export const INITIATIVES: InitiativeItem[] = [
     queHacemos: 'Coordinamos una red de convenios estratégicos con comercios, centros médicos, gimnasios, librerías y empresas de servicios de la región para todo el personal de Educar.',
     porqueLoHacemos: 'Reconocemos y premiamos el compromiso diario de nuestros colaboradores, acercándoles ventajas reales para su economía y calidad de vida.',
     queValorAporta: 'Acceso inmediato a descuentos exclusivos, facilidades de pago y experiencias recreativas compartidas en familia.',
-    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom'
+    videoDriveId: '1kVF14POeW7uLBeF6wV3DTkp55x83Prom',
+    videoUrl: ''
   }
 ];
 
